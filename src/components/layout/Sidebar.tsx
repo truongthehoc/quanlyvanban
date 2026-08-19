@@ -107,14 +107,14 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`relative flex flex-col justify-between border-r border-slate-200 bg-white select-none transition-all duration-300 ease-in-out z-10 h-screen flex-shrink-0 ${
+      className={`relative flex flex-col justify-between border-r border-slate-200 bg-white select-none transition-all duration-300 ease-in-out h-screen flex-shrink-0 ${
         isCollapsed ? 'w-[68px]' : 'w-64'
       }`}
     >
       {/* Modern Floating Border Toggle Button (< and >) */}
       <button
         onClick={toggleSidebar}
-        className="absolute -right-3.5 top-5 z-20 flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-md hover:border-blue-400 hover:text-[#1E60F3] hover:bg-blue-50 transition-all duration-200 hover:scale-110 focus:outline-none cursor-pointer"
+        className="absolute -right-3.5 top-5 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-md hover:border-blue-400 hover:text-[#1E60F3] hover:bg-blue-50 transition-all duration-200 hover:scale-110 focus:outline-none cursor-pointer"
         title={isCollapsed ? 'Mở rộng thanh điều hướng (>)' : 'Thu gọn thanh điều hướng (<)'}
       >
         {isCollapsed ? (

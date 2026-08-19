@@ -73,7 +73,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-6 backdrop-blur-md transition-all shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+    <header className="flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white px-6 transition-all flex-shrink-0">
       {/* Left: Organization context & Breadcrumb */}
       <div className="flex items-center space-x-3">
         <div className="flex items-center space-x-2 text-xs font-semibold text-slate-700">
