@@ -52,6 +52,7 @@ model OrganizationCategory {
   code        String   @unique // e.g. "GOVERNMENT", "DEPARTMENT", "ENTERPRISE", "PARTNER", "HOSPITAL", "EDUCATION", ...
   name        String   // e.g. "Cơ quan Nhà nước", "Sở ban ngành", "Doanh nghiệp / Đối tác", "Bệnh viện / Y tế"
   color       String?  @default("blue") // e.g. "blue", "purple", "amber", "emerald", "rose", "indigo", "teal"
+  order       Int      @default(0) // Số thứ tự hiển thị (STT)
   description String?
   isDefault   Boolean  @default(false)
   createdAt   DateTime @default(now())

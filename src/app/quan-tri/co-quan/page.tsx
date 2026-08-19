@@ -38,6 +38,7 @@ export default function OrganizationsAdminPage() {
   const [editingOrg, setEditingOrg] = useState<any>(null);
   const [deletingOrg, setDeletingOrg] = useState<any>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [editingCat, setEditingCat] = useState<any>(null);
   const [categoryLoading, setCategoryLoading] = useState(false);
   const [categoryToast, setCategoryToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -56,6 +57,7 @@ export default function OrganizationsAdminPage() {
     code: '',
     name: '',
     color: 'blue',
+    order: 1,
     description: '',
   });
 
@@ -70,6 +72,10 @@ export default function OrganizationsAdminPage() {
       if (res.ok) {
         const data = await res.json();
         setCategories(data);
+        if (!editingCat) {
+          const maxOrder = data.reduce((max: number, c: any) => Math.max(max, c.order || 0), 0);
+          setCategoryFormData((prev) => ({ ...prev, order: maxOrder + 1 }));
+        }
       }
     } catch (err) {
       console.error(err);
@@ -158,32 +164,75 @@ export default function OrganizationsAdminPage() {
     }
   };
 
-  const handleCreateCategory = async (e: React.FormEvent) => {
+  const handleSaveCategory = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!categoryFormData.code || !categoryFormData.name) {
-      showCatToast('Vui lòng nhập đầy đủ mã và tên phân loại', 'error');
+    if (!categoryFormData.name || (!editingCat && !categoryFormData.code)) {
+      showCatToast('Vui lòng nhập đầy đủ thông tin phân loại', 'error');
       return;
     }
     setCategoryLoading(true);
     try {
-      const res = await fetch('/api/admin/organization-categories', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(categoryFormData),
-      });
-      if (res.ok) {
-        showCatToast('Đã thêm phân loại mới thành công');
-        setCategoryFormData({ code: '', name: '', color: 'blue', description: '' });
-        fetchCategories();
+      if (editingCat) {
+        const res = await fetch('/api/admin/organization-categories', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: editingCat.id,
+            name: categoryFormData.name,
+            color: categoryFormData.color,
+            order: Number(categoryFormData.order) || 1,
+            description: categoryFormData.description,
+          }),
+        });
+        if (res.ok) {
+          showCatToast('Đã cập nhật phân loại thành công');
+          setEditingCat(null);
+          setCategoryFormData({ code: '', name: '', color: 'blue', order: categories.length + 1, description: '' });
+          fetchCategories();
+        } else {
+          const data = await res.json();
+          showCatToast(data.error || 'Lỗi khi cập nhật', 'error');
+        }
       } else {
-        const data = await res.json();
-        showCatToast(data.error || 'Lỗi khi tạo phân loại', 'error');
+        const res = await fetch('/api/admin/organization-categories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...categoryFormData,
+            order: Number(categoryFormData.order) || 1,
+          }),
+        });
+        if (res.ok) {
+          showCatToast('Đã thêm phân loại mới thành công');
+          setCategoryFormData({ code: '', name: '', color: 'blue', order: categories.length + 2, description: '' });
+          fetchCategories();
+        } else {
+          const data = await res.json();
+          showCatToast(data.error || 'Lỗi khi tạo phân loại', 'error');
+        }
       }
     } catch (err) {
       showCatToast('Lỗi hệ thống', 'error');
     } finally {
       setCategoryLoading(false);
     }
+  };
+
+  const handleStartEditCat = (cat: any) => {
+    setEditingCat(cat);
+    setCategoryFormData({
+      code: cat.code,
+      name: cat.name,
+      color: cat.color || 'blue',
+      order: cat.order || 1,
+      description: cat.description || '',
+    });
+  };
+
+  const handleCancelEditCat = () => {
+    setEditingCat(null);
+    const maxOrder = categories.reduce((max: number, c: any) => Math.max(max, c.order || 0), 0);
+    setCategoryFormData({ code: '', name: '', color: 'blue', order: maxOrder + 1, description: '' });
   };
 
   const handleDeleteCategory = async (id: string, code: string) => {
@@ -597,7 +646,7 @@ export default function OrganizationsAdminPage() {
                     className="text-[11px] font-bold text-[#1E60F3] hover:underline cursor-pointer flex items-center space-x-1"
                   >
                     <Plus className="h-3 w-3" />
-                    <span>+ Thêm phân loại mới</span>
+                    <span>Thêm phân loại</span>
                   </button>
                 </div>
                 <select
@@ -684,16 +733,16 @@ export default function OrganizationsAdminPage() {
       )}
 
       {/* ======================================================== */}
-      {/* MODAL QUẢN LÝ PHÂN LOẠI CƠ QUAN / ĐƠN VỊ (CATEGORIES)    */}
+      {/* MODAL QUẢN LÝ PHÂN LOẠI CƠ QUAN / ĐƠN VỊ (EXPANDED WIDE) */}
       {/* ======================================================== */}
       {showCategoryModal && mounted && createPortal(
         <div className="fixed inset-0 z-[105] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-lg max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-4xl max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
             
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-slate-200 bg-purple-50/70 px-6 py-4 flex-shrink-0">
-              <div className="flex items-center space-x-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-purple-600 text-white font-bold shadow-xs">
+            <div className="flex items-center justify-between border-b border-purple-100 bg-purple-50/80 px-6 py-4 flex-shrink-0">
+              <div className="flex items-center space-x-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-purple-600 text-white font-bold shadow-md shadow-purple-500/20">
                   <Building className="h-5 w-5" />
                 </div>
                 <div>
@@ -701,25 +750,25 @@ export default function OrganizationsAdminPage() {
                     Quản Lý Phân Loại Cơ Quan / Đơn Vị
                   </h2>
                   <p className="text-[11px] text-slate-500">
-                    Tùy chỉnh các nhóm phân loại cơ quan bên ngoài trong toàn hệ thống
+                    Sắp xếp thứ tự (STT) và tùy chỉnh các phân loại cơ quan bên ngoài trong toàn hệ thống
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setShowCategoryModal(false)}
-                className="rounded-full p-2 text-slate-400 hover:bg-slate-200 transition-colors cursor-pointer"
+                className="rounded-full p-2 text-slate-400 hover:bg-purple-100/80 transition-colors cursor-pointer"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            {/* Body */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-5 text-xs">
+            {/* Body (2 Columns Layout) */}
+            <div className="flex-1 overflow-y-auto p-6 text-xs space-y-4">
               
               {/* Toast inside modal */}
               {categoryToast && (
                 <div
-                  className={`flex items-center space-x-2 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-white shadow-sm animate-in fade-in ${
+                  className={`flex items-center space-x-2 rounded-2xl px-4 py-2.5 text-xs font-bold text-white shadow-sm animate-in fade-in ${
                     categoryToast.type === 'error' ? 'bg-rose-600' : 'bg-emerald-600'
                   }`}
                 >
@@ -728,123 +777,251 @@ export default function OrganizationsAdminPage() {
                 </div>
               )}
 
-              {/* 1. Existing Categories List */}
-              <div className="space-y-2">
-                <label className="block font-bold text-slate-700 text-xs">
-                  Danh sách phân loại hiện có ({categories.length})
-                </label>
-                <div className="rounded-2xl border border-slate-200 divide-y divide-slate-100 max-h-48 overflow-y-auto bg-slate-50/50">
-                  {categories.map((cat) => {
-                    const mappedCount = organizations.filter((o) => o.type === cat.code).length;
-                    return (
-                      <div
-                        key={cat.id}
-                        className="flex items-center justify-between p-3 bg-white hover:bg-slate-50/80 transition-colors"
-                      >
-                        <div className="flex items-center space-x-2.5">
-                          {getTypeBadge(cat.code)}
-                          <div>
-                            <span className="font-mono text-[10px] text-slate-400 font-bold ml-1">
-                              ({cat.code})
-                            </span>
-                            <span className="text-[11px] text-slate-500 ml-2">
-                              • {mappedCount} đơn vị
-                            </span>
-                          </div>
-                        </div>
-
-                        {!cat.isDefault && mappedCount === 0 && (
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteCategory(cat.id, cat.code)}
-                            className="p-1.5 rounded-full text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                            title="Xóa phân loại này"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* 2. Form Create New Category */}
-              <form onSubmit={handleCreateCategory} className="rounded-2xl border border-purple-200 bg-purple-50/40 p-4 space-y-3">
-                <h3 className="font-bold text-purple-900 text-xs flex items-center space-x-1.5">
-                  <Plus className="h-3.5 w-3.5" />
-                  <span>Thêm Phân Loại Cơ Quan Mới</span>
-                </h3>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block font-bold text-slate-700 mb-1 text-[11px]">
-                      Mã phân loại <span className="text-rose-500 font-bold">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="VD: BENH_VIEN, TRUONG_HOC..."
-                      value={categoryFormData.code}
-                      onChange={(e) => setCategoryFormData({ ...categoryFormData, code: e.target.value.toUpperCase() })}
-                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-mono uppercase focus:border-purple-600 focus:outline-none"
-                      required
-                    />
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                {/* 1. Left Column: Table of Categories (Col Span 7) */}
+                <div className="lg:col-span-7 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-slate-800 text-xs flex items-center space-x-1.5">
+                      <span>Danh sách phân loại hiện có</span>
+                      <span className="rounded-full bg-purple-100 text-purple-700 px-2 py-0.5 text-[10px] font-bold">
+                        {categories.length}
+                      </span>
+                    </h3>
+                    <span className="text-[11px] text-slate-400 italic">
+                      * Thứ tự hiển thị theo STT
+                    </span>
                   </div>
 
-                  <div>
-                    <label className="block font-bold text-slate-700 mb-1 text-[11px]">
-                      Tên phân loại <span className="text-rose-500 font-bold">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="VD: Bệnh viện / Y tế..."
-                      value={categoryFormData.name}
-                      onChange={(e) => setCategoryFormData({ ...categoryFormData, name: e.target.value })}
-                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs focus:border-purple-600 focus:outline-none font-semibold"
-                      required
-                    />
-                  </div>
-                </div>
+                  <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-xs bg-white">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-slate-200 bg-slate-50/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                          <th className="py-2.5 px-3 text-center w-12">STT</th>
+                          <th className="py-2.5 px-3">Tên Phân Loại & Huy Hiệu</th>
+                          <th className="py-2.5 px-3 text-center w-24">Số Đơn Vị</th>
+                          <th className="py-2.5 px-3 text-right w-20">Thao Tác</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 text-xs">
+                        {categories.map((cat, idx) => {
+                          const mappedCount = organizations.filter((o) => o.type === cat.code).length;
+                          const isSelected = editingCat?.id === cat.id;
 
-                {/* Color Choice */}
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1.5 text-[11px]">
-                    Màu sắc nhận diện huy hiệu
-                  </label>
-                  <div className="flex items-center space-x-2">
-                    {[
-                      { key: 'blue', name: 'Xanh dương', class: 'bg-blue-600' },
-                      { key: 'purple', name: 'Tím', class: 'bg-purple-600' },
-                      { key: 'amber', name: 'Vàng cam', class: 'bg-amber-500' },
-                      { key: 'emerald', name: 'Xanh lá', class: 'bg-emerald-600' },
-                      { key: 'rose', name: 'Hồng đỏ', class: 'bg-rose-600' },
-                      { key: 'indigo', name: 'Chàm', class: 'bg-indigo-600' },
-                      { key: 'teal', name: 'Xanh ngọc', class: 'bg-teal-600' },
-                    ].map((c) => (
-                      <button
-                        key={c.key}
-                        type="button"
-                        onClick={() => setCategoryFormData({ ...categoryFormData, color: c.key })}
-                        className={`h-6 w-6 rounded-full transition-all cursor-pointer ${c.class} ${
-                          categoryFormData.color === c.key ? 'ring-2 ring-offset-2 ring-slate-800 scale-110' : 'opacity-70 hover:opacity-100'
-                        }`}
-                        title={c.name}
-                      />
-                    ))}
+                          return (
+                            <tr
+                              key={cat.id}
+                              className={`transition-colors ${
+                                isSelected ? 'bg-purple-50/80 font-medium' : 'hover:bg-slate-50/80'
+                              }`}
+                            >
+                              {/* STT */}
+                              <td className="py-3 px-3 text-center">
+                                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-purple-100 text-[11px] font-bold text-purple-800 font-mono">
+                                  {cat.order || idx + 1}
+                                </span>
+                              </td>
+
+                              {/* Huy hiệu & Tên */}
+                              <td className="py-3 px-3 space-y-1">
+                                <div className="flex items-center space-x-2">
+                                  {getTypeBadge(cat.code)}
+                                  <span className="font-mono text-[10px] text-slate-400 font-bold">
+                                    {cat.code}
+                                  </span>
+                                </div>
+                                <div className="text-[11px] text-slate-600 font-medium line-clamp-1">
+                                  {cat.name}
+                                </div>
+                              </td>
+
+                              {/* Số đơn vị */}
+                              <td className="py-3 px-3 text-center">
+                                <span className="inline-flex items-center space-x-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-bold text-slate-700">
+                                  <span>{mappedCount}</span>
+                                </span>
+                              </td>
+
+                              {/* Thao tác */}
+                              <td className="py-3 px-3 text-right">
+                                <div className="flex items-center justify-end space-x-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleStartEditCat(cat)}
+                                    className="p-1.5 rounded-full text-[#1E60F3] hover:bg-blue-50 transition-colors cursor-pointer"
+                                    title="Sửa phân loại này"
+                                  >
+                                    <Edit2 className="h-3.5 w-3.5" />
+                                  </button>
+
+                                  {!cat.isDefault && mappedCount === 0 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleDeleteCategory(cat.id, cat.code)}
+                                      className="p-1.5 rounded-full text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                                      title="Xóa phân loại này"
+                                    >
+                                      <Trash2 className="h-3.5 w-3.5" />
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
 
-                <div className="flex justify-end pt-1">
-                  <button
-                    type="submit"
-                    disabled={categoryLoading}
-                    className="inline-flex items-center space-x-1.5 rounded-full bg-purple-600 px-4 py-1.5 text-xs font-bold text-white hover:bg-purple-700 transition-colors shadow-xs cursor-pointer disabled:opacity-50"
+                {/* 2. Right Column: Form Create / Edit Category (Col Span 5) */}
+                <div className="lg:col-span-5">
+                  <form
+                    onSubmit={handleSaveCategory}
+                    className={`rounded-2xl border p-4.5 space-y-3.5 transition-all shadow-xs ${
+                      editingCat ? 'border-purple-300 bg-purple-50/50' : 'border-slate-200 bg-slate-50/60'
+                    }`}
                   >
-                    <Plus className="h-3.5 w-3.5" />
-                    <span>{categoryLoading ? 'Đang tạo...' : 'Tạo Phân Loại'}</span>
-                  </button>
+                    <div className="flex items-center justify-between pb-1 border-b border-purple-100">
+                      <h3 className="font-bold text-slate-900 text-xs flex items-center space-x-1.5">
+                        {editingCat ? (
+                          <>
+                            <Edit2 className="h-3.5 w-3.5 text-purple-600" />
+                            <span>Chỉnh Sửa Phân Loại</span>
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="h-3.5 w-3.5 text-purple-600" />
+                            <span>Thêm Phân Loại Mới</span>
+                          </>
+                        )}
+                      </h3>
+
+                      {editingCat && (
+                        <button
+                          type="button"
+                          onClick={handleCancelEditCat}
+                          className="text-[11px] font-bold text-slate-500 hover:text-slate-800 cursor-pointer"
+                        >
+                          Hủy sửa
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2.5">
+                      {/* STT Input */}
+                      <div>
+                        <label className="block font-bold text-slate-700 mb-1 text-[11px]">
+                          STT <span className="text-rose-500 font-bold">*</span>
+                        </label>
+                        <input
+                          type="number"
+                          min="1"
+                          placeholder="1, 2..."
+                          value={categoryFormData.order}
+                          onChange={(e) => setCategoryFormData({ ...categoryFormData, order: Number(e.target.value) || 1 })}
+                          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs text-center font-bold font-mono focus:border-purple-600 focus:outline-none"
+                          required
+                        />
+                      </div>
+
+                      {/* Mã phân loại */}
+                      <div className="col-span-2">
+                        <label className="block font-bold text-slate-700 mb-1 text-[11px]">
+                          Mã phân loại <span className="text-rose-500 font-bold">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="BENH_VIEN, TRUONG_HOC..."
+                          value={categoryFormData.code}
+                          disabled={!!editingCat}
+                          onChange={(e) => setCategoryFormData({ ...categoryFormData, code: e.target.value.toUpperCase() })}
+                          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-mono uppercase focus:border-purple-600 focus:outline-none disabled:bg-slate-100 disabled:text-slate-500"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    {/* Tên phân loại */}
+                    <div>
+                      <label className="block font-bold text-slate-700 mb-1 text-[11px]">
+                        Tên phân loại <span className="text-rose-500 font-bold">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Nhập tên phân loại cơ quan / đơn vị..."
+                        value={categoryFormData.name}
+                        onChange={(e) => setCategoryFormData({ ...categoryFormData, name: e.target.value })}
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs focus:border-purple-600 focus:outline-none font-semibold"
+                        required
+                      />
+                    </div>
+
+                    {/* Color Choice */}
+                    <div>
+                      <label className="block font-bold text-slate-700 mb-1.5 text-[11px]">
+                        Màu sắc nhận diện huy hiệu
+                      </label>
+                      <div className="flex items-center space-x-2">
+                        {[
+                          { key: 'blue', name: 'Xanh dương', class: 'bg-blue-600' },
+                          { key: 'purple', name: 'Tím', class: 'bg-purple-600' },
+                          { key: 'amber', name: 'Vàng cam', class: 'bg-amber-500' },
+                          { key: 'emerald', name: 'Xanh lá', class: 'bg-emerald-600' },
+                          { key: 'rose', name: 'Hồng đỏ', class: 'bg-rose-600' },
+                          { key: 'indigo', name: 'Chàm', class: 'bg-indigo-600' },
+                          { key: 'teal', name: 'Xanh ngọc', class: 'bg-teal-600' },
+                        ].map((c) => (
+                          <button
+                            key={c.key}
+                            type="button"
+                            onClick={() => setCategoryFormData({ ...categoryFormData, color: c.key })}
+                            className={`h-6 w-6 rounded-full transition-all cursor-pointer ${c.class} ${
+                              categoryFormData.color === c.key ? 'ring-2 ring-offset-2 ring-slate-800 scale-110' : 'opacity-70 hover:opacity-100'
+                            }`}
+                            title={c.name}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Mô tả ngắn */}
+                    <div>
+                      <label className="block font-bold text-slate-700 mb-1 text-[11px]">
+                        Mô tả tóm tắt (Tùy chọn)
+                      </label>
+                      <textarea
+                        rows={2}
+                        placeholder="Nhập mô tả tóm tắt phạm vi phân loại..."
+                        value={categoryFormData.description}
+                        onChange={(e) => setCategoryFormData({ ...categoryFormData, description: e.target.value })}
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs focus:border-purple-600 focus:outline-none"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-end space-x-2 pt-1 border-t border-purple-100">
+                      {editingCat && (
+                        <button
+                          type="button"
+                          onClick={handleCancelEditCat}
+                          className="rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer"
+                        >
+                          Hủy
+                        </button>
+                      )}
+                      <button
+                        type="submit"
+                        disabled={categoryLoading}
+                        className="inline-flex items-center space-x-1.5 rounded-full bg-purple-600 px-5 py-1.5 text-xs font-bold text-white hover:bg-purple-700 transition-colors shadow-xs cursor-pointer disabled:opacity-50"
+                      >
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        <span>{categoryLoading ? 'Đang lưu...' : editingCat ? 'Cập Nhật' : 'Tạo Phân Loại'}</span>
+                      </button>
+                    </div>
+                  </form>
                 </div>
-              </form>
+
+              </div>
 
             </div>
 
@@ -853,7 +1030,7 @@ export default function OrganizationsAdminPage() {
               <button
                 type="button"
                 onClick={() => setShowCategoryModal(false)}
-                className="rounded-full bg-slate-900 px-5 py-2 text-xs font-bold text-white hover:bg-slate-800 cursor-pointer"
+                className="rounded-full bg-slate-900 px-6 py-2 text-xs font-bold text-white hover:bg-slate-800 cursor-pointer shadow-xs"
               >
                 Đóng
               </button>
