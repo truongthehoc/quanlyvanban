@@ -164,16 +164,65 @@ export function SystemConfigProvider({ children }: { children: React.ReactNode }
     }
   }, []);
 
-  // Apply CSS variables to root dynamically
-  useEffect(() => {
-    if (typeof document !== 'undefined' && config.brandTheme.primaryColor) {
-      document.documentElement.style.setProperty('--primary', config.brandTheme.primaryColor);
-      document.documentElement.style.setProperty(
-        '--primary-hover',
-        config.brandTheme.primaryHover || config.brandTheme.primaryColor
-      );
-      document.documentElement.style.setProperty('--primary-light', `${config.brandTheme.primaryColor}18`);
+  // Apply CSS variables and global theme styles dynamically
+  const applyGlobalThemeStyles = (color: string, hoverColor?: string) => {
+    if (typeof document === 'undefined' || !color) return;
+    const hover = hoverColor || color;
+
+    document.documentElement.style.setProperty('--primary', color);
+    document.documentElement.style.setProperty('--primary-hover', hover);
+    document.documentElement.style.setProperty('--primary-light', `${color}18`);
+
+    let styleTag = document.getElementById('eoffice-dynamic-theme-style') as HTMLStyleElement;
+    if (!styleTag) {
+      styleTag = document.createElement('style');
+      styleTag.id = 'eoffice-dynamic-theme-style';
+      document.head.appendChild(styleTag);
     }
+
+    styleTag.innerHTML = `
+      :root {
+        --primary: ${color};
+        --primary-hover: ${hover};
+      }
+      .bg-\\[\\#1E60F3\\],
+      .bg-blue-600,
+      button.bg-blue-600,
+      a.bg-blue-600,
+      .btn-primary {
+        background-color: ${color} !important;
+      }
+      .hover\\:bg-blue-700:hover,
+      .hover\\:bg-\\[\\#1E60F3\\]:hover {
+        filter: brightness(0.92) !important;
+      }
+      .text-\\[\\#1E60F3\\],
+      .text-blue-600 {
+        color: ${color} !important;
+      }
+      .border-\\[\\#1E60F3\\],
+      .border-blue-600,
+      .border-blue-500 {
+        border-color: ${color} !important;
+      }
+      .bg-blue-50 {
+        background-color: ${color}14 !important;
+      }
+      .border-blue-200 {
+        border-color: ${color}33 !important;
+      }
+      .focus\\:border-\\[\\#1E60F3\\]:focus,
+      .focus\\:border-blue-600:focus {
+        border-color: ${color} !important;
+      }
+      .selection\\:bg-blue-600::selection {
+        background-color: ${color} !important;
+      }
+    `;
+  };
+
+  useEffect(() => {
+    applyGlobalThemeStyles(config.brandTheme.primaryColor, config.brandTheme.primaryHover);
   }, [config.brandTheme.primaryColor, config.brandTheme.primaryHover]);
 
   // Save config to storage and update CSS variables
@@ -185,15 +234,7 @@ export function SystemConfigProvider({ children }: { children: React.ReactNode }
       console.error('Failed to save system config', err);
     }
 
-    // Apply primary color to document root
-    if (typeof document !== 'undefined') {
-      document.documentElement.style.setProperty('--primary', newConfig.brandTheme.primaryColor);
-      document.documentElement.style.setProperty(
-        '--primary-hover',
-        newConfig.brandTheme.primaryHover || newConfig.brandTheme.primaryColor
-      );
-      document.documentElement.style.setProperty('--primary-light', `${newConfig.brandTheme.primaryColor}18`);
-    }
+    applyGlobalThemeStyles(newConfig.brandTheme.primaryColor, newConfig.brandTheme.primaryHover);
   };
 
   const updateAdminInfo = (info: Partial<AdminInfo>) => {

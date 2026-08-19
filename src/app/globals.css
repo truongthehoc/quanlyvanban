@@ -20,6 +20,30 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  :root {
+    --primary: #1E60F3;
+    --primary-hover: #174ec7;
+  }
+
+  /* Global theme classes */
+  .bg-\[\#1E60F3\],
+  .bg-blue-600,
+  button.bg-blue-600,
+  a.bg-blue-600,
+  .btn-primary {
+    background-color: var(--primary, #1E60F3) !important;
+  }
+
+  .text-\[\#1E60F3\],
+  .text-blue-600 {
+    color: var(--primary, #1E60F3) !important;
+  }
+
+  .border-\[\#1E60F3\],
+  .border-blue-600 {
+    border-color: var(--primary, #1E60F3) !important;
+  }
+
   /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
