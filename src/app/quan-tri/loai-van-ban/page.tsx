@@ -294,11 +294,11 @@ export default function DocumentTypesAdminPage() {
                 <select
                   value={formData.defaultBookId}
                   onChange={(e) => setFormData({ ...formData, defaultBookId: e.target.value })}
-                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none cursor-pointer"
+                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none cursor-pointer font-medium text-slate-800"
                 >
                   {books.map((b) => (
                     <option key={b.id} value={b.id}>
-                      {b.name} ({b.code})
+                      {b.name}
                     </option>
                   ))}
                 </select>
