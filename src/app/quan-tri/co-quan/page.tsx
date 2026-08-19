@@ -458,7 +458,7 @@ export default function OrganizationsAdminPage() {
                   </label>
                   <input
                     type="text"
-                    placeholder="VD: UBND-BD"
+                    placeholder="Nhập mã cơ quan..."
                     value={formData.code}
                     disabled={!!editingOrg}
                     onChange={(e) => setFormData({ ...formData, code: e.target.value })}
@@ -471,7 +471,7 @@ export default function OrganizationsAdminPage() {
                   <label className="block font-bold text-slate-700 mb-1">Tên viết tắt</label>
                   <input
                     type="text"
-                    placeholder="VD: UBND tỉnh Bình Dương"
+                    placeholder="Nhập tên viết tắt..."
                     value={formData.shortName}
                     onChange={(e) => setFormData({ ...formData, shortName: e.target.value })}
                     className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
@@ -485,7 +485,7 @@ export default function OrganizationsAdminPage() {
                 </label>
                 <input
                   type="text"
-                  placeholder="VD: Ủy ban Nhân dân tỉnh Bình Dương"
+                  placeholder="Nhập tên đầy đủ cơ quan / đơn vị..."
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
@@ -512,7 +512,7 @@ export default function OrganizationsAdminPage() {
                   <label className="block font-bold text-slate-700 mb-1">Email liên hệ / Điện tử</label>
                   <input
                     type="email"
-                    placeholder="vanthu@binhduong.gov.vn"
+                    placeholder="Nhập địa chỉ email..."
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
@@ -523,7 +523,7 @@ export default function OrganizationsAdminPage() {
                   <label className="block font-bold text-slate-700 mb-1">Số điện thoại</label>
                   <input
                     type="tel"
-                    placeholder="0274.3822..."
+                    placeholder="Nhập số điện thoại..."
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
@@ -535,7 +535,7 @@ export default function OrganizationsAdminPage() {
                 <label className="block font-bold text-slate-700 mb-1">Địa chỉ trụ sở</label>
                 <input
                   type="text"
-                  placeholder="Trung tâm Hành chính tỉnh, TP. Thủ Dầu Một..."
+                  placeholder="Nhập địa chỉ trụ sở..."
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                   className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"

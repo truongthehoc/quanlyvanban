@@ -147,7 +147,7 @@ export function CreateIncomingModal({
               </label>
               <input
                 type="text"
-                placeholder="VD: 108/UBND-VX"
+                placeholder="Nhập số/ký hiệu văn bản..."
                 value={formData.documentNumber}
                 onChange={(e) => setFormData({ ...formData, documentNumber: e.target.value })}
                 className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
@@ -428,7 +428,7 @@ export function DirectiveModal({
             </label>
             <textarea
               rows={3}
-              placeholder="VD: Giao Trung tâm CNTT chủ trì, Phòng KHTC phối hợp rà soát và đề xuất phương án..."
+              placeholder="Nhập ý kiến chỉ đạo, giao nhiệm vụ..."
               value={directiveText}
               onChange={(e) => setDirectiveText(e.target.value)}
               className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
@@ -703,7 +703,7 @@ export function ProgressModal({
             <label className="block font-bold text-slate-700 mb-1">Báo cáo kết quả / Ghi chú chi tiết <span className="text-rose-500 font-bold">*</span></label>
             <textarea
               rows={4}
-              placeholder="VD: Đã hoàn tất dự thảo kế hoạch và gửi báo cáo thẩm định..."
+              placeholder="Nhập báo cáo tiến độ, kết quả thực hiện chi tiết..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-emerald-500 focus:outline-none"

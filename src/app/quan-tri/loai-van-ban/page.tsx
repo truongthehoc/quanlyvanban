@@ -245,7 +245,7 @@ export default function DocumentTypesAdminPage() {
                   </label>
                   <input
                     type="text"
-                    placeholder="VD: CV, QD, TB..."
+                    placeholder="Nhập mã loại văn bản (CV, QD, TB...)"
                     value={formData.code}
                     disabled={!!editingType}
                     onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
@@ -260,7 +260,7 @@ export default function DocumentTypesAdminPage() {
                   </label>
                   <input
                     type="text"
-                    placeholder="VD: Công văn, Quyết định..."
+                    placeholder="Nhập tên loại văn bản..."
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
@@ -275,7 +275,7 @@ export default function DocumentTypesAdminPage() {
                 </label>
                 <input
                   type="text"
-                  placeholder="VD: {STT}/{MA_LOAI}-{MA_DV}"
+                  placeholder="Nhập công thức sinh số..."
                   value={formData.numberingPattern}
                   onChange={(e) => setFormData({ ...formData, numberingPattern: e.target.value })}
                   className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-mono text-[#1E60F3] font-bold focus:border-[#1E60F3] focus:outline-none"

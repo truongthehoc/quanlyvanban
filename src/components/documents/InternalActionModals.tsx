@@ -127,7 +127,7 @@ export function CreateInternalModal({
               </label>
               <input
                 type="text"
-                placeholder="VD: Thông báo Lịch nghỉ Lễ & Phân công trực ban..."
+                placeholder="Nhập trích yếu / tiêu đề thông báo..."
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
@@ -139,7 +139,7 @@ export function CreateInternalModal({
               <label className="block font-bold text-slate-700 mb-1">Số/Ký hiệu nội bộ</label>
               <input
                 type="text"
-                placeholder="VD: 09/TB-VP"
+                placeholder="Nhập số/ký hiệu nội bộ..."
                 value={formData.documentNumber}
                 onChange={(e) => setFormData({ ...formData, documentNumber: e.target.value })}
                 className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
@@ -151,7 +151,7 @@ export function CreateInternalModal({
             <label className="block font-bold text-slate-700 mb-1">Tóm tắt / Nội dung thông báo</label>
             <textarea
               rows={3}
-              placeholder="Nội dung truyền đạt đến các phòng ban/cá nhân..."
+              placeholder="Nhập tóm tắt nội dung thông báo truyền đạt..."
               value={formData.summary}
               onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
               className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"

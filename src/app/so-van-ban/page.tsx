@@ -830,7 +830,7 @@ export default function DocumentBooksPage() {
                     </label>
                     <input
                       type="text"
-                      placeholder="VD: SO-DEN-2026"
+                      placeholder="Nhập mã định danh sổ..."
                       value={formData.code}
                       disabled={!!editingBook}
                       onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
@@ -845,7 +845,7 @@ export default function DocumentBooksPage() {
                     </label>
                     <input
                       type="text"
-                      placeholder="VD: Sổ Đăng ký Văn bản Đến năm 2026"
+                      placeholder="Nhập tên sổ đăng ký..."
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="w-full rounded-xl border border-slate-300 px-3 py-1.5 text-xs focus:border-[#1E60F3] focus:outline-none font-semibold"

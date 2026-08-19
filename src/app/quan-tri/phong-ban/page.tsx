@@ -261,7 +261,7 @@ export default function DepartmentsAdminPage() {
                 </label>
                 <input
                   type="text"
-                  placeholder="VD: KHTC, CNTT, VP..."
+                  placeholder="Nhập mã đơn vị (KHTC, CNTT, VP...)"
                   value={formData.code}
                   onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
                   className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs uppercase focus:border-[#1E60F3] focus:outline-none font-mono"
@@ -275,7 +275,7 @@ export default function DepartmentsAdminPage() {
                 </label>
                 <input
                   type="text"
-                  placeholder="VD: Phòng Kế hoạch - Tài chính"
+                  placeholder="Nhập tên phòng ban / đơn vị..."
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
@@ -287,7 +287,7 @@ export default function DepartmentsAdminPage() {
                 <label className="block font-bold text-slate-700 mb-1">Mô tả chức năng nhiệm vụ</label>
                 <textarea
                   rows={4}
-                  placeholder="Mô tả chức năng tham mưu, quản lý..."
+                  placeholder="Nhập mô tả chức năng, nhiệm vụ của đơn vị..."
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"

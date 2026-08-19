@@ -348,7 +348,7 @@ export default function SystemConfigPage() {
                   </label>
                   <input
                     type="text"
-                    placeholder="VD: Bệnh viện Thuận Mỹ TDM"
+                    placeholder="Nhập tên đầy đủ cơ quan / đơn vị..."
                     value={adminForm.orgName}
                     onChange={(e) => setAdminForm({ ...adminForm, orgName: e.target.value })}
                     className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:outline-none"
@@ -360,7 +360,7 @@ export default function SystemConfigPage() {
                   <label className="block font-bold text-slate-700 mb-1">Tên viết tắt / Hiển thị gọn</label>
                   <input
                     type="text"
-                    placeholder="VD: TMTDM"
+                    placeholder="Nhập tên viết tắt..."
                     value={adminForm.shortName}
                     onChange={(e) => setAdminForm({ ...adminForm, shortName: e.target.value })}
                     className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:outline-none"
@@ -372,7 +372,7 @@ export default function SystemConfigPage() {
                 <label className="block font-bold text-slate-700 mb-1">Thủ trưởng / Người đứng đầu</label>
                 <input
                   type="text"
-                  placeholder="VD: Phí Thùy Châu"
+                  placeholder="Nhập họ tên thủ trưởng / người đứng đầu..."
                   value={adminForm.leaderName}
                   onChange={(e) => setAdminForm({ ...adminForm, leaderName: e.target.value })}
                   className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:outline-none"
@@ -383,7 +383,7 @@ export default function SystemConfigPage() {
                 <label className="block font-bold text-slate-700 mb-1">Địa chỉ trụ sở chính</label>
                 <input
                   type="text"
-                  placeholder="VD: Số 01 Đường Quang Trung, Phường 1, TP. Thủ Dầu Một"
+                  placeholder="Nhập địa chỉ trụ sở chính..."
                   value={adminForm.address}
                   onChange={(e) => setAdminForm({ ...adminForm, address: e.target.value })}
                   className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:outline-none"
@@ -571,7 +571,7 @@ export default function SystemConfigPage() {
 
                 <input
                   type="text"
-                  placeholder="Tên màu (VD: Màu Thuận Mỹ...)"
+                  placeholder="Nhập tên mô tả màu nhận diện..."
                   value={newColorName}
                   onChange={(e) => setNewColorName(e.target.value)}
                   className="flex-1 min-w-[140px] rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs focus:outline-none"
@@ -1184,7 +1184,7 @@ export default function SystemConfigPage() {
                   </label>
                   <input
                     type="text"
-                    placeholder="VD: v3.1.0-beta"
+                    placeholder="Nhập số hiệu phiên bản mới (v3.1.0, v3.2.0...)"
                     value={customVerInput}
                     onChange={(e) => setCustomVerInput(e.target.value)}
                     className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-mono focus:outline-none"

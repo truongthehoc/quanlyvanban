@@ -143,7 +143,7 @@ export function CreateOutgoingModal({
             </label>
             <textarea
               rows={3}
-              placeholder="VD: Quyết định V/v Kiện toàn nhân sự ban chuyển đổi số..."
+              placeholder="Nhập trích yếu nội dung văn bản..."
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
@@ -199,7 +199,7 @@ export function CreateOutgoingModal({
               ) : (
                 <input
                   type="text"
-                  placeholder="VD: UBND tỉnh, Sở GD&ĐT, Các phòng ban..."
+                  placeholder="Nhập tên cơ quan / nơi nhận văn bản..."
                   value={formData.recipientOrg}
                   onChange={(e) => setFormData({ ...formData, recipientOrg: e.target.value, recipientOrgId: '' })}
                   className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
