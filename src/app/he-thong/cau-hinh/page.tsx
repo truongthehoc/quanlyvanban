@@ -424,9 +424,9 @@ export default function SystemConfigPage() {
                 <button
                   type="submit"
                   style={{ backgroundColor: currentBrandColor }}
-                  className="inline-flex items-center space-x-2 rounded-full px-6 py-2.5 font-bold text-white shadow-md transition-all hover:scale-105 hover:opacity-90 cursor-pointer"
+                  className="inline-flex items-center space-x-1.5 rounded-full px-4 py-2 text-xs font-bold text-white shadow-sm hover:opacity-90 transition-all cursor-pointer"
                 >
-                  <Save className="h-4 w-4" />
+                  <Save className="h-3.5 w-3.5" />
                   <span>Lưu Thông Tin Hành Chính</span>
                 </button>
               </div>
@@ -770,9 +770,9 @@ export default function SystemConfigPage() {
                 type="button"
                 onClick={handleSaveBrand}
                 style={{ backgroundColor: currentBrandColor }}
-                className="inline-flex items-center space-x-2 rounded-full px-6 py-2.5 font-bold text-white shadow-md transition-all hover:scale-105 hover:opacity-90 cursor-pointer"
+                className="inline-flex items-center space-x-1.5 rounded-full px-4 py-2 text-xs font-bold text-white shadow-sm hover:opacity-90 transition-all cursor-pointer"
               >
-                <Save className="h-4 w-4" />
+                <Save className="h-3.5 w-3.5" />
                 <span>Lưu Cấu Hình Bảng Màu</span>
               </button>
             </div>
@@ -814,7 +814,7 @@ export default function SystemConfigPage() {
                 </span>
                 <button
                   type="button"
-                  className="px-5 py-2.5 rounded-full font-bold text-white shadow-md transition-transform hover:scale-105 cursor-pointer"
+                  className="px-4 py-2 rounded-full font-bold text-xs text-white shadow-sm hover:opacity-90 transition-transform cursor-pointer"
                   style={{ backgroundColor: currentBrandColor }}
                 >
                   + Tiếp Nhận Văn Bản
@@ -827,7 +827,7 @@ export default function SystemConfigPage() {
                   Menu Active Trên Sidebar:
                 </span>
                 <div
-                  className="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-white font-semibold shadow-xs"
+                  className="flex items-center justify-between px-3.5 py-2 rounded-2xl text-white font-semibold shadow-xs text-xs"
                   style={{ backgroundColor: currentBrandColor }}
                 >
                   <div className="flex items-center space-x-2">
@@ -913,7 +913,7 @@ export default function SystemConfigPage() {
                     setShowReleaseModal(true);
                   }}
                   style={{ backgroundColor: currentBrandColor }}
-                  className="inline-flex items-center space-x-2 rounded-full px-5 py-2 text-xs font-bold text-white shadow-md transition-all hover:scale-105 hover:opacity-90 cursor-pointer"
+                  className="inline-flex items-center space-x-1.5 rounded-full px-4 py-2 text-xs font-bold text-white shadow-sm hover:opacity-90 transition-all cursor-pointer"
                 >
                   <Plus className="h-4 w-4" />
                   <span>Phát Hành Phiên Bản Mới</span>
@@ -958,7 +958,7 @@ export default function SystemConfigPage() {
                 <div className="flex justify-end pt-2">
                   <button
                     type="submit"
-                    className="inline-flex items-center space-x-1.5 rounded-full border border-slate-300 bg-white px-5 py-2 font-bold text-slate-700 shadow-xs hover:bg-slate-50 cursor-pointer"
+                    className="inline-flex items-center space-x-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-xs transition-colors cursor-pointer"
                   >
                     <Save className="h-3.5 w-3.5" />
                     <span>Lưu Thông Tin Phần Mềm</span>
@@ -1181,14 +1181,14 @@ export default function SystemConfigPage() {
                 <button
                   type="button"
                   onClick={() => setShowReleaseModal(false)}
-                  className="rounded-full border border-slate-300 px-5 py-2 font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
+                  className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer transition-colors"
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
                   style={{ backgroundColor: currentBrandColor }}
-                  className="rounded-full px-6 py-2 font-bold text-white shadow-md hover:opacity-90 cursor-pointer"
+                  className="rounded-full px-4 py-2 text-xs font-bold text-white shadow-sm hover:opacity-90 cursor-pointer transition-all"
                 >
                   Xác Nhận Phát Hành
                 </button>
