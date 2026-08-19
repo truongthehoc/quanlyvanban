@@ -125,6 +125,8 @@ export default function DocumentBooksPage() {
   // Modals
   const [showModal, setShowModal] = useState(false);
   const [editingBook, setEditingBook] = useState<DocumentBookItem | null>(null);
+  const [deletingBook, setDeletingBook] = useState<DocumentBookItem | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [inspectingFolderBook, setInspectingFolderBook] = useState<DocumentBookItem | null>(null);
   const [toastMessage, setToastMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -331,20 +333,25 @@ export default function DocumentBooksPage() {
     }
   };
 
-  const handleDeleteBook = async (book: DocumentBookItem) => {
+  const handleRequestDelete = (book: DocumentBookItem) => {
     if (book._count?.documents && book._count.documents > 0) {
-      showToast(`Sổ này đang chứa ${book._count.documents} văn bản. Không thể xóa!`, 'error');
+      showToast(`Sổ này đang chứa ${book._count.documents} văn bản lưu trữ. Không thể xóa!`, 'error');
       return;
     }
+    setDeletingBook(book);
+  };
 
-    if (!confirm(`Bạn có chắc chắn muốn xóa "${book.name}" (${book.code})?`)) return;
+  const handleConfirmDelete = async () => {
+    if (!deletingBook) return;
+    setDeleteLoading(true);
 
     try {
-      const res = await fetch(`/api/books?id=${book.id}`, {
+      const res = await fetch(`/api/books?id=${deletingBook.id}`, {
         method: 'DELETE',
       });
       if (res.ok) {
         showToast('Đã xóa sổ văn bản thành công');
+        setDeletingBook(null);
         fetchBooks();
       } else {
         const data = await res.json();
@@ -352,7 +359,9 @@ export default function DocumentBooksPage() {
       }
     } catch (err) {
       console.error(err);
-      showToast('Lỗi hệ thống', 'error');
+      showToast('Lỗi hệ thống khi xóa sổ', 'error');
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -658,7 +667,7 @@ export default function DocumentBooksPage() {
                                 </button>
 
                                 <button
-                                  onClick={() => handleDeleteBook(book)}
+                                  onClick={() => handleRequestDelete(book)}
                                   className="p-1.5 rounded-full text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                                   title="Xóa sổ (khi chưa có văn bản)"
                                 >
@@ -1047,6 +1056,62 @@ export default function DocumentBooksPage() {
                 className="rounded-full bg-slate-900 px-5 py-2 text-xs font-bold text-white hover:bg-slate-800 cursor-pointer"
               >
                 Đóng
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* ======================================================== */}
+      {/* MODAL XÁC NHẬN XÓA SỔ VĂN BẢN (BEAUTIFUL DELETE DIALOG) */}
+      {/* ======================================================== */}
+      {deletingBook && mounted && createPortal(
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-sm rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 p-6 text-center space-y-4">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 shadow-sm border border-rose-100">
+              <Trash2 className="h-7 w-7" />
+            </div>
+
+            <div className="space-y-1.5">
+              <h3 className="text-base font-black text-slate-900">
+                Xác Nhận Xóa Sổ Văn Bản?
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Hành động này sẽ xóa sổ văn bản khỏi hệ thống và không thể hoàn tác.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-3.5 text-xs text-left space-y-1.5 font-mono">
+              <div className="flex items-center justify-between font-bold text-slate-800">
+                <span className="font-sans">Tên sổ:</span>
+                <span className="text-rose-700 font-sans truncate max-w-[180px]">{deletingBook.name}</span>
+              </div>
+              <div className="flex items-center justify-between text-slate-600">
+                <span className="font-sans">Mã định danh:</span>
+                <span className="text-blue-700 font-bold">{deletingBook.code}</span>
+              </div>
+              <div className="flex items-center justify-between text-slate-600">
+                <span className="font-sans">Thư mục Server:</span>
+                <span className="text-slate-800 text-[11px]">{getBookStoragePath(deletingBook)}/</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setDeletingBook(null)}
+                className="rounded-full border border-slate-200 bg-white py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shadow-xs"
+              >
+                Hủy bỏ
+              </button>
+              <button
+                type="button"
+                disabled={deleteLoading}
+                onClick={handleConfirmDelete}
+                className="rounded-full bg-rose-600 py-2.5 text-xs font-bold text-white hover:bg-rose-700 transition-colors cursor-pointer shadow-md shadow-rose-500/20 disabled:opacity-50"
+              >
+                {deleteLoading ? 'Đang xóa...' : 'Xác Nhận Xóa'}
               </button>
             </div>
           </div>
