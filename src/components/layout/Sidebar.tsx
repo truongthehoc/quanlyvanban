@@ -17,8 +17,8 @@ import {
   Landmark,
   FileCode2,
   FileText,
-  PanelLeftClose,
-  PanelLeftOpen,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -111,6 +111,19 @@ export default function Sidebar() {
         isCollapsed ? 'w-[68px]' : 'w-64'
       }`}
     >
+      {/* Modern Floating Border Toggle Button (< and >) */}
+      <button
+        onClick={toggleSidebar}
+        className="absolute -right-3.5 top-5 z-40 flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-md hover:border-blue-400 hover:text-[#1E60F3] hover:bg-blue-50 transition-all duration-200 hover:scale-110 focus:outline-none cursor-pointer"
+        title={isCollapsed ? 'Mở rộng thanh điều hướng (>)' : 'Thu gọn thanh điều hướng (<)'}
+      >
+        {isCollapsed ? (
+          <ChevronRight className="h-4 w-4" />
+        ) : (
+          <ChevronLeft className="h-4 w-4" />
+        )}
+      </button>
+
       {/* 1. Top Sidebar Branding / Logo */}
       <div className="flex h-16 items-center border-b border-slate-200 px-3.5 bg-white">
         {!isCollapsed ? (

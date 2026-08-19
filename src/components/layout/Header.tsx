@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/lib/auth-context';
-import { useSidebar } from '@/lib/sidebar-context';
 import {
   Bell,
   User,
@@ -14,8 +13,6 @@ import {
   Building2,
   Sparkles,
   ExternalLink,
-  PanelLeftClose,
-  PanelLeftOpen,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -27,7 +24,6 @@ export default function Header() {
     unreadNotificationCount,
     setUnreadNotificationCount,
   } = useAuth();
-  const { isCollapsed, toggleSidebar } = useSidebar();
 
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifMenu, setShowNotifMenu] = useState(false);
@@ -77,27 +73,14 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-4 sm:px-6 backdrop-blur-md transition-all shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-      {/* Left: Sidebar Toggle Button */}
+    <header className="sticky top-0 z-20 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-6 backdrop-blur-md transition-all shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+      {/* Left: Organization context & Breadcrumb */}
       <div className="flex items-center space-x-3">
-        <button
-          onClick={toggleSidebar}
-          className="flex h-9 w-9 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all focus:outline-none border border-slate-200 shadow-sm"
-          title={isCollapsed ? 'Mở rộng thanh điều hướng' : 'Thu gọn thanh điều hướng'}
-        >
-          {isCollapsed ? (
-            <PanelLeftOpen className="h-4 w-4 text-[#1E60F3]" />
-          ) : (
-            <PanelLeftClose className="h-4 w-4 text-slate-600" />
-          )}
-        </button>
-
-        <div className="hidden sm:block">
-          <div className="flex items-center space-x-2 text-xs text-slate-500 font-medium">
-            <span>Hệ thống Quản lý Văn bản</span>
-            <span className="text-slate-300">•</span>
-            <span className="text-slate-800 font-semibold">{currentUser?.departmentName || 'Cơ quan'}</span>
-          </div>
+        <div className="flex items-center space-x-2 text-xs font-semibold text-slate-700">
+          <span className="h-2 w-2 rounded-full bg-emerald-500 ring-4 ring-emerald-50" />
+          <span>Hệ thống Quản lý Văn bản & Điều hành</span>
+          <span className="text-slate-300">•</span>
+          <span className="text-slate-500 font-medium">{currentUser?.departmentName || 'Cơ quan'}</span>
         </div>
       </div>
 
