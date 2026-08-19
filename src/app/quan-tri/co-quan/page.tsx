@@ -737,12 +737,12 @@ export default function OrganizationsAdminPage() {
       {/* ======================================================== */}
       {showCategoryModal && mounted && createPortal(
         <div className="fixed inset-0 z-[105] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-4xl max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-5xl max-h-[92vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
             
             {/* Header */}
             <div className="flex items-center justify-between border-b border-purple-100 bg-purple-50/80 px-6 py-4 flex-shrink-0">
               <div className="flex items-center space-x-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-purple-600 text-white font-bold shadow-md shadow-purple-500/20">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-purple-600 text-white font-bold shadow-md shadow-purple-500/20 flex-shrink-0">
                   <Building className="h-5 w-5" />
                 </div>
                 <div>
@@ -780,9 +780,9 @@ export default function OrganizationsAdminPage() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 
                 {/* 1. Left Column: Table of Categories (Col Span 7) */}
-                <div className="lg:col-span-7 space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-slate-800 text-xs flex items-center space-x-1.5">
+                <div className="lg:col-span-7 space-y-3">
+                  <div className="flex items-center justify-between px-1">
+                    <h3 className="font-bold text-slate-800 text-xs flex items-center space-x-2">
                       <span>Danh sách phân loại hiện có</span>
                       <span className="rounded-full bg-purple-100 text-purple-700 px-2 py-0.5 text-[10px] font-bold">
                         {categories.length}
@@ -797,10 +797,10 @@ export default function OrganizationsAdminPage() {
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className="border-b border-slate-200 bg-slate-50/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                          <th className="py-2.5 px-3 text-center w-12">STT</th>
-                          <th className="py-2.5 px-3">Tên Phân Loại & Huy Hiệu</th>
-                          <th className="py-2.5 px-3 text-center w-24">Số Đơn Vị</th>
-                          <th className="py-2.5 px-3 text-right w-20">Thao Tác</th>
+                          <th className="py-3 px-3.5 text-center w-14">STT</th>
+                          <th className="py-3 px-3.5">Tên Phân Loại & Huy Hiệu</th>
+                          <th className="py-3 px-3 text-center w-24">Số Đơn Vị</th>
+                          <th className="py-3 px-3.5 text-right w-24">Thao Tác</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 text-xs">
@@ -812,22 +812,22 @@ export default function OrganizationsAdminPage() {
                             <tr
                               key={cat.id}
                               className={`transition-colors ${
-                                isSelected ? 'bg-purple-50/80 font-medium' : 'hover:bg-slate-50/80'
+                                isSelected ? 'bg-purple-50/90 font-medium ring-1 ring-inset ring-purple-200' : 'hover:bg-slate-50/80'
                               }`}
                             >
                               {/* STT */}
-                              <td className="py-3 px-3 text-center">
-                                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-purple-100 text-[11px] font-bold text-purple-800 font-mono">
+                              <td className="py-3 px-3.5 text-center">
+                                <span className="inline-flex h-6.5 w-6.5 items-center justify-center rounded-full bg-purple-100 text-[11px] font-bold text-purple-800 font-mono shadow-xs">
                                   {cat.order || idx + 1}
                                 </span>
                               </td>
 
                               {/* Huy hiệu & Tên */}
-                              <td className="py-3 px-3 space-y-1">
+                              <td className="py-3 px-3.5 space-y-1">
                                 <div className="flex items-center space-x-2">
                                   {getTypeBadge(cat.code)}
                                   <span className="font-mono text-[10px] text-slate-400 font-bold">
-                                    {cat.code}
+                                    ({cat.code})
                                   </span>
                                 </div>
                                 <div className="text-[11px] text-slate-600 font-medium line-clamp-1">
@@ -843,12 +843,12 @@ export default function OrganizationsAdminPage() {
                               </td>
 
                               {/* Thao tác */}
-                              <td className="py-3 px-3 text-right">
-                                <div className="flex items-center justify-end space-x-1">
+                              <td className="py-3 px-3.5 text-right">
+                                <div className="flex items-center justify-end space-x-1.5">
                                   <button
                                     type="button"
                                     onClick={() => handleStartEditCat(cat)}
-                                    className="p-1.5 rounded-full text-[#1E60F3] hover:bg-blue-50 transition-colors cursor-pointer"
+                                    className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-[#1E60F3] hover:bg-blue-50 hover:border-blue-300 transition-colors cursor-pointer"
                                     title="Sửa phân loại này"
                                   >
                                     <Edit2 className="h-3.5 w-3.5" />
@@ -858,7 +858,7 @@ export default function OrganizationsAdminPage() {
                                     <button
                                       type="button"
                                       onClick={() => handleDeleteCategory(cat.id, cat.code)}
-                                      className="p-1.5 rounded-full text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                                      className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-rose-500 hover:bg-rose-50 hover:border-rose-300 transition-colors cursor-pointer"
                                       title="Xóa phân loại này"
                                     >
                                       <Trash2 className="h-3.5 w-3.5" />
@@ -878,20 +878,22 @@ export default function OrganizationsAdminPage() {
                 <div className="lg:col-span-5">
                   <form
                     onSubmit={handleSaveCategory}
-                    className={`rounded-2xl border p-4.5 space-y-3.5 transition-all shadow-xs ${
-                      editingCat ? 'border-purple-300 bg-purple-50/50' : 'border-slate-200 bg-slate-50/60'
+                    className={`rounded-3xl border p-5 sm:p-5.5 space-y-4 transition-all shadow-sm ${
+                      editingCat
+                        ? 'border-purple-300 bg-purple-50/40 ring-2 ring-purple-500/20'
+                        : 'border-slate-200 bg-slate-50/60'
                     }`}
                   >
-                    <div className="flex items-center justify-between pb-1 border-b border-purple-100">
+                    <div className="flex items-center justify-between pb-2.5 border-b border-purple-100">
                       <h3 className="font-bold text-slate-900 text-xs flex items-center space-x-1.5">
                         {editingCat ? (
                           <>
-                            <Edit2 className="h-3.5 w-3.5 text-purple-600" />
+                            <Edit2 className="h-4 w-4 text-purple-600" />
                             <span>Chỉnh Sửa Phân Loại</span>
                           </>
                         ) : (
                           <>
-                            <Plus className="h-3.5 w-3.5 text-purple-600" />
+                            <Plus className="h-4 w-4 text-purple-600" />
                             <span>Thêm Phân Loại Mới</span>
                           </>
                         )}
@@ -901,32 +903,32 @@ export default function OrganizationsAdminPage() {
                         <button
                           type="button"
                           onClick={handleCancelEditCat}
-                          className="text-[11px] font-bold text-slate-500 hover:text-slate-800 cursor-pointer"
+                          className="rounded-full bg-slate-200/80 px-2.5 py-0.5 text-[11px] font-bold text-slate-600 hover:bg-slate-300 transition-colors cursor-pointer"
                         >
                           Hủy sửa
                         </button>
                       )}
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2.5">
+                    <div className="flex items-center gap-3">
                       {/* STT Input */}
-                      <div>
+                      <div className="w-24 flex-shrink-0">
                         <label className="block font-bold text-slate-700 mb-1 text-[11px]">
                           STT <span className="text-rose-500 font-bold">*</span>
                         </label>
                         <input
                           type="number"
                           min="1"
-                          placeholder="1, 2..."
+                          placeholder="1"
                           value={categoryFormData.order}
                           onChange={(e) => setCategoryFormData({ ...categoryFormData, order: Number(e.target.value) || 1 })}
-                          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs text-center font-bold font-mono focus:border-purple-600 focus:outline-none"
+                          className="w-full rounded-xl border border-slate-300 bg-white px-2.5 py-2 text-xs text-center font-bold font-mono focus:border-purple-600 focus:outline-none shadow-xs"
                           required
                         />
                       </div>
 
                       {/* Mã phân loại */}
-                      <div className="col-span-2">
+                      <div className="flex-1 min-w-0">
                         <label className="block font-bold text-slate-700 mb-1 text-[11px]">
                           Mã phân loại <span className="text-rose-500 font-bold">*</span>
                         </label>
@@ -936,7 +938,7 @@ export default function OrganizationsAdminPage() {
                           value={categoryFormData.code}
                           disabled={!!editingCat}
                           onChange={(e) => setCategoryFormData({ ...categoryFormData, code: e.target.value.toUpperCase() })}
-                          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-mono uppercase focus:border-purple-600 focus:outline-none disabled:bg-slate-100 disabled:text-slate-500"
+                          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-mono uppercase focus:border-purple-600 focus:outline-none disabled:bg-slate-100 disabled:text-slate-500 shadow-xs"
                           required
                         />
                       </div>
@@ -952,7 +954,7 @@ export default function OrganizationsAdminPage() {
                         placeholder="Nhập tên phân loại cơ quan / đơn vị..."
                         value={categoryFormData.name}
                         onChange={(e) => setCategoryFormData({ ...categoryFormData, name: e.target.value })}
-                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs focus:border-purple-600 focus:outline-none font-semibold"
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs focus:border-purple-600 focus:outline-none font-semibold shadow-xs"
                         required
                       />
                     </div>
@@ -962,7 +964,7 @@ export default function OrganizationsAdminPage() {
                       <label className="block font-bold text-slate-700 mb-1.5 text-[11px]">
                         Màu sắc nhận diện huy hiệu
                       </label>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2.5 pt-0.5">
                         {[
                           { key: 'blue', name: 'Xanh dương', class: 'bg-blue-600' },
                           { key: 'purple', name: 'Tím', class: 'bg-purple-600' },
@@ -976,8 +978,8 @@ export default function OrganizationsAdminPage() {
                             key={c.key}
                             type="button"
                             onClick={() => setCategoryFormData({ ...categoryFormData, color: c.key })}
-                            className={`h-6 w-6 rounded-full transition-all cursor-pointer ${c.class} ${
-                              categoryFormData.color === c.key ? 'ring-2 ring-offset-2 ring-slate-800 scale-110' : 'opacity-70 hover:opacity-100'
+                            className={`h-7 w-7 rounded-full transition-all cursor-pointer shadow-xs ${c.class} ${
+                              categoryFormData.color === c.key ? 'ring-2 ring-offset-2 ring-purple-600 scale-110' : 'opacity-70 hover:opacity-100'
                             }`}
                             title={c.name}
                           />
@@ -995,16 +997,16 @@ export default function OrganizationsAdminPage() {
                         placeholder="Nhập mô tả tóm tắt phạm vi phân loại..."
                         value={categoryFormData.description}
                         onChange={(e) => setCategoryFormData({ ...categoryFormData, description: e.target.value })}
-                        className="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs focus:border-purple-600 focus:outline-none"
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs focus:border-purple-600 focus:outline-none shadow-xs"
                       />
                     </div>
 
-                    <div className="flex items-center justify-end space-x-2 pt-1 border-t border-purple-100">
+                    <div className="flex items-center justify-end space-x-2 pt-2 border-t border-purple-100">
                       {editingCat && (
                         <button
                           type="button"
                           onClick={handleCancelEditCat}
-                          className="rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer"
+                          className="rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer transition-colors"
                         >
                           Hủy
                         </button>
@@ -1012,7 +1014,7 @@ export default function OrganizationsAdminPage() {
                       <button
                         type="submit"
                         disabled={categoryLoading}
-                        className="inline-flex items-center space-x-1.5 rounded-full bg-purple-600 px-5 py-1.5 text-xs font-bold text-white hover:bg-purple-700 transition-colors shadow-xs cursor-pointer disabled:opacity-50"
+                        className="inline-flex items-center space-x-1.5 rounded-full bg-purple-600 px-5 py-2 text-xs font-bold text-white hover:bg-purple-700 transition-colors shadow-md shadow-purple-500/20 cursor-pointer disabled:opacity-50"
                       >
                         <CheckCircle2 className="h-3.5 w-3.5" />
                         <span>{categoryLoading ? 'Đang lưu...' : editingCat ? 'Cập Nhật' : 'Tạo Phân Loại'}</span>
