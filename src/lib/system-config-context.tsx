@@ -21,11 +21,11 @@ export interface CustomColorItem {
 }
 
 export interface BrandTheme {
-  primaryColor: string; // e.g. '#C52998'
+  primaryColor: string; // e.g. '#C52998' (Màu nút bấm & menu active)
   primaryHover: string;
+  headingColor: string; // e.g. '#190072' (Màu tiêu đề các mục & các trang)
   accentColor: string;
   themeMode: 'LIGHT' | 'DARK' | 'SLATE';
-  borderRadius: 'rounded-full' | 'rounded-2xl' | 'rounded-xl';
   savedColors?: CustomColorItem[];
 }
 
@@ -67,13 +67,13 @@ const DEFAULT_CONFIG: SystemConfig = {
   brandTheme: {
     primaryColor: '#C52998',
     primaryHover: '#a71f80',
+    headingColor: '#190072',
     accentColor: '#C52998',
     themeMode: 'LIGHT',
-    borderRadius: 'rounded-full',
     savedColors: [
-      { id: 'c1', name: 'Màu Thuận Mỹ TDM', hex: '#C52998' },
-      { id: 'c2', name: 'Xanh e-Office', hex: '#1E60F3' },
-      { id: 'c3', name: 'Xanh Ngọc Lục Bảo', hex: '#059669' },
+      { id: 'c1', name: 'Màu Thuận Mỹ (Nút & Menu)', hex: '#C52998' },
+      { id: 'c2', name: 'Xanh Đậm (Tiêu đề các mục)', hex: '#190072' },
+      { id: 'c3', name: 'Xanh e-Office Chuẩn', hex: '#1E60F3' },
     ],
   },
   softwareInfo: {
@@ -177,13 +177,15 @@ export function SystemConfigProvider({ children }: { children: React.ReactNode }
   }, []);
 
   // Apply CSS variables and global theme styles dynamically
-  const applyGlobalThemeStyles = (color: string, hoverColor?: string) => {
+  const applyGlobalThemeStyles = (color: string, hoverColor?: string, headingColor?: string) => {
     if (typeof document === 'undefined' || !color) return;
     const hover = hoverColor || color;
+    const heading = headingColor || '#190072';
 
     document.documentElement.style.setProperty('--primary', color);
     document.documentElement.style.setProperty('--primary-hover', hover);
     document.documentElement.style.setProperty('--primary-light', `${color}18`);
+    document.documentElement.style.setProperty('--heading-color', heading);
 
     let styleTag = document.getElementById('eoffice-dynamic-theme-style') as HTMLStyleElement;
     if (!styleTag) {
@@ -196,6 +198,16 @@ export function SystemConfigProvider({ children }: { children: React.ReactNode }
       :root {
         --primary: ${color};
         --primary-hover: ${hover};
+        --heading-color: ${heading};
+      }
+      h1,
+      h2,
+      .page-title,
+      .section-heading,
+      .text-slate-900.text-xl,
+      .text-slate-900.text-2xl,
+      .text-slate-900.font-extrabold {
+        color: ${heading} !important;
       }
       .bg-\\[\\#1E60F3\\],
       .bg-blue-600,
@@ -234,8 +246,12 @@ export function SystemConfigProvider({ children }: { children: React.ReactNode }
   };
 
   useEffect(() => {
-    applyGlobalThemeStyles(config.brandTheme.primaryColor, config.brandTheme.primaryHover);
-  }, [config.brandTheme.primaryColor, config.brandTheme.primaryHover]);
+    applyGlobalThemeStyles(
+      config.brandTheme.primaryColor,
+      config.brandTheme.primaryHover,
+      config.brandTheme.headingColor
+    );
+  }, [config.brandTheme.primaryColor, config.brandTheme.primaryHover, config.brandTheme.headingColor]);
 
   // Save config to storage and update CSS variables
   const saveConfig = (newConfig: SystemConfig) => {
@@ -246,7 +262,11 @@ export function SystemConfigProvider({ children }: { children: React.ReactNode }
       console.error('Failed to save system config', err);
     }
 
-    applyGlobalThemeStyles(newConfig.brandTheme.primaryColor, newConfig.brandTheme.primaryHover);
+    applyGlobalThemeStyles(
+      newConfig.brandTheme.primaryColor,
+      newConfig.brandTheme.primaryHover,
+      newConfig.brandTheme.headingColor
+    );
   };
 
   const updateAdminInfo = (info: Partial<AdminInfo>) => {
