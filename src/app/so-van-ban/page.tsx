@@ -22,7 +22,6 @@ import {
   Trash2,
   Hash,
   ArrowUpRight,
-  TrendingUp,
   Folder,
   FolderOpen,
   FolderTree,
@@ -30,11 +29,9 @@ import {
   Clock,
   Check,
   HardDrive,
-  ChevronRight,
   Inbox,
   Send,
   Radio,
-  FileSpreadsheet,
 } from 'lucide-react';
 
 interface DocumentBookItem {
@@ -187,15 +184,6 @@ export default function DocumentBooksPage() {
       return matchSearch && matchYear && matchCat;
     });
   }, [books, searchQuery, selectedYear, selectedCategoryTab]);
-
-  // Overall Stats
-  const stats = useMemo(() => {
-    const total = books.length;
-    const active = books.filter((b) => b.isActive).length;
-    const totalDocs = books.reduce((acc, curr) => acc + (curr._count?.documents || 0), 0);
-    const totalIssued = books.reduce((acc, curr) => acc + (curr.currentNumber || 0), 0);
-    return { total, active, totalDocs, totalIssued };
-  }, [books]);
 
   // Auto generate code and name for form
   const syncFormFields = (
@@ -368,7 +356,7 @@ export default function DocumentBooksPage() {
         </div>
       )}
 
-      {/* 1. Header Area */}
+      {/* 1. Header Area with Single Main Action Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
@@ -376,7 +364,7 @@ export default function DocumentBooksPage() {
               className="text-xl sm:text-2xl font-black tracking-tight"
               style={{ color: currentHeadingColor }}
             >
-              Quản Lý Sổ Đăng Ký Văn Bản & Cấu Trúc Thư Mục
+              Quản Lý Sổ Đăng Ký Văn Bản & Thư Mục Server
             </h1>
             <Info className="h-4 w-4 text-slate-400 cursor-pointer hover:text-slate-600" />
           </div>
@@ -392,55 +380,12 @@ export default function DocumentBooksPage() {
             className="inline-flex items-center space-x-2 rounded-full px-4 py-2 text-xs font-bold text-white shadow-sm hover:opacity-90 transition-all cursor-pointer flex-shrink-0"
           >
             <Plus className="h-4 w-4" />
-            <span>Mở Sổ Mới (Năm / Quý)</span>
+            <span>Mở Sổ Mới Cho Năm / Quý</span>
           </button>
         )}
       </div>
 
-      {/* 2. Top Overview Widgets */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs flex items-center justify-between">
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Tổng Số Kỳ Sổ</p>
-            <p className="text-2xl font-black text-slate-900 mt-1">{stats.total}</p>
-          </div>
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
-            <BookOpen className="h-5 w-5" />
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs flex items-center justify-between">
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Sổ Đang Mở</p>
-            <p className="text-2xl font-black text-emerald-600 mt-1">{stats.active}</p>
-          </div>
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
-            <CheckCircle2 className="h-5 w-5" />
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs flex items-center justify-between">
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Số Cấp Lũy Kế</p>
-            <p className="text-2xl font-black text-indigo-600 mt-1">{stats.totalIssued}</p>
-          </div>
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
-            <TrendingUp className="h-5 w-5" />
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs flex items-center justify-between">
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Văn Bản Lưu Trữ</p>
-            <p className="text-2xl font-black text-slate-900 mt-1">{stats.totalDocs}</p>
-          </div>
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
-            <HardDrive className="h-5 w-5" />
-          </div>
-        </div>
-      </div>
-
-      {/* 3. Global Filter & Search Bar */}
+      {/* 2. Global Filter & Search Bar */}
       <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 text-xs">
         
         {/* Search */}
@@ -509,7 +454,7 @@ export default function DocumentBooksPage() {
         </div>
       </div>
 
-      {/* 4. Hierarchical Master List for the 3 Fixed Categories */}
+      {/* 3. Hierarchical Master List for the 3 Fixed Categories (No inline duplicate buttons) */}
       <div className="space-y-6">
         {FIXED_BOOK_CATEGORIES.filter(
           (cat) => selectedCategoryTab === 'ALL' || selectedCategoryTab === cat.type
@@ -523,7 +468,7 @@ export default function DocumentBooksPage() {
               className="rounded-3xl border border-slate-200 bg-white shadow-xs overflow-hidden"
             >
               {/* Category Header Bar */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 bg-slate-50/70 p-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 bg-slate-50/70 p-4 sm:px-6">
                 <div className="flex items-center space-x-3">
                   <div
                     className={`flex h-10 w-10 items-center justify-center rounded-2xl border ${category.badgeBg} ${category.badgeText} ${category.badgeBorder}`}
@@ -538,7 +483,7 @@ export default function DocumentBooksPage() {
                       >
                         {category.title}
                       </h2>
-                      <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-mono font-bold text-slate-700">
+                      <span className="rounded-full bg-slate-200/80 px-2.5 py-0.5 text-[10px] font-mono font-bold text-slate-700">
                         📁 DOCS/{category.folderName}/
                       </span>
                     </div>
@@ -547,20 +492,9 @@ export default function DocumentBooksPage() {
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <span className="text-xs font-semibold text-slate-500 mr-1">
-                    Đã mở: <strong className="text-slate-900">{categoryBooks.length}</strong> kỳ sổ
+                  <span className="text-xs font-semibold text-slate-500 bg-white px-3 py-1 rounded-full border border-slate-200">
+                    Tổng cộng: <strong className="text-slate-900">{categoryBooks.length}</strong> kỳ sổ
                   </span>
-
-                  {hasRole(['CLERK', 'ADMIN']) && (
-                    <button
-                      onClick={() => handleOpenCreateModal(category.type)}
-                      style={{ backgroundColor: currentBrandColor }}
-                      className="inline-flex items-center space-x-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-white shadow-xs hover:opacity-90 transition-all cursor-pointer"
-                    >
-                      <Plus className="h-3.5 w-3.5" />
-                      <span>+ Mở Sổ Cho Năm/Quý</span>
-                    </button>
-                  )}
                 </div>
               </div>
 
@@ -569,7 +503,7 @@ export default function DocumentBooksPage() {
                 <div className="p-8 text-center text-xs text-slate-400">
                   <Folder className="mx-auto h-8 w-8 text-slate-300 mb-2" />
                   <p className="font-semibold text-slate-600">Chưa có sổ văn bản nào được mở cho mục này trong năm đã chọn.</p>
-                  <p className="mt-1">Nhấn "+ Mở Sổ Cho Năm/Quý" để khởi tạo sổ và thư mục lưu trữ mới.</p>
+                  <p className="mt-1">Nhấn "Mở Sổ Mới Cho Năm / Quý" ở góc trên để khởi tạo sổ và thư mục lưu trữ mới.</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
@@ -730,34 +664,34 @@ export default function DocumentBooksPage() {
       </div>
 
       {/* ======================================================== */}
-      {/* MODAL MỞ SỔ / CẤU HÌNH SỔ VĂN BẢN (CREATE / EDIT PORTAL) */}
+      {/* COMPACT MODAL: MỞ SỔ / CẤU HÌNH SỔ VĂN BẢN (NO SCROLL)   */}
       {/* ======================================================== */}
       {showModal && mounted && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-lg max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-2xl rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
             
             {/* Header */}
             <div
-              className="flex items-center justify-between border-b border-slate-200 px-6 py-4 flex-shrink-0"
+              className="flex items-center justify-between border-b border-slate-200 px-6 py-3.5 flex-shrink-0"
               style={{
                 backgroundColor: `${currentBrandColor}10`,
               }}
             >
               <div className="flex items-center space-x-2.5">
                 <div
-                  className="flex h-9 w-9 items-center justify-center rounded-2xl text-white font-bold shadow-xs"
+                  className="flex h-8 w-8 items-center justify-center rounded-xl text-white font-bold shadow-xs"
                   style={{ backgroundColor: currentBrandColor }}
                 >
-                  <BookOpen className="h-5 w-5" />
+                  <BookOpen className="h-4 w-4" />
                 </div>
                 <div>
                   <h2
-                    className="text-base font-bold"
+                    className="text-sm font-black tracking-tight"
                     style={{ color: currentHeadingColor }}
                   >
                     {editingBook ? 'Cấu Hình Sổ Văn Bản' : 'Mở Sổ Đăng Ký Văn Bản Mới'}
                   </h2>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
+                  <p className="text-[10px] text-slate-500">
                     {editingBook
                       ? 'Điều chỉnh thông tin, số bắt đầu, số hiện tại và cơ chế cấp số'
                       : 'Khởi tạo sổ theo kỳ (Năm / Quý) và định cấu trúc thư mục lưu file trên server'}
@@ -766,16 +700,16 @@ export default function DocumentBooksPage() {
               </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="rounded-full p-2 text-slate-400 hover:bg-slate-200 transition-colors cursor-pointer"
+                className="rounded-full p-1.5 text-slate-400 hover:bg-slate-200 transition-colors cursor-pointer"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4" />
               </button>
             </div>
 
-            {/* Body Form */}
-            <form onSubmit={handleSaveBook} className="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
+            {/* Form Body - 2 Columns Layout for ZERO scrolling */}
+            <form onSubmit={handleSaveBook} className="p-5 space-y-3.5 text-xs">
               
-              {/* 1. Chọn loại sổ cố định */}
+              {/* 1. Chọn loại sổ cố định (3 Buttons) */}
               <div>
                 <label className="block font-bold text-slate-700 mb-1">
                   Loại sổ văn bản cố định <span className="text-rose-500 font-bold">*</span>
@@ -787,240 +721,229 @@ export default function DocumentBooksPage() {
                       type="button"
                       disabled={!!editingBook}
                       onClick={() => syncFormFields(cat.type, formData.periodType, formData.year, formData.quarter)}
-                      className={`rounded-2xl p-2.5 border text-center transition-all cursor-pointer ${
+                      className={`rounded-xl p-2 border text-center transition-all cursor-pointer ${
                         formData.type === cat.type
                           ? 'border-blue-600 bg-blue-50/80 font-bold text-blue-900 ring-1 ring-blue-600'
                           : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
                       } ${editingBook ? 'opacity-70 cursor-not-allowed' : ''}`}
                     >
                       <p className="text-xs font-extrabold">{cat.title}</p>
-                      <p className="text-[10px] text-slate-500 font-mono mt-0.5">{cat.folderName}/</p>
+                      <p className="text-[10px] text-slate-500 font-mono">📁 {cat.folderName}/</p>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* 2. Chu kỳ mở sổ: Theo Năm hoặc Theo Quý */}
-              <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-3.5 space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="font-bold text-slate-800 text-xs">
-                    Chu kỳ mở sổ <span className="text-rose-500 font-bold">*</span>
-                  </label>
-                  <div className="flex items-center rounded-full border border-slate-200 bg-white p-0.5 text-[11px]">
-                    <button
-                      type="button"
-                      onClick={() => syncFormFields(formData.type, 'YEAR', formData.year, formData.quarter)}
-                      className={`rounded-full px-3 py-1 font-bold transition-all cursor-pointer ${
-                        formData.periodType === 'YEAR' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-800'
-                      }`}
-                    >
-                      Theo Năm
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => syncFormFields(formData.type, 'QUARTER', formData.year, formData.quarter)}
-                      className={`rounded-full px-3 py-1 font-bold transition-all cursor-pointer ${
-                        formData.periodType === 'QUARTER' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:text-slate-800'
-                      }`}
-                    >
-                      Theo Quý
-                    </button>
-                  </div>
-                </div>
+              {/* 2. Grid 2 Columns */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                
+                {/* Left Column: Chu kỳ, Năm, Mã, Tên */}
+                <div className="space-y-3">
+                  {/* Chu kỳ & Năm */}
+                  <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-2.5 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-700 text-[11px]">Chu kỳ mở sổ *</span>
+                      <div className="flex items-center rounded-full border border-slate-200 bg-white p-0.5 text-[10px]">
+                        <button
+                          type="button"
+                          onClick={() => syncFormFields(formData.type, 'YEAR', formData.year, formData.quarter)}
+                          className={`rounded-full px-2.5 py-0.5 font-bold transition-all cursor-pointer ${
+                            formData.periodType === 'YEAR' ? 'bg-slate-900 text-white' : 'text-slate-500'
+                          }`}
+                        >
+                          Theo Năm
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => syncFormFields(formData.type, 'QUARTER', formData.year, formData.quarter)}
+                          className={`rounded-full px-2.5 py-0.5 font-bold transition-all cursor-pointer ${
+                            formData.periodType === 'QUARTER' ? 'bg-slate-900 text-white' : 'text-slate-500'
+                          }`}
+                        >
+                          Theo Quý
+                        </button>
+                      </div>
+                    </div>
 
-                <div className="grid grid-cols-2 gap-3 pt-1">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-600 mb-0.5">Năm áp dụng *</label>
+                        <input
+                          type="number"
+                          value={formData.year}
+                          onChange={(e) => syncFormFields(formData.type, formData.periodType, Number(e.target.value), formData.quarter)}
+                          className="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:border-[#1E60F3] focus:outline-none font-bold font-mono"
+                          required
+                        />
+                      </div>
+
+                      {formData.periodType === 'QUARTER' ? (
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-600 mb-0.5">Chọn Quý *</label>
+                          <select
+                            value={formData.quarter}
+                            onChange={(e) => syncFormFields(formData.type, formData.periodType, formData.year, Number(e.target.value))}
+                            className="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs focus:border-[#1E60F3] focus:outline-none font-bold cursor-pointer"
+                          >
+                            <option value={1}>Quý 1 (T01-03)</option>
+                            <option value={2}>Quý 2 (T04-06)</option>
+                            <option value={3}>Quý 3 (T07-09)</option>
+                            <option value={4}>Quý 4 (T10-12)</option>
+                          </select>
+                        </div>
+                      ) : (
+                        <div className="flex items-center text-[10px] text-slate-500 pt-3">
+                          <span>12 tháng tự động</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Mã định danh & Tên sổ */}
                   <div>
                     <label className="block font-bold text-slate-700 mb-1">
-                      Năm áp dụng <span className="text-rose-500 font-bold">*</span>
+                      Mã định danh sổ <span className="text-rose-500 font-bold">*</span>
                     </label>
                     <input
-                      type="number"
-                      value={formData.year}
-                      onChange={(e) => syncFormFields(formData.type, formData.periodType, Number(e.target.value), formData.quarter)}
-                      className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none font-bold font-mono"
+                      type="text"
+                      placeholder="VD: SO-DEN-2026"
+                      value={formData.code}
+                      disabled={!!editingBook}
+                      onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+                      className="w-full rounded-xl border border-slate-300 px-3 py-1.5 text-xs uppercase focus:border-[#1E60F3] focus:outline-none font-mono font-bold disabled:bg-slate-100"
                       required
                     />
                   </div>
 
-                  {formData.periodType === 'QUARTER' ? (
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      Tên sổ đăng ký <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="VD: Sổ Đăng ký Văn bản Đến năm 2026"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full rounded-xl border border-slate-300 px-3 py-1.5 text-xs focus:border-[#1E60F3] focus:outline-none font-semibold"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Right Column: Cơ chế tăng số, Số bắt đầu, Số hiện tại, Thư mục */}
+                <div className="space-y-3 flex flex-col justify-between">
+                  
+                  {/* Cơ chế cấp số */}
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      Cơ chế cấp số đăng ký <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, isAutoIncrement: true })}
+                        className={`rounded-xl p-2 border text-left transition-all cursor-pointer ${
+                          formData.isAutoIncrement
+                            ? 'border-purple-600 bg-purple-50/90 ring-1 ring-purple-600'
+                            : 'border-slate-200 bg-white hover:bg-slate-50'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-extrabold text-purple-900 text-xs">Tự động (+1)</span>
+                          <Sparkles className="h-3.5 w-3.5 text-purple-600" />
+                        </div>
+                        <p className="text-[10px] text-slate-500 mt-0.5">Tự động tăng số khi vào sổ</p>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, isAutoIncrement: false })}
+                        className={`rounded-xl p-2 border text-left transition-all cursor-pointer ${
+                          !formData.isAutoIncrement
+                            ? 'border-amber-600 bg-amber-50/90 ring-1 ring-amber-600'
+                            : 'border-slate-200 bg-white hover:bg-slate-50'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-extrabold text-amber-900 text-xs">Thủ công</span>
+                          <Hash className="h-3.5 w-3.5 text-amber-600" />
+                        </div>
+                        <p className="text-[10px] text-slate-500 mt-0.5">Văn thư tự gõ số văn bản</p>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Số bắt đầu & Số hiện tại */}
+                  <div className="grid grid-cols-2 gap-2">
                     <div>
                       <label className="block font-bold text-slate-700 mb-1">
-                        Chọn Quý <span className="text-rose-500 font-bold">*</span>
+                        Số bắt đầu <span className="text-rose-500 font-bold">*</span>
                       </label>
-                      <select
-                        value={formData.quarter}
-                        onChange={(e) => syncFormFields(formData.type, formData.periodType, formData.year, Number(e.target.value))}
-                        className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none font-bold cursor-pointer"
-                      >
-                        <option value={1}>Quý 1 (Tháng 01 - 03)</option>
-                        <option value={2}>Quý 2 (Tháng 04 - 06)</option>
-                        <option value={3}>Quý 3 (Tháng 07 - 09)</option>
-                        <option value={4}>Quý 4 (Tháng 10 - 12)</option>
-                      </select>
+                      <input
+                        type="number"
+                        min={1}
+                        value={formData.startNumber}
+                        onChange={(e) => {
+                          const start = Math.max(1, Number(e.target.value));
+                          setFormData({
+                            ...formData,
+                            startNumber: start,
+                            currentNumber: !editingBook ? Math.max(0, start - 1) : formData.currentNumber,
+                          });
+                        }}
+                        className="w-full rounded-xl border border-slate-300 px-3 py-1.5 text-xs focus:border-[#1E60F3] focus:outline-none font-mono font-bold"
+                        required
+                      />
                     </div>
-                  ) : (
-                    <div className="flex flex-col justify-center text-[11px] text-slate-500">
-                      <span>Cả năm {formData.year}</span>
-                      <span className="text-[10px] text-slate-400 mt-0.5">Tự động chia 12 folder tháng</span>
+
+                    <div>
+                      <label className="block font-bold text-slate-700 mb-1">Số hiện tại đã cấp</label>
+                      <input
+                        type="number"
+                        min={0}
+                        value={formData.currentNumber}
+                        onChange={(e) => setFormData({ ...formData, currentNumber: Math.max(0, Number(e.target.value)) })}
+                        className="w-full rounded-xl border border-slate-300 px-3 py-1.5 text-xs focus:border-[#1E60F3] focus:outline-none font-mono font-bold"
+                      />
                     </div>
-                  )}
-                </div>
-              </div>
+                  </div>
 
-              {/* 3. Mã định danh & Tên sổ */}
-              <div className="space-y-3">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">
-                    Mã định danh sổ <span className="text-rose-500 font-bold">*</span>
+                  {/* Thư mục lưu trữ */}
+                  <div className="rounded-xl border border-amber-200 bg-amber-50/60 p-2 text-[11px] space-y-0.5">
+                    <span className="font-bold text-amber-900 text-[10px] block">📁 Thư mục lưu trữ server:</span>
+                    <p className="font-mono font-extrabold text-blue-800 text-[11px] truncate">
+                      DOCS/{FIXED_BOOK_CATEGORIES.find((c) => c.type === formData.type)?.folderName}/{formData.year}/[Thang]/
+                    </p>
+                  </div>
+
+                  {/* Active Toggle */}
+                  <label className="flex items-center space-x-2 cursor-pointer pt-0.5">
+                    <input
+                      type="checkbox"
+                      checked={formData.isActive}
+                      onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                      className="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    />
+                    <span className="text-[11px] font-bold text-slate-800">
+                      Đang mở sổ tiếp nhận văn bản (Active)
+                    </span>
                   </label>
-                  <input
-                    type="text"
-                    placeholder="VD: SO-DEN-2026"
-                    value={formData.code}
-                    disabled={!!editingBook}
-                    onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs uppercase focus:border-[#1E60F3] focus:outline-none font-mono font-bold disabled:bg-slate-100"
-                    required
-                  />
                 </div>
-
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">
-                    Tên sổ đăng ký <span className="text-rose-500 font-bold">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="VD: Sổ Đăng ký Văn bản Đến năm 2026"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none font-semibold"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* 4. Preview Đường Dẫn Lưu Trữ Trên Server */}
-              <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-3.5 space-y-1.5">
-                <div className="flex items-center space-x-2 text-amber-900 font-bold text-xs">
-                  <Folder className="h-4 w-4 text-amber-600" />
-                  <span>Đường dẫn lưu file đính kèm trên server:</span>
-                </div>
-                <p className="font-mono text-xs font-extrabold text-blue-800 bg-white px-3 py-1.5 rounded-xl border border-amber-200">
-                  📁 DOCS/{FIXED_BOOK_CATEGORIES.find((c) => c.type === formData.type)?.folderName}/{formData.year}/[Thang_01..12]/
-                </p>
-                <p className="text-[10px] text-slate-500">
-                  Hệ thống sẽ tự động phân loại tệp vào folder tháng tương ứng dựa trên ngày phát hành / tiếp nhận văn bản.
-                </p>
-              </div>
-
-              {/* 5. CƠ CHẾ TĂNG SỐ: CÓ TĂNG TỰ ĐỘNG HAY KHÔNG */}
-              <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 space-y-3">
-                <label className="block font-bold text-slate-800 text-xs">
-                  Cơ chế cấp số đăng ký <span className="text-rose-500 font-bold">*</span>
-                </label>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, isAutoIncrement: true })}
-                    className={`rounded-2xl p-3 border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                      formData.isAutoIncrement
-                        ? 'border-purple-600 bg-purple-50/80 ring-1 ring-purple-600'
-                        : 'border-slate-200 bg-white hover:bg-slate-50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-extrabold text-purple-900 text-xs">Tự động tăng (+1)</span>
-                      <Sparkles className="h-4 w-4 text-purple-600" />
-                    </div>
-                    <p className="text-[10px] text-slate-500 mt-1">Hệ thống tự động cấp số tiếp theo (+1) khi vào sổ.</p>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, isAutoIncrement: false })}
-                    className={`rounded-2xl p-3 border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                      !formData.isAutoIncrement
-                        ? 'border-amber-600 bg-amber-50/80 ring-1 ring-amber-600'
-                        : 'border-slate-200 bg-white hover:bg-slate-50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-extrabold text-amber-900 text-xs">Nhập thủ công</span>
-                      <Hash className="h-4 w-4 text-amber-600" />
-                    </div>
-                    <p className="text-[10px] text-slate-500 mt-1">Văn thư tự gõ số khi tiếp nhận hoặc phát hành.</p>
-                  </button>
-                </div>
-              </div>
-
-              {/* 6. SỐ BẮT ĐẦU VÀ SỐ HIỆN TẠI ĐÃ CẤP */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">
-                    Số bắt đầu (Start Number) <span className="text-rose-500 font-bold">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={formData.startNumber}
-                    onChange={(e) => {
-                      const start = Math.max(1, Number(e.target.value));
-                      setFormData({
-                        ...formData,
-                        startNumber: start,
-                        currentNumber: !editingBook ? Math.max(0, start - 1) : formData.currentNumber,
-                      });
-                    }}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none font-mono font-bold"
-                    required
-                  />
-                  <p className="text-[10px] text-slate-400 mt-1">Thường đặt là 1 hoặc số nối tiếp từ sổ cũ.</p>
-                </div>
-
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">
-                    Số hiện tại đã cấp
-                  </label>
-                  <input
-                    type="number"
-                    min={0}
-                    value={formData.currentNumber}
-                    onChange={(e) => setFormData({ ...formData, currentNumber: Math.max(0, Number(e.target.value)) })}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none font-mono font-bold"
-                  />
-                  <p className="text-[10px] text-slate-400 mt-1">Số cuối cùng đã phát hành trong sổ.</p>
-                </div>
-              </div>
-
-              {/* Trạng thái mở sổ / đóng sổ */}
-              <div className="pt-2">
-                <label className="flex items-center space-x-2.5 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.isActive}
-                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                  />
-                  <span className="text-xs font-bold text-slate-800">
-                    Đang mở sổ tiếp nhận văn bản (Active)
-                  </span>
-                </label>
               </div>
 
               {/* Footer */}
-              <div className="flex justify-end space-x-2 pt-4 border-t border-slate-200">
+              <div className="flex justify-end space-x-2 pt-3 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
+                  className="rounded-full border border-slate-200 bg-white px-4 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
                   style={{ backgroundColor: currentBrandColor }}
-                  className="inline-flex items-center space-x-1.5 rounded-full px-4 py-2 text-xs font-bold text-white shadow-sm hover:opacity-90 transition-all cursor-pointer"
+                  className="inline-flex items-center space-x-1.5 rounded-full px-4 py-1.5 text-xs font-bold text-white shadow-sm hover:opacity-90 transition-all cursor-pointer"
                 >
                   <Check className="h-3.5 w-3.5" />
                   <span>{editingBook ? 'Lưu Thay Đổi' : 'Tạo Sổ Văn Bản'}</span>
