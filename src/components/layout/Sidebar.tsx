@@ -157,20 +157,12 @@ export default function Sidebar() {
               </div>
             )}
             <div className="truncate">
-              <div className="flex items-center space-x-1.5">
-                <span className="text-sm font-extrabold tracking-tight text-slate-900 truncate">
-                  {config.softwareInfo.softwareName || 'e-Office DMS'}
-                </span>
-                <span
-                  className="rounded-full px-2 py-0.5 text-[9px] font-bold flex-shrink-0"
-                  style={{
-                    backgroundColor: `${config.brandTheme.primaryColor || '#1E60F3'}15`,
-                    color: config.brandTheme.primaryColor || '#1E60F3',
-                  }}
-                >
-                  {config.softwareInfo.currentVersion || 'v2.6.2'}
-                </span>
-              </div>
+              <span
+                className="text-base font-black tracking-tight truncate block leading-tight"
+                style={{ color: config.brandTheme.primaryColor || '#1E60F3' }}
+              >
+                {config.softwareInfo.softwareName || 'e-Office DMS'}
+              </span>
               <p className="text-[10px] text-slate-400 font-medium truncate leading-tight mt-0.5">
                 {config.softwareInfo.slogan || config.adminInfo.shortName || 'Quản lý Văn bản & Điều hành'}
               </p>
@@ -277,29 +269,29 @@ export default function Sidebar() {
 
       {/* 3. Footer Info */}
       {!isCollapsed ? (
-        <div className="p-3.5 border border-slate-200/80 bg-slate-50/70 m-3 rounded-2xl text-xs space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="font-bold text-slate-800 truncate">
-              {config.softwareInfo.softwareName || 'e-Office DMS'}
-            </span>
+        <div className="border-t border-slate-200 px-4 py-3 text-[11px] space-y-1 bg-white">
+          <p className="font-semibold text-slate-800 truncate">
+            <span className="text-slate-500 font-normal">Phần mềm:</span>{' '}
+            <span className="font-bold text-slate-900">{config.softwareInfo.softwareName || 'e-Office'}</span>{' '}
+            <span className="text-slate-300">|</span>{' '}
             <span
-              className="font-mono font-bold text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0"
-              style={{
-                backgroundColor: `${config.brandTheme.primaryColor || '#1E60F3'}15`,
-                color: config.brandTheme.primaryColor || '#1E60F3',
-              }}
+              className="font-mono font-bold"
+              style={{ color: config.brandTheme.primaryColor || '#1E60F3' }}
             >
               {config.softwareInfo.currentVersion || 'v2.6.2'}
             </span>
-          </div>
-          <p className="text-slate-500 text-[10px] leading-snug truncate">
-            {config.softwareInfo.developer || 'e-Office Tech Solutions JSC'}
+          </p>
+          <p className="text-slate-500 truncate text-[10px]">
+            <span>Tác giả:</span>{' '}
+            <span className="font-medium text-slate-700">
+              {config.softwareInfo.developer || 'e-Office Tech Solutions'}
+            </span>
           </p>
         </div>
       ) : (
         <div
           className="p-3 border-t border-slate-100 text-center"
-          title={`${config.softwareInfo.softwareName} ${config.softwareInfo.currentVersion} - ${config.softwareInfo.developer}`}
+          title={`Phần mềm: ${config.softwareInfo.softwareName} | ${config.softwareInfo.currentVersion} - Tác giả: ${config.softwareInfo.developer}`}
         >
           <div className="h-2.5 w-2.5 rounded-full bg-emerald-500 mx-auto ring-4 ring-emerald-50" />
         </div>
