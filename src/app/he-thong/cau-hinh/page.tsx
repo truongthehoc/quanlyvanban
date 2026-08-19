@@ -235,6 +235,7 @@ export default function SystemConfigPage() {
                   <label className="block font-bold text-slate-700 mb-1">Tên đầy đủ Cơ quan / Đơn vị *</label>
                   <input
                     type="text"
+                    placeholder="VD: Bệnh viện Thuận Mỹ TDM"
                     value={adminForm.orgName}
                     onChange={(e) => setAdminForm({ ...adminForm, orgName: e.target.value })}
                     className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:border-[#1E60F3] focus:outline-none"
@@ -243,44 +244,33 @@ export default function SystemConfigPage() {
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Tên viết tắt / Hiển thị gọn *</label>
+                  <label className="block font-bold text-slate-700 mb-1">Tên viết tắt / Hiển thị gọn</label>
                   <input
                     type="text"
+                    placeholder="VD: TMTDM"
                     value={adminForm.shortName}
                     onChange={(e) => setAdminForm({ ...adminForm, shortName: e.target.value })}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:border-[#1E60F3] focus:outline-none"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Mã định danh hành chính *</label>
-                  <input
-                    type="text"
-                    value={adminForm.orgCode}
-                    onChange={(e) => setAdminForm({ ...adminForm, orgCode: e.target.value.toUpperCase() })}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs font-mono uppercase focus:border-[#1E60F3] focus:outline-none"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Thủ trưởng / Người đứng đầu</label>
-                  <input
-                    type="text"
-                    value={adminForm.leaderName}
-                    onChange={(e) => setAdminForm({ ...adminForm, leaderName: e.target.value })}
                     className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:border-[#1E60F3] focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
+                <label className="block font-bold text-slate-700 mb-1">Thủ trưởng / Người đứng đầu</label>
+                <input
+                  type="text"
+                  placeholder="VD: Phí Thùy Châu"
+                  value={adminForm.leaderName}
+                  onChange={(e) => setAdminForm({ ...adminForm, leaderName: e.target.value })}
+                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:border-[#1E60F3] focus:outline-none"
+                />
+              </div>
+
+              <div>
                 <label className="block font-bold text-slate-700 mb-1">Địa chỉ trụ sở chính</label>
                 <input
                   type="text"
+                  placeholder="VD: Số 01 Đường Quang Trung, Phường 1, TP. Thủ Dầu Một"
                   value={adminForm.address}
                   onChange={(e) => setAdminForm({ ...adminForm, address: e.target.value })}
                   className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:border-[#1E60F3] focus:outline-none"
