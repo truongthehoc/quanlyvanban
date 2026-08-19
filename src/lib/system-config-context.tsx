@@ -164,6 +164,18 @@ export function SystemConfigProvider({ children }: { children: React.ReactNode }
     }
   }, []);
 
+  // Apply CSS variables to root dynamically
+  useEffect(() => {
+    if (typeof document !== 'undefined' && config.brandTheme.primaryColor) {
+      document.documentElement.style.setProperty('--primary', config.brandTheme.primaryColor);
+      document.documentElement.style.setProperty(
+        '--primary-hover',
+        config.brandTheme.primaryHover || config.brandTheme.primaryColor
+      );
+      document.documentElement.style.setProperty('--primary-light', `${config.brandTheme.primaryColor}18`);
+    }
+  }, [config.brandTheme.primaryColor, config.brandTheme.primaryHover]);
+
   // Save config to storage and update CSS variables
   const saveConfig = (newConfig: SystemConfig) => {
     setConfig(newConfig);
@@ -175,8 +187,12 @@ export function SystemConfigProvider({ children }: { children: React.ReactNode }
 
     // Apply primary color to document root
     if (typeof document !== 'undefined') {
-      document.documentElement.style.setProperty('--color-primary', newConfig.brandTheme.primaryColor);
-      document.documentElement.style.setProperty('--color-primary-hover', newConfig.brandTheme.primaryHover);
+      document.documentElement.style.setProperty('--primary', newConfig.brandTheme.primaryColor);
+      document.documentElement.style.setProperty(
+        '--primary-hover',
+        newConfig.brandTheme.primaryHover || newConfig.brandTheme.primaryColor
+      );
+      document.documentElement.style.setProperty('--primary-light', `${newConfig.brandTheme.primaryColor}18`);
     }
   };
 

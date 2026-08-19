@@ -16,18 +16,10 @@ import {
   Plus,
   History,
   FileText,
-  Shield,
   Clock,
   User,
-  Globe,
-  Mail,
-  Phone,
-  MapPin,
   X,
-  AlertCircle,
   CheckCircle2,
-  Layers,
-  ArrowUpRight,
 } from 'lucide-react';
 
 const PRESET_COLORS = [
@@ -45,7 +37,7 @@ export default function SystemConfigPage() {
   const { config, updateAdminInfo, updateBrandTheme, updateSoftwareInfo, releaseNewVersion, calculateNextVersion } =
     useSystemConfig();
 
-  const [activeTab, setActiveTab] = useState<'admin' | 'brand' | 'software'>('admin');
+  const [activeTab, setActiveTab] = useState<'admin' | 'brand' | 'software'>('brand');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Form states
@@ -69,6 +61,18 @@ export default function SystemConfigPage() {
     setSoftwareForm(config.softwareInfo);
   }, [config]);
 
+  // Live real-time color reflection as admin selects colors
+  const handleColorChange = (hex: string, hover?: string) => {
+    const updated = {
+      ...brandForm,
+      primaryColor: hex,
+      primaryHover: hover || hex,
+    };
+    setBrandForm(updated);
+    // Instant live preview across the system
+    updateBrandTheme(updated);
+  };
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
@@ -85,7 +89,7 @@ export default function SystemConfigPage() {
   const handleSaveBrand = (e: React.FormEvent) => {
     e.preventDefault();
     updateBrandTheme(brandForm);
-    showToast('Đã lưu cấu hình nhận diện thương hiệu & màu sắc giao diện!');
+    showToast('Đã áp dụng và lưu cấu hình nhận diện thương hiệu thành công!');
   };
 
   // Save Software Info
@@ -135,6 +139,8 @@ export default function SystemConfigPage() {
     }
   };
 
+  const currentBrandColor = brandForm.primaryColor || config.brandTheme.primaryColor || '#1E60F3';
+
   return (
     <div className="w-full space-y-6">
       
@@ -151,8 +157,8 @@ export default function SystemConfigPage() {
         <div>
           <div className="flex items-center space-x-2.5">
             <div
-              className="flex h-9 w-9 items-center justify-center rounded-2xl text-white font-bold shadow-md shadow-blue-500/20"
-              style={{ backgroundColor: config.brandTheme.primaryColor || '#1E60F3' }}
+              className="flex h-9 w-9 items-center justify-center rounded-2xl text-white font-bold shadow-md transition-colors duration-200"
+              style={{ backgroundColor: currentBrandColor }}
             >
               <Settings className="h-5 w-5" />
             </div>
@@ -171,7 +177,10 @@ export default function SystemConfigPage() {
         <div className="flex items-center space-x-2 rounded-full bg-white px-4 py-2 border border-slate-200 shadow-xs self-start sm:self-auto">
           <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
           <span className="text-xs font-bold text-slate-700">
-            Phiên bản hiện tại: <span className="text-[#1E60F3] font-mono">{config.softwareInfo.currentVersion}</span>
+            Phiên bản hiện tại:{' '}
+            <span className="font-mono font-bold" style={{ color: currentBrandColor }}>
+              {config.softwareInfo.currentVersion}
+            </span>
           </span>
         </div>
       </div>
@@ -180,9 +189,18 @@ export default function SystemConfigPage() {
       <div className="flex border-b border-slate-200 space-x-2">
         <button
           onClick={() => setActiveTab('admin')}
+          style={
+            activeTab === 'admin'
+              ? {
+                  borderColor: currentBrandColor,
+                  color: currentBrandColor,
+                  backgroundColor: `${currentBrandColor}12`,
+                }
+              : undefined
+          }
           className={`flex items-center space-x-2 border-b-2 py-3 px-5 text-xs font-bold transition-all cursor-pointer ${
             activeTab === 'admin'
-              ? 'border-[#1E60F3] text-[#1E60F3] bg-blue-50/50 rounded-t-2xl'
+              ? 'rounded-t-2xl'
               : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
@@ -192,9 +210,18 @@ export default function SystemConfigPage() {
 
         <button
           onClick={() => setActiveTab('brand')}
+          style={
+            activeTab === 'brand'
+              ? {
+                  borderColor: currentBrandColor,
+                  color: currentBrandColor,
+                  backgroundColor: `${currentBrandColor}12`,
+                }
+              : undefined
+          }
           className={`flex items-center space-x-2 border-b-2 py-3 px-5 text-xs font-bold transition-all cursor-pointer ${
             activeTab === 'brand'
-              ? 'border-[#1E60F3] text-[#1E60F3] bg-blue-50/50 rounded-t-2xl'
+              ? 'rounded-t-2xl'
               : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
@@ -204,9 +231,18 @@ export default function SystemConfigPage() {
 
         <button
           onClick={() => setActiveTab('software')}
+          style={
+            activeTab === 'software'
+              ? {
+                  borderColor: currentBrandColor,
+                  color: currentBrandColor,
+                  backgroundColor: `${currentBrandColor}12`,
+                }
+              : undefined
+          }
           className={`flex items-center space-x-2 border-b-2 py-3 px-5 text-xs font-bold transition-all cursor-pointer ${
             activeTab === 'software'
-              ? 'border-[#1E60F3] text-[#1E60F3] bg-blue-50/50 rounded-t-2xl'
+              ? 'rounded-t-2xl'
               : 'border-transparent text-slate-500 hover:text-slate-900'
           }`}
         >
@@ -238,7 +274,7 @@ export default function SystemConfigPage() {
                     placeholder="VD: Bệnh viện Thuận Mỹ TDM"
                     value={adminForm.orgName}
                     onChange={(e) => setAdminForm({ ...adminForm, orgName: e.target.value })}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:border-[#1E60F3] focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:outline-none"
                     required
                   />
                 </div>
@@ -250,7 +286,7 @@ export default function SystemConfigPage() {
                     placeholder="VD: TMTDM"
                     value={adminForm.shortName}
                     onChange={(e) => setAdminForm({ ...adminForm, shortName: e.target.value })}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:border-[#1E60F3] focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:outline-none"
                   />
                 </div>
               </div>
@@ -262,7 +298,7 @@ export default function SystemConfigPage() {
                   placeholder="VD: Phí Thùy Châu"
                   value={adminForm.leaderName}
                   onChange={(e) => setAdminForm({ ...adminForm, leaderName: e.target.value })}
-                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:border-[#1E60F3] focus:outline-none"
+                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:outline-none"
                 />
               </div>
 
@@ -273,7 +309,7 @@ export default function SystemConfigPage() {
                   placeholder="VD: Số 01 Đường Quang Trung, Phường 1, TP. Thủ Dầu Một"
                   value={adminForm.address}
                   onChange={(e) => setAdminForm({ ...adminForm, address: e.target.value })}
-                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:border-[#1E60F3] focus:outline-none"
+                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:outline-none"
                 />
               </div>
 
@@ -284,7 +320,7 @@ export default function SystemConfigPage() {
                     type="text"
                     value={adminForm.phone}
                     onChange={(e) => setAdminForm({ ...adminForm, phone: e.target.value })}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:border-[#1E60F3] focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:outline-none"
                   />
                 </div>
 
@@ -294,7 +330,7 @@ export default function SystemConfigPage() {
                     type="email"
                     value={adminForm.email}
                     onChange={(e) => setAdminForm({ ...adminForm, email: e.target.value })}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:border-[#1E60F3] focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:outline-none"
                   />
                 </div>
 
@@ -304,7 +340,7 @@ export default function SystemConfigPage() {
                     type="text"
                     value={adminForm.website}
                     onChange={(e) => setAdminForm({ ...adminForm, website: e.target.value })}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:border-[#1E60F3] focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs focus:outline-none"
                   />
                 </div>
               </div>
@@ -312,7 +348,8 @@ export default function SystemConfigPage() {
               <div className="flex justify-end pt-4 border-t border-slate-200">
                 <button
                   type="submit"
-                  className="inline-flex items-center space-x-2 rounded-full bg-[#1E60F3] px-6 py-2.5 font-bold text-white shadow-md shadow-blue-500/20 hover:bg-blue-700 transition-all hover:scale-105"
+                  style={{ backgroundColor: currentBrandColor }}
+                  className="inline-flex items-center space-x-2 rounded-full px-6 py-2.5 font-bold text-white shadow-md transition-all hover:scale-105 hover:opacity-90 cursor-pointer"
                 >
                   <Save className="h-4 w-4" />
                   <span>Lưu Thông Tin Hành Chính</span>
@@ -342,7 +379,7 @@ export default function SystemConfigPage() {
                     />
                     <button
                       onClick={() => setAdminForm({ ...adminForm, logoUrl: '' })}
-                      className="absolute -top-2 -right-2 rounded-full bg-rose-500 p-1.5 text-white shadow-md hover:bg-rose-600 transition-colors"
+                      className="absolute -top-2 -right-2 rounded-full bg-rose-500 p-1.5 text-white shadow-md hover:bg-rose-600 transition-colors cursor-pointer"
                       title="Xóa logo"
                     >
                       <X className="h-3.5 w-3.5" />
@@ -350,7 +387,13 @@ export default function SystemConfigPage() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-blue-50 text-[#1E60F3] mb-2 shadow-xs">
+                    <div
+                      className="flex h-16 w-16 items-center justify-center rounded-3xl mb-2 shadow-xs"
+                      style={{
+                        backgroundColor: `${currentBrandColor}18`,
+                        color: currentBrandColor,
+                      }}
+                    >
                       <Building2 className="h-8 w-8" />
                     </div>
                     <span className="text-xs font-bold text-slate-700">Chưa thiết lập Logo riêng</span>
@@ -358,7 +401,7 @@ export default function SystemConfigPage() {
                   </div>
                 )}
 
-                <label className="mt-4 inline-flex items-center space-x-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-xs hover:bg-slate-50 hover:border-blue-400 hover:text-blue-600 transition-all cursor-pointer">
+                <label className="mt-4 inline-flex items-center space-x-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-xs hover:bg-slate-50 hover:border-slate-400 transition-all cursor-pointer">
                   <Upload className="h-3.5 w-3.5" />
                   <span>Tải lên Logo mới</span>
                   <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
@@ -374,13 +417,16 @@ export default function SystemConfigPage() {
                   {adminForm.logoUrl ? (
                     <img src={adminForm.logoUrl} alt="Logo" className="h-9 w-9 rounded-2xl object-contain border p-1" />
                   ) : (
-                    <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-600 text-white font-bold">
+                    <div
+                      className="flex h-9 w-9 items-center justify-center rounded-2xl text-white font-bold"
+                      style={{ backgroundColor: currentBrandColor }}
+                    >
                       <FileText className="h-5 w-5" />
                     </div>
                   )}
                   <div className="truncate">
                     <p className="text-xs font-extrabold text-slate-900">{config.softwareInfo.softwareName}</p>
-                    <p className="text-[10px] text-slate-400 font-medium truncate">{adminForm.shortName}</p>
+                    <p className="text-[10px] text-slate-400 font-medium truncate">{adminForm.shortName || 'TMTDM'}</p>
                   </div>
                 </div>
               </div>
@@ -413,13 +459,7 @@ export default function SystemConfigPage() {
                       <button
                         type="button"
                         key={col.hex}
-                        onClick={() =>
-                          setBrandForm({
-                            ...brandForm,
-                            primaryColor: col.hex,
-                            primaryHover: col.hover,
-                          })
-                        }
+                        onClick={() => handleColorChange(col.hex, col.hover)}
                         className={`flex items-center space-x-3 rounded-2xl p-3 border transition-all text-left cursor-pointer ${
                           isSelected
                             ? 'border-slate-900 ring-2 ring-slate-900/10 shadow-md bg-slate-50'
@@ -452,26 +492,14 @@ export default function SystemConfigPage() {
                   <input
                     type="color"
                     value={brandForm.primaryColor}
-                    onChange={(e) =>
-                      setBrandForm({
-                        ...brandForm,
-                        primaryColor: e.target.value,
-                        primaryHover: e.target.value,
-                      })
-                    }
+                    onChange={(e) => handleColorChange(e.target.value)}
                     className="h-9 w-9 rounded-xl border border-slate-300 cursor-pointer p-0.5"
                   />
                   <input
                     type="text"
                     value={brandForm.primaryColor}
-                    onChange={(e) =>
-                      setBrandForm({
-                        ...brandForm,
-                        primaryColor: e.target.value,
-                        primaryHover: e.target.value,
-                      })
-                    }
-                    className="w-28 rounded-xl border border-slate-300 px-3 py-1.5 font-mono uppercase text-xs focus:border-[#1E60F3] focus:outline-none"
+                    onChange={(e) => handleColorChange(e.target.value)}
+                    className="w-28 rounded-xl border border-slate-300 px-3 py-1.5 font-mono uppercase text-xs focus:outline-none"
                   />
                 </div>
               </div>
@@ -482,8 +510,12 @@ export default function SystemConfigPage() {
                 <div className="grid grid-cols-3 gap-3">
                   <button
                     type="button"
-                    onClick={() => setBrandForm({ ...brandForm, borderRadius: 'rounded-full' })}
-                    className={`rounded-full border py-2.5 text-center font-bold text-xs transition-all ${
+                    onClick={() => {
+                      const updated = { ...brandForm, borderRadius: 'rounded-full' as const };
+                      setBrandForm(updated);
+                      updateBrandTheme(updated);
+                    }}
+                    className={`rounded-full border py-2.5 text-center font-bold text-xs transition-all cursor-pointer ${
                       brandForm.borderRadius === 'rounded-full'
                         ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
                         : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
@@ -494,8 +526,12 @@ export default function SystemConfigPage() {
 
                   <button
                     type="button"
-                    onClick={() => setBrandForm({ ...brandForm, borderRadius: 'rounded-2xl' })}
-                    className={`rounded-2xl border py-2.5 text-center font-bold text-xs transition-all ${
+                    onClick={() => {
+                      const updated = { ...brandForm, borderRadius: 'rounded-2xl' as const };
+                      setBrandForm(updated);
+                      updateBrandTheme(updated);
+                    }}
+                    className={`rounded-2xl border py-2.5 text-center font-bold text-xs transition-all cursor-pointer ${
                       brandForm.borderRadius === 'rounded-2xl'
                         ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
                         : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
@@ -506,8 +542,12 @@ export default function SystemConfigPage() {
 
                   <button
                     type="button"
-                    onClick={() => setBrandForm({ ...brandForm, borderRadius: 'rounded-xl' })}
-                    className={`rounded-xl border py-2.5 text-center font-bold text-xs transition-all ${
+                    onClick={() => {
+                      const updated = { ...brandForm, borderRadius: 'rounded-xl' as const };
+                      setBrandForm(updated);
+                      updateBrandTheme(updated);
+                    }}
+                    className={`rounded-xl border py-2.5 text-center font-bold text-xs transition-all cursor-pointer ${
                       brandForm.borderRadius === 'rounded-xl'
                         ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
                         : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
@@ -521,7 +561,8 @@ export default function SystemConfigPage() {
               <div className="flex justify-end pt-4 border-t border-slate-200">
                 <button
                   type="submit"
-                  className="inline-flex items-center space-x-2 rounded-full bg-[#1E60F3] px-6 py-2.5 font-bold text-white shadow-md shadow-blue-500/20 hover:bg-blue-700 transition-all hover:scale-105"
+                  style={{ backgroundColor: currentBrandColor }}
+                  className="inline-flex items-center space-x-2 rounded-full px-6 py-2.5 font-bold text-white shadow-md transition-all hover:scale-105 hover:opacity-90 cursor-pointer"
                 >
                   <Save className="h-4 w-4" />
                   <span>Áp Dụng & Lưu Bảng Màu</span>
@@ -546,8 +587,8 @@ export default function SystemConfigPage() {
                 <div className="mt-1.5">
                   <button
                     type="button"
-                    className={`px-5 py-2.5 font-bold text-white shadow-md transition-transform hover:scale-105 ${brandForm.borderRadius}`}
-                    style={{ backgroundColor: brandForm.primaryColor }}
+                    className={`px-5 py-2.5 font-bold text-white shadow-md transition-transform hover:scale-105 cursor-pointer ${brandForm.borderRadius}`}
+                    style={{ backgroundColor: currentBrandColor }}
                   >
                     + Thêm Văn Bản Mới
                   </button>
@@ -558,7 +599,7 @@ export default function SystemConfigPage() {
                 <span className="text-[11px] font-bold text-slate-500 uppercase">Menu Kích Hoạt (Active State):</span>
                 <div
                   className={`mt-1.5 flex items-center justify-between px-3.5 py-2 text-white font-semibold shadow-xs ${brandForm.borderRadius}`}
-                  style={{ backgroundColor: brandForm.primaryColor }}
+                  style={{ backgroundColor: currentBrandColor }}
                 >
                   <div className="flex items-center space-x-2">
                     <FileText className="h-4 w-4" />
@@ -574,8 +615,8 @@ export default function SystemConfigPage() {
                   <span
                     className="font-bold px-2.5 py-0.5 rounded-full text-xs"
                     style={{
-                      backgroundColor: `${brandForm.primaryColor}15`,
-                      color: brandForm.primaryColor,
+                      backgroundColor: `${currentBrandColor}18`,
+                      color: currentBrandColor,
                     }}
                   >
                     {config.softwareInfo.currentVersion}
@@ -596,10 +637,19 @@ export default function SystemConfigPage() {
           {/* Top Hero & Release Action */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Version Hero Box */}
-            <div className="rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white p-6 shadow-xs flex flex-col justify-between">
+            <div
+              className="rounded-3xl border p-6 shadow-xs flex flex-col justify-between"
+              style={{
+                borderColor: `${currentBrandColor}30`,
+                background: `linear-gradient(135deg, ${currentBrandColor}0d 0%, #ffffff 100%)`,
+              }}
+            >
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-extrabold text-white shadow-xs">
+                  <span
+                    className="rounded-full px-3 py-1 text-xs font-extrabold text-white shadow-xs"
+                    style={{ backgroundColor: currentBrandColor }}
+                  >
                     ACTIVE RELEASE
                   </span>
                   <span className="text-xs text-slate-500 font-medium">Bản phát hành chính thức</span>
@@ -607,12 +657,14 @@ export default function SystemConfigPage() {
 
                 <div className="mt-4">
                   <p className="text-3xl font-black text-slate-900 tracking-tight">{config.softwareInfo.currentVersion}</p>
-                  <p className="text-sm font-extrabold text-blue-900 mt-1">{config.softwareInfo.softwareName}</p>
+                  <p className="text-sm font-extrabold mt-1" style={{ color: currentBrandColor }}>
+                    {config.softwareInfo.softwareName}
+                  </p>
                   <p className="text-xs text-slate-500 mt-0.5">{config.softwareInfo.slogan}</p>
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-blue-100 flex items-center justify-between text-xs text-slate-600">
+              <div className="mt-6 pt-4 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
                 <span>Bản quyền: {config.softwareInfo.developer}</span>
               </div>
             </div>
@@ -632,7 +684,8 @@ export default function SystemConfigPage() {
                     setReleaseType('PATCH');
                     setShowReleaseModal(true);
                   }}
-                  className="inline-flex items-center space-x-2 rounded-full bg-emerald-600 px-5 py-2 text-xs font-bold text-white shadow-md shadow-emerald-500/20 hover:bg-emerald-700 transition-all hover:scale-105"
+                  style={{ backgroundColor: currentBrandColor }}
+                  className="inline-flex items-center space-x-2 rounded-full px-5 py-2 text-xs font-bold text-white shadow-md transition-all hover:scale-105 hover:opacity-90 cursor-pointer"
                 >
                   <Plus className="h-4 w-4" />
                   <span>Phát Hành Phiên Bản Mới</span>
@@ -647,7 +700,7 @@ export default function SystemConfigPage() {
                       type="text"
                       value={softwareForm.softwareName}
                       onChange={(e) => setSoftwareForm({ ...softwareForm, softwareName: e.target.value })}
-                      className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
+                      className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none"
                       required
                     />
                   </div>
@@ -658,7 +711,7 @@ export default function SystemConfigPage() {
                       type="text"
                       value={softwareForm.developer}
                       onChange={(e) => setSoftwareForm({ ...softwareForm, developer: e.target.value })}
-                      className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
+                      className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none"
                       required
                     />
                   </div>
@@ -670,14 +723,14 @@ export default function SystemConfigPage() {
                     type="text"
                     value={softwareForm.slogan}
                     onChange={(e) => setSoftwareForm({ ...softwareForm, slogan: e.target.value })}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none"
                   />
                 </div>
 
                 <div className="flex justify-end pt-2">
                   <button
                     type="submit"
-                    className="inline-flex items-center space-x-1.5 rounded-full border border-slate-300 bg-white px-5 py-2 font-bold text-slate-700 shadow-xs hover:bg-slate-50"
+                    className="inline-flex items-center space-x-1.5 rounded-full border border-slate-300 bg-white px-5 py-2 font-bold text-slate-700 shadow-xs hover:bg-slate-50 cursor-pointer"
                   >
                     <Save className="h-3.5 w-3.5" />
                     <span>Lưu Thông Tin Phần Mềm</span>
@@ -744,7 +797,7 @@ export default function SystemConfigPage() {
                     <ul className="space-y-1.5 text-xs text-slate-700">
                       {item.changelog.map((c, cIdx) => (
                         <li key={cIdx} className="flex items-start space-x-2">
-                          <span className="text-[#1E60F3] font-bold mt-0.5">•</span>
+                          <span className="font-bold mt-0.5" style={{ color: currentBrandColor }}>•</span>
                           <span className="leading-relaxed">{c}</span>
                         </li>
                       ))}
@@ -765,9 +818,17 @@ export default function SystemConfigPage() {
           <div className="w-full max-w-lg max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
             
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-slate-200 bg-emerald-50/90 px-6 py-4 flex-shrink-0">
+            <div
+              className="flex items-center justify-between border-b border-slate-200 px-6 py-4 flex-shrink-0"
+              style={{
+                backgroundColor: `${currentBrandColor}12`,
+              }}
+            >
               <div className="flex items-center space-x-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-600 text-white font-bold shadow-xs">
+                <div
+                  className="flex h-9 w-9 items-center justify-center rounded-2xl text-white font-bold shadow-xs"
+                  style={{ backgroundColor: currentBrandColor }}
+                >
                   <Rocket className="h-5 w-5" />
                 </div>
                 <div>
@@ -777,7 +838,7 @@ export default function SystemConfigPage() {
               </div>
               <button
                 onClick={() => setShowReleaseModal(false)}
-                className="rounded-full p-2 text-slate-400 hover:bg-slate-200 transition-colors"
+                className="rounded-full p-2 text-slate-400 hover:bg-slate-200 transition-colors cursor-pointer"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -791,7 +852,7 @@ export default function SystemConfigPage() {
                   <button
                     type="button"
                     onClick={() => setReleaseType('PATCH')}
-                    className={`rounded-2xl p-3 border text-left transition-all ${
+                    className={`rounded-2xl p-3 border text-left transition-all cursor-pointer ${
                       releaseType === 'PATCH'
                         ? 'border-emerald-600 bg-emerald-50/70 ring-1 ring-emerald-600'
                         : 'border-slate-200 bg-white hover:bg-slate-50'
@@ -807,7 +868,7 @@ export default function SystemConfigPage() {
                   <button
                     type="button"
                     onClick={() => setReleaseType('MINOR')}
-                    className={`rounded-2xl p-3 border text-left transition-all ${
+                    className={`rounded-2xl p-3 border text-left transition-all cursor-pointer ${
                       releaseType === 'MINOR'
                         ? 'border-blue-600 bg-blue-50/70 ring-1 ring-blue-600'
                         : 'border-slate-200 bg-white hover:bg-slate-50'
@@ -823,7 +884,7 @@ export default function SystemConfigPage() {
                   <button
                     type="button"
                     onClick={() => setReleaseType('MAJOR')}
-                    className={`rounded-2xl p-3 border text-left transition-all ${
+                    className={`rounded-2xl p-3 border text-left transition-all cursor-pointer ${
                       releaseType === 'MAJOR'
                         ? 'border-rose-600 bg-rose-50/70 ring-1 ring-rose-600'
                         : 'border-slate-200 bg-white hover:bg-slate-50'
@@ -846,7 +907,7 @@ export default function SystemConfigPage() {
                     placeholder="VD: v3.1.0-beta"
                     value={customVerInput}
                     onChange={(e) => setCustomVerInput(e.target.value)}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-mono focus:border-emerald-500 focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-mono focus:outline-none"
                     required
                   />
                 </div>
@@ -861,12 +922,19 @@ export default function SystemConfigPage() {
                   placeholder={`- Bổ sung trang Cấu hình Hệ thống & Nhận diện thương hiệu\n- Cải tiến tính năng tự động ghi log phiên bản\n- Tối ưu hiệu năng và sửa lỗi hiển thị`}
                   value={changelogInput}
                   onChange={(e) => setChangelogInput(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-emerald-500 focus:outline-none leading-relaxed"
+                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:outline-none leading-relaxed"
                   required
                 />
               </div>
 
-              <div className="rounded-2xl bg-blue-50/70 p-3.5 border border-blue-200 text-blue-900 text-[11px] font-medium">
+              <div
+                className="rounded-2xl p-3.5 border text-[11px] font-medium"
+                style={{
+                  backgroundColor: `${currentBrandColor}12`,
+                  borderColor: `${currentBrandColor}30`,
+                  color: currentBrandColor,
+                }}
+              >
                 ✓ Phiên bản mới sẽ tự động cập nhật ngay lên đỉnh Sidebar và các báo cáo hành chính.
               </div>
 
@@ -875,13 +943,14 @@ export default function SystemConfigPage() {
                 <button
                   type="button"
                   onClick={() => setShowReleaseModal(false)}
-                  className="rounded-full border border-slate-300 px-5 py-2 font-semibold text-slate-700 hover:bg-slate-50"
+                  className="rounded-full border border-slate-300 px-5 py-2 font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
-                  className="rounded-full bg-emerald-600 px-6 py-2 font-bold text-white hover:bg-emerald-700 shadow-md shadow-emerald-500/20"
+                  style={{ backgroundColor: currentBrandColor }}
+                  className="rounded-full px-6 py-2 font-bold text-white shadow-md hover:opacity-90 cursor-pointer"
                 >
                   Xác Nhận Phát Hành
                 </button>

@@ -161,7 +161,14 @@ export default function Sidebar() {
                 <span className="text-sm font-extrabold tracking-tight text-slate-900 truncate">
                   {config.softwareInfo.softwareName || 'e-Office DMS'}
                 </span>
-                <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[9px] font-bold text-[#1E60F3] border border-blue-200 flex-shrink-0">
+                <span
+                  className="rounded-full px-2 py-0.5 text-[9px] font-bold border flex-shrink-0"
+                  style={{
+                    backgroundColor: `${config.brandTheme.primaryColor || '#1E60F3'}15`,
+                    color: config.brandTheme.primaryColor || '#1E60F3',
+                    borderColor: `${config.brandTheme.primaryColor || '#1E60F3'}30`,
+                  }}
+                >
                   {config.softwareInfo.currentVersion || 'v2.6.2'}
                 </span>
               </div>
@@ -216,13 +223,18 @@ export default function Sidebar() {
                       key={item.href}
                       href={item.href}
                       title={isCollapsed ? item.label : undefined}
+                      style={
+                        isActive
+                          ? { backgroundColor: config.brandTheme.primaryColor || '#1E60F3' }
+                          : undefined
+                      }
                       className={`group relative flex items-center rounded-2xl transition-all duration-150 ${
                         isCollapsed
                           ? 'justify-center h-10 w-10 mx-auto'
                           : 'justify-between px-3.5 py-2.5 text-xs font-semibold'
                       } ${
                         isActive
-                          ? 'bg-[#1E60F3] text-white shadow-md shadow-blue-500/20'
+                          ? 'text-white shadow-md'
                           : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                       }`}
                     >
