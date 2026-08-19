@@ -16,6 +16,7 @@ import {
   Building2,
   Users,
   Check,
+  X,
 } from 'lucide-react';
 import DocumentDetailModal from '@/components/documents/DocumentDetailModal';
 import { CreateInternalModal } from '@/components/documents/InternalActionModals';
@@ -25,6 +26,8 @@ export default function InternalDocsPage() {
   const [documents, setDocuments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+
+  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -54,9 +57,14 @@ export default function InternalDocsPage() {
     }
   };
 
+  // Live debounced auto-search
   useEffect(() => {
-    fetchDocs();
-  }, [currentUser]);
+    const timer = setTimeout(() => {
+      fetchDocs();
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [currentUser, search]);
 
   const handleConfirmRead = async (docId: string) => {
     if (!currentUser) return;
@@ -154,10 +162,19 @@ export default function InternalDocsPage() {
             placeholder="Tìm kiếm thông báo, trích yếu, người đăng..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && fetchDocs()}
-            className="w-full rounded-full border border-slate-200 bg-white pl-10 pr-4 py-2.5 text-xs focus:border-[#1E60F3] focus:outline-none placeholder:text-slate-400 shadow-sm"
+            className="w-full rounded-full border border-slate-200 bg-white pl-10 pr-9 py-2.5 text-xs focus:border-[#1E60F3] focus:outline-none placeholder:text-slate-400 shadow-sm"
           />
-          <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400 pointer-events-none" />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch('')}
+              title="Xóa tìm kiếm"
+              className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </div>
 

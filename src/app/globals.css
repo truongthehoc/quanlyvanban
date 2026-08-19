@@ -127,3 +127,117 @@
   backdrop-filter: blur(8px);
   border: 1px solid rgba(226, 232, 240, 0.8);
 }
+
+/* =========================================================
+   DEDICATED PRINT STYLES FOR OFFICIAL ADMINISTRATIVE SLIPS
+   ========================================================= */
+@media print {
+  /* 1. Hide all application layout and browser UI */
+  header,
+  aside,
+  nav,
+  footer,
+  .print-hidden,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* 2. Reset root document for full-bleed printing */
+  html, body, main {
+    background: #ffffff !important;
+    color: #000000 !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 11pt !important;
+  }
+
+  /* Reset all modal containers and overlays so they do not clip in print */
+  .printable-modal-overlay,
+  .printable-modal-overlay > div {
+    position: static !important;
+    overflow: visible !important;
+    max-height: none !important;
+    max-width: 100% !important;
+    height: auto !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    inset: auto !important;
+  }
+
+  /* Hide everything on page by default */
+  body * {
+    visibility: hidden;
+  }
+
+  /* 3. Isolate and render only the official printable sheet */
+  .printable-document-sheet,
+  .printable-document-sheet * {
+    visibility: visible !important;
+  }
+
+  .printable-document-sheet {
+    display: block !important;
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 195mm !important;
+    margin: 0 auto !important;
+    padding: 8mm 12mm 16mm 12mm !important;
+    box-sizing: border-box !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Force print table borders to crisp solid lines */
+  .printable-document-sheet table {
+    border-collapse: collapse !important;
+    page-break-inside: auto;
+  }
+  .printable-document-sheet tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+  .printable-document-sheet thead {
+    display: table-header-group;
+  }
+  .printable-document-sheet th,
+  .printable-document-sheet td {
+    border-color: #000000 !important;
+  }
+
+  /* Signature block avoid page breaks */
+  .printable-signature-block {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Footer pinned to the absolute bottom of the printable page */
+  .printable-document-footer {
+    display: flex !important;
+    position: absolute !important;
+    bottom: 6mm !important;
+    left: 12mm !important;
+    right: 12mm !important;
+    margin: 0 !important;
+    padding-top: 2mm !important;
+    border-top: 1px dashed #666666 !important;
+    visibility: visible !important;
+  }
+
+  /* Suppress default browser header/footer (date & title) by setting @page margin to 0 */
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+}

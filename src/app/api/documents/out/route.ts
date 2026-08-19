@@ -73,10 +73,12 @@ export async function POST(req: NextRequest) {
       creatorId,
       departmentId,
       submitDirectlyToLeader = false,
+      leaderId,
+      attachments = [],
     } = body;
 
     if (!title || !creatorId) {
-      return NextResponse.json({ error: 'Trích yếu và Người soạn thảo là bắt buộc' }, { status: 400 });
+      return NextResponse.json({ error: 'Trích yếu và Người tạo là bắt buộc' }, { status: 400 });
     }
 
     const initialStatus = submitDirectlyToLeader ? 'PENDING_APPROVAL' : 'DRAFT';
@@ -90,9 +92,19 @@ export async function POST(req: NextRequest) {
         urgencyLevel: urgencyLevel || 'NORMAL',
         confidentialityLevel: confidentialityLevel || 'NORMAL',
         status: initialStatus,
+        leaderId: submitDirectlyToLeader ? (leaderId || undefined) : undefined,
         creatorId,
         departmentId: departmentId || undefined,
         documentTypeId: documentTypeId || undefined,
+        attachments: {
+          create: attachments.map((att: any) => ({
+            fileName: att.fileName,
+            fileUrl: att.fileUrl,
+            fileType: att.fileType || 'pdf',
+            fileSize: att.fileSize || 0,
+            uploadedById: creatorId,
+          })),
+        },
         processingLogs: {
           create: [
             {
@@ -109,28 +121,41 @@ export async function POST(req: NextRequest) {
         documentType: true,
         department: true,
         creator: true,
+        attachments: true,
       },
     });
 
     // Notify leaders if submitted directly
     if (submitDirectlyToLeader) {
-      const leaders = await prisma.user.findMany({
-        where: {
-          roles: { some: { role: { code: 'LEADER' } } },
-          isActive: true,
-        },
-      });
-
-      for (const leader of leaders) {
+      if (leaderId) {
         await prisma.notification.create({
           data: {
-            userId: leader.id,
+            userId: leaderId,
             title: 'Dự thảo văn bản đi cần phê duyệt',
             content: `Có dự thảo mới: "${title}" cần xem xét ký duyệt.`,
-            link: `/van-ban-di`,
+            link: `/van-ban-di/${newDoc.id}`,
             type: 'DIRECTIVE',
           },
         });
+      } else {
+        const leaders = await prisma.user.findMany({
+          where: {
+            roles: { some: { role: { code: 'LEADER' } } },
+            isActive: true,
+          },
+        });
+
+        for (const leader of leaders) {
+          await prisma.notification.create({
+            data: {
+              userId: leader.id,
+              title: 'Dự thảo văn bản đi cần phê duyệt',
+              content: `Có dự thảo mới: "${title}" cần xem xét ký duyệt.`,
+              link: `/van-ban-di/${newDoc.id}`,
+              type: 'DIRECTIVE',
+            },
+          });
+        }
       }
     }
 

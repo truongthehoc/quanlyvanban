@@ -219,7 +219,7 @@ export default function Header() {
               <div className="text-xs text-slate-600 space-y-1.5">
                 <div className="flex items-center space-x-2 py-0.5">
                   <Building2 className="h-3.5 w-3.5 text-slate-400" />
-                  <span className="text-[11px]">Đơn vị: <strong>{currentUser?.departmentName || 'Chưa gán'}</strong></span>
+                  <span className="text-[11px]">Phòng ban/bộ phận: <strong>{currentUser?.departmentName || 'Chưa gán'}</strong></span>
                 </div>
                 <div className="flex items-center space-x-2 py-0.5">
                   <Shield className="h-3.5 w-3.5 text-slate-400" />

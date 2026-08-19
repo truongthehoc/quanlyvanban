@@ -15,72 +15,97 @@ export async function GET(req: NextRequest) {
     const userId = searchParams.get('userId');
     const role = searchParams.get('role');
 
-    const where: any = {
-      documentTypeDoc: 'INCOMING',
-    };
+    const andConditions: any[] = [
+      { documentTypeDoc: 'INCOMING' }
+    ];
+
+    // Role-based visibility
+    if (role === 'HEAD_DEPT' && departmentId) {
+      andConditions.push({
+        OR: [
+          { departmentId },
+          { assignees: { some: { departmentId } } },
+        ],
+      });
+    } else if (role === 'OFFICER' && userId) {
+      andConditions.push({
+        assignees: {
+          some: { userId },
+        },
+      });
+    }
+
+    // Role-scoped base condition for stat cards
+    const baseWhere = andConditions.length === 1 ? andConditions[0] : { AND: andConditions };
+
+    // Build filter conditions for document list
+    const filterConditions = [...andConditions];
 
     if (status && status !== 'ALL') {
-      if (status === 'PENDING') {
-        where.status = { in: ['PENDING_DIRECTIVE', 'DRAFT'] };
+      if (status === 'PENDING_DIRECTIVE' || status === 'PENDING') {
+        filterConditions.push({
+          status: { in: ['PENDING_DIRECTIVE', 'DRAFT', 'DIRECTED', 'PENDING_PROCESSING'] }
+        });
+      } else if (status === 'DIRECTED') {
+        filterConditions.push({ status: 'DIRECTED' });
       } else if (status === 'PROCESSING') {
-        where.status = { in: ['DIRECTED', 'PROCESSING'] };
+        filterConditions.push({
+          status: { in: ['PROCESSING', 'IN_PROGRESS'] }
+        });
       } else if (status === 'COMPLETED') {
-        where.status = 'COMPLETED';
+        filterConditions.push({
+          status: { in: ['COMPLETED', 'PROCESSED'] }
+        });
       } else if (status === 'OVERDUE') {
-        where.OR = [
-          { status: 'OVERDUE' },
-          {
-            dueDate: { lt: new Date() },
-            status: { notIn: ['COMPLETED', 'ARCHIVED'] },
-          },
-        ];
+        filterConditions.push({
+          OR: [
+            { status: 'OVERDUE' },
+            {
+              dueDate: { lt: new Date() },
+              status: { notIn: ['COMPLETED', 'ARCHIVED', 'PROCESSED'] },
+            },
+          ],
+        });
       } else {
-        where.status = status;
+        filterConditions.push({ status });
       }
     }
 
     if (urgency && urgency !== 'ALL') {
-      where.urgencyLevel = urgency;
+      filterConditions.push({ urgencyLevel: urgency });
     }
 
     if (senderOrg && senderOrg !== 'ALL') {
-      where.senderOrg = senderOrg;
+      filterConditions.push({ senderOrg });
     }
 
     if (dateFrom || dateTo) {
-      where.arrivalDate = {};
-      if (dateFrom) where.arrivalDate.gte = new Date(dateFrom);
+      const dateCond: any = {};
+      if (dateFrom) dateCond.gte = new Date(dateFrom);
       if (dateTo) {
         const dTo = new Date(dateTo);
         dTo.setHours(23, 59, 59, 999);
-        where.arrivalDate.lte = dTo;
+        dateCond.lte = dTo;
       }
+      filterConditions.push({ arrivalDate: dateCond });
     }
 
     if (search) {
-      where.OR = [
-        { title: { contains: search } },
-        { documentNumber: { contains: search } },
-        { senderOrg: { contains: search } },
-        { subNumber: { contains: search } },
-      ];
+      filterConditions.push({
+        OR: [
+          { title: { contains: search } },
+          { documentNumber: { contains: search } },
+          { senderOrg: { contains: search } },
+          { subNumber: { contains: search } },
+        ],
+      });
     }
 
-    // Role-based visibility
-    if (role === 'HEAD_DEPT' && departmentId) {
-      where.OR = [
-        { departmentId },
-        { assignees: { some: { departmentId } } },
-      ];
-    } else if (role === 'OFFICER' && userId) {
-      where.assignees = {
-        some: { userId },
-      };
-    }
+    const queryWhere = filterConditions.length === 1 ? filterConditions[0] : { AND: filterConditions };
 
     const [documents, totalCount, pendingCount, processingCount, completedCount, overdueCount, senderOrgs] = await Promise.all([
       prisma.document.findMany({
-        where,
+        where: queryWhere,
         include: {
           documentType: true,
           department: true,
@@ -91,40 +116,58 @@ export async function GET(req: NextRequest) {
           assignees: {
             include: {
               department: true,
-              user: true,
+              user: { select: { id: true, fullName: true, email: true } },
             },
           },
-          processingLogs: {
-            include: {
-              actor: true,
-            },
-            orderBy: { createdAt: 'desc' },
-          },
-          attachments: true,
+          attachments: { select: { id: true, fileName: true, fileUrl: true, fileType: true, fileSize: true } },
         },
         orderBy: { arrivalDate: 'desc' },
       }),
-      prisma.document.count({ where: { documentTypeDoc: 'INCOMING' } }),
+      prisma.document.count({ where: baseWhere }),
       prisma.document.count({
-        where: { documentTypeDoc: 'INCOMING', status: { in: ['PENDING_DIRECTIVE', 'DRAFT'] } },
-      }),
-      prisma.document.count({
-        where: { documentTypeDoc: 'INCOMING', status: { in: ['DIRECTED', 'PROCESSING'] } },
-      }),
-      prisma.document.count({
-        where: { documentTypeDoc: 'INCOMING', status: 'COMPLETED' },
+        where: {
+          AND: [
+            baseWhere,
+            { status: { in: ['PENDING_DIRECTIVE', 'DRAFT', 'DIRECTED', 'PENDING_PROCESSING'] } },
+          ],
+        },
       }),
       prisma.document.count({
         where: {
-          documentTypeDoc: 'INCOMING',
-          OR: [
-            { status: 'OVERDUE' },
-            { dueDate: { lt: new Date() }, status: { notIn: ['COMPLETED', 'ARCHIVED'] } },
+          AND: [
+            baseWhere,
+            { status: { in: ['PROCESSING', 'IN_PROGRESS'] } },
+          ],
+        },
+      }),
+      prisma.document.count({
+        where: {
+          AND: [
+            baseWhere,
+            { status: { in: ['COMPLETED', 'PROCESSED'] } },
+          ],
+        },
+      }),
+      prisma.document.count({
+        where: {
+          AND: [
+            baseWhere,
+            {
+              OR: [
+                { status: 'OVERDUE' },
+                { dueDate: { lt: new Date() }, status: { notIn: ['COMPLETED', 'ARCHIVED', 'PROCESSED'] } },
+              ],
+            },
           ],
         },
       }),
       prisma.document.findMany({
-        where: { documentTypeDoc: 'INCOMING', senderOrg: { not: null } },
+        where: {
+          AND: [
+            baseWhere,
+            { senderOrg: { not: null } },
+          ],
+        },
         select: { senderOrg: true },
         distinct: ['senderOrg'],
       }),
@@ -163,6 +206,8 @@ export async function POST(req: NextRequest) {
       documentTypeId,
       creatorId,
       submitDirectlyToLeader = true,
+      leaderId,
+      attachments = [],
     } = body;
 
     if (!title || !creatorId) {
@@ -174,7 +219,7 @@ export async function POST(req: NextRequest) {
 
     const initialStatus = submitDirectlyToLeader ? 'PENDING_DIRECTIVE' : 'DRAFT';
 
-    // 2. Tạo bản ghi Document
+    // 2. Tạo bản ghi Document kèm attachments và processingLogs
     const newDoc = await prisma.document.create({
       data: {
         documentNumber: documentNumber || `Đến-${autoSequence}`,
@@ -190,10 +235,20 @@ export async function POST(req: NextRequest) {
         urgencyLevel: urgencyLevel || 'NORMAL',
         confidentialityLevel: confidentialityLevel || 'NORMAL',
         status: initialStatus,
+        leaderId: submitDirectlyToLeader ? (leaderId || undefined) : undefined,
         clerkId: creatorId,
         creatorId,
         documentTypeId: documentTypeId || undefined,
         bookId,
+        attachments: {
+          create: attachments.map((att: any) => ({
+            fileName: att.fileName,
+            fileUrl: att.fileUrl,
+            fileType: att.fileType || 'pdf',
+            fileSize: att.fileSize || 0,
+            uploadedById: creatorId,
+          })),
+        },
         processingLogs: {
           create: [
             {
@@ -211,28 +266,42 @@ export async function POST(req: NextRequest) {
         department: true,
         book: true,
         creator: true,
+        leader: true,
+        attachments: true,
       },
     });
 
     // 3. Gửi thông báo đến Lãnh đạo nếu trình duyệt ngay
     if (submitDirectlyToLeader) {
-      const leaders = await prisma.user.findMany({
-        where: {
-          roles: { some: { role: { code: 'LEADER' } } },
-          isActive: true,
-        },
-      });
-
-      for (const leader of leaders) {
+      if (leaderId) {
         await prisma.notification.create({
           data: {
-            userId: leader.id,
+            userId: leaderId,
             title: 'Văn bản đến mới cần cho ý kiến',
             content: `Văn thư đã tiếp nhận văn bản: "${title}". Số đến: ${subNumber}`,
-            link: `/van-ban-den`,
+            link: `/van-ban-den/${newDoc.id}`,
             type: 'DIRECTIVE',
           },
         });
+      } else {
+        const leaders = await prisma.user.findMany({
+          where: {
+            roles: { some: { role: { code: 'LEADER' } } },
+            isActive: true,
+          },
+        });
+
+        for (const leader of leaders) {
+          await prisma.notification.create({
+            data: {
+              userId: leader.id,
+              title: 'Văn bản đến mới cần cho ý kiến',
+              content: `Văn thư đã tiếp nhận văn bản: "${title}". Số đến: ${subNumber}`,
+              link: `/van-ban-den/${newDoc.id}`,
+              type: 'DIRECTIVE',
+            },
+          });
+        }
       }
     }
 

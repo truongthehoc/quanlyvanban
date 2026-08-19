@@ -414,7 +414,7 @@ export default function DocumentDetailModal({
               {/* Assigned Departments & Officers */}
               <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm text-xs">
                 <h3 className="font-bold text-slate-800 text-sm mb-4">
-                  Danh sách đơn vị & cá nhân được phân công xử lý
+                  Danh sách phòng ban/bộ phận & cá nhân được phân công xử lý
                 </h3>
 
                 {doc.assignees && doc.assignees.length > 0 ? (
@@ -465,7 +465,7 @@ export default function DocumentDetailModal({
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-slate-400 italic">Chưa phân công đơn vị nào.</p>
+                  <p className="text-xs text-slate-400 italic">Chưa phân công phòng ban/bộ phận nào.</p>
                 )}
               </div>
 
