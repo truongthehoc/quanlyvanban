@@ -146,7 +146,7 @@ export default function Sidebar() {
               <img
                 src={config.adminInfo.logoUrl}
                 alt="Logo"
-                className="h-10 w-10 rounded-2xl object-contain flex-shrink-0"
+                className="h-10 w-10 object-contain flex-shrink-0"
               />
             ) : (
               <div
@@ -171,18 +171,22 @@ export default function Sidebar() {
         ) : (
           <Link
             href="/"
-            className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl text-white shadow-md shadow-blue-500/20 hover:scale-105 transition-transform"
-            style={{ backgroundColor: config.brandTheme.primaryColor || '#1E60F3' }}
+            className="mx-auto flex h-10 w-10 items-center justify-center hover:scale-105 transition-transform"
             title={`${config.softwareInfo.softwareName} ${config.softwareInfo.currentVersion}`}
           >
             {config.adminInfo.logoUrl ? (
               <img
                 src={config.adminInfo.logoUrl}
                 alt="Logo"
-                className="h-10 w-10 rounded-2xl object-contain"
+                className="max-h-9 max-w-9 object-contain"
               />
             ) : (
-              <FileText className="h-5 w-5" />
+              <div
+                className="flex h-9 w-9 items-center justify-center rounded-2xl text-white shadow-md shadow-blue-500/20"
+                style={{ backgroundColor: config.brandTheme.primaryColor || '#1E60F3' }}
+              >
+                <FileText className="h-4.5 w-4.5" />
+              </div>
             )}
           </Link>
         )}
@@ -231,7 +235,7 @@ export default function Sidebar() {
                     >
                       <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'}`}>
                         <Icon
-                          className={`h-4.5 w-4.5 flex-shrink-0 ${
+                          className={`h-4 w-4 flex-shrink-0 ${
                             isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-700'
                           }`}
                         />
