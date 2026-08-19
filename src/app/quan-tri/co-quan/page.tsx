@@ -266,10 +266,10 @@ export default function OrganizationsAdminPage() {
     const found = categories.find((c) => c.code === type);
     const colorKey = found?.color || (type === 'GOVERNMENT' ? 'blue' : type === 'DEPARTMENT' ? 'purple' : type === 'ENTERPRISE' ? 'amber' : 'teal');
     const colorStyle = BADGE_COLOR_MAP[colorKey] || BADGE_COLOR_MAP.blue;
-    const displayName = found?.name?.split('(')[0]?.trim() || (type === 'GOVERNMENT' ? 'Cơ quan Nhà nước' : type === 'DEPARTMENT' ? 'Sở ban ngành' : type === 'ENTERPRISE' ? 'Doanh nghiệp / Bưu chính' : type === 'PARTNER' ? 'Đối tác' : type);
+    const displayName = found?.name || (type === 'GOVERNMENT' ? 'Cơ quan Nhà nước' : type === 'DEPARTMENT' ? 'Sở ban ngành địa phương' : type === 'ENTERPRISE' ? 'Doanh nghiệp / Đơn vị Bưu chính' : type === 'PARTNER' ? 'Đối tác / Tổ chức khác' : type);
 
     return (
-      <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${colorStyle.bg} ${colorStyle.text} ${colorStyle.border}`}>
+      <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border whitespace-nowrap ${colorStyle.bg} ${colorStyle.text} ${colorStyle.border}`}>
         {displayName}
       </span>
     );
@@ -364,19 +364,19 @@ export default function OrganizationsAdminPage() {
         </div>
       </div>
 
-      {/* 4. Table Section */}
+      {/* 3. Table Section */}
       <div className="rounded-2xl border border-slate-200/90 bg-white shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/80 font-bold text-slate-700">
-                <th className="py-3.5 px-4 sm:px-5 w-32 font-bold text-slate-800">Mã cơ quan</th>
-                <th className="py-3.5 px-4 sm:px-5 font-bold text-slate-800">Tên cơ quan / Đơn vị & Tên tắt</th>
-                <th className="py-3.5 px-4 sm:px-5 w-44 font-bold text-slate-800">Phân loại</th>
-                <th className="py-3.5 px-4 sm:px-5 w-52 font-bold text-slate-800">Thông tin liên hệ</th>
-                <th className="py-3.5 px-4 sm:px-5 w-64 font-bold text-slate-800">Địa chỉ trụ sở</th>
-                <th className="py-3.5 px-4 sm:px-5 w-28 text-center font-bold text-slate-800">VB liên kết</th>
-                <th className="py-3.5 px-4 sm:px-5 w-24 text-right font-bold text-slate-800">Thao tác</th>
+              <tr className="border-b border-slate-200 bg-slate-50/80 font-bold text-slate-700 text-[11px] uppercase tracking-wider">
+                <th className="py-3.5 px-4 sm:px-5 w-28 font-bold text-slate-800 whitespace-nowrap">Mã cơ quan</th>
+                <th className="py-3.5 px-4 sm:px-5 max-w-[260px] font-bold text-slate-800">Tên cơ quan / Đơn vị & Tên tắt</th>
+                <th className="py-3.5 px-4 sm:px-5 whitespace-nowrap min-w-[200px] font-bold text-slate-800">Phân loại</th>
+                <th className="py-3.5 px-4 sm:px-5 w-48 font-bold text-slate-800">Thông tin liên hệ</th>
+                <th className="py-3.5 px-4 sm:px-5 max-w-[240px] font-bold text-slate-800">Địa chỉ trụ sở</th>
+                <th className="py-3.5 px-4 sm:px-5 w-24 text-center font-bold text-slate-800 whitespace-nowrap">VB liên kết</th>
+                <th className="py-3.5 px-4 sm:px-5 w-20 text-right font-bold text-slate-800 whitespace-nowrap">Thao tác</th>
               </tr>
             </thead>
 
@@ -401,13 +401,13 @@ export default function OrganizationsAdminPage() {
                     <tr key={org.id} className="hover:bg-slate-50/80 transition-colors">
                       
                       {/* Mã */}
-                      <td className="py-4 px-4 sm:px-5 font-mono font-bold text-[#1E60F3]">
+                      <td className="py-4 px-4 sm:px-5 font-mono font-bold text-[#1E60F3] whitespace-nowrap">
                         {org.code}
                       </td>
 
                       {/* Tên & Tên tắt */}
-                      <td className="py-4 px-4 sm:px-5">
-                        <div className="font-bold text-slate-900 text-xs">{org.name}</div>
+                      <td className="py-4 px-4 sm:px-5 max-w-[260px]">
+                        <div className="font-bold text-slate-900 text-xs leading-snug">{org.name}</div>
                         {org.shortName && org.shortName !== org.name && (
                           <div className="text-[11px] text-slate-400 mt-0.5 font-medium">
                             Tên viết tắt: <strong className="text-slate-600">{org.shortName}</strong>
@@ -416,7 +416,7 @@ export default function OrganizationsAdminPage() {
                       </td>
 
                       {/* Phân loại */}
-                      <td className="py-4 px-4 sm:px-5">
+                      <td className="py-4 px-4 sm:px-5 whitespace-nowrap">
                         {getTypeBadge(org.type)}
                       </td>
 
