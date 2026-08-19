@@ -240,7 +240,9 @@ export default function DocumentTypesAdminPage() {
             <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Mã loại văn bản *</label>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Mã loại văn bản <span className="text-rose-500 font-bold">*</span>
+                  </label>
                   <input
                     type="text"
                     placeholder="VD: CV, QD, TB..."
@@ -253,7 +255,9 @@ export default function DocumentTypesAdminPage() {
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Tên loại văn bản *</label>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Tên loại văn bản <span className="text-rose-500 font-bold">*</span>
+                  </label>
                   <input
                     type="text"
                     placeholder="VD: Công văn, Quyết định..."
@@ -266,7 +270,9 @@ export default function DocumentTypesAdminPage() {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Mẫu quy tắc sinh số (Pattern) *</label>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Mẫu quy tắc sinh số (Pattern) <span className="text-rose-500 font-bold">*</span>
+                </label>
                 <input
                   type="text"
                   placeholder="VD: {STT}/{MA_LOAI}-{MA_DV}"

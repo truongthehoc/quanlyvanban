@@ -343,7 +343,9 @@ export default function SystemConfigPage() {
             <form onSubmit={handleSaveAdmin} className="space-y-4 text-xs">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Tên đầy đủ Cơ quan / Đơn vị *</label>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Tên đầy đủ Cơ quan / Đơn vị <span className="text-rose-500 font-bold">*</span>
+                  </label>
                   <input
                     type="text"
                     placeholder="VD: Bệnh viện Thuận Mỹ TDM"
@@ -905,7 +907,9 @@ export default function SystemConfigPage() {
               <form onSubmit={handleSaveSoftware} className="space-y-3 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-bold text-slate-700 mb-1">Tên phần mềm / Ứng dụng *</label>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      Tên phần mềm / Ứng dụng <span className="text-rose-500 font-bold">*</span>
+                    </label>
                     <input
                       type="text"
                       value={softwareForm.softwareName}
@@ -916,7 +920,9 @@ export default function SystemConfigPage() {
                   </div>
 
                   <div>
-                    <label className="block font-bold text-slate-700 mb-1">Đơn vị phát triển / Tác giả *</label>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      Đơn vị phát triển / Tác giả <span className="text-rose-500 font-bold">*</span>
+                    </label>
                     <input
                       type="text"
                       value={softwareForm.developer}
@@ -1117,7 +1123,9 @@ export default function SystemConfigPage() {
             {/* Body */}
             <form onSubmit={handleReleaseVersion} className="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
               <div>
-                <label className="block font-bold text-slate-700 mb-1.5">Chọn loại nâng cấp phiên bản *</label>
+                <label className="block font-bold text-slate-700 mb-1.5">
+                  Chọn loại nâng cấp phiên bản <span className="text-rose-500 font-bold">*</span>
+                </label>
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
@@ -1171,7 +1179,9 @@ export default function SystemConfigPage() {
 
               {releaseType === 'CUSTOM' && (
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Số phiên bản tùy chỉnh *</label>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Số phiên bản tùy chỉnh <span className="text-rose-500 font-bold">*</span>
+                  </label>
                   <input
                     type="text"
                     placeholder="VD: v3.1.0-beta"
@@ -1185,7 +1195,7 @@ export default function SystemConfigPage() {
 
               <div>
                 <label className="block font-bold text-slate-700 mb-1">
-                  Nội dung thay đổi (Changelog) - Mỗi dòng là 1 đầu mục *
+                  Nội dung thay đổi (Changelog) - Mỗi dòng là 1 đầu mục <span className="text-rose-500 font-bold">*</span>
                 </label>
                 <textarea
                   rows={4}

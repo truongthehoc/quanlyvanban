@@ -256,7 +256,9 @@ export default function DepartmentsAdminPage() {
             {/* Body */}
             <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Mã đơn vị *</label>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Mã đơn vị <span className="text-rose-500 font-bold">*</span>
+                </label>
                 <input
                   type="text"
                   placeholder="VD: KHTC, CNTT, VP..."
@@ -268,7 +270,9 @@ export default function DepartmentsAdminPage() {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Tên Phòng Ban / Đơn vị *</label>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Tên Phòng Ban / Đơn vị <span className="text-rose-500 font-bold">*</span>
+                </label>
                 <input
                   type="text"
                   placeholder="VD: Phòng Kế hoạch - Tài chính"

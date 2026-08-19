@@ -182,7 +182,9 @@ export default function DocumentBooksPage() {
             {/* Body */}
             <form onSubmit={handleCreateBook} className="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Mã định danh sổ *</label>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Mã định danh sổ <span className="text-rose-500 font-bold">*</span>
+                </label>
                 <input
                   type="text"
                   placeholder="VD: SO-DEN-2027"
@@ -194,7 +196,9 @@ export default function DocumentBooksPage() {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Tên sổ đăng ký *</label>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Tên sổ đăng ký <span className="text-rose-500 font-bold">*</span>
+                </label>
                 <input
                   type="text"
                   placeholder="VD: Sổ Đăng ký Văn bản Đến năm 2027"

@@ -122,7 +122,9 @@ export function CreateInternalModal({
 
           <div className="grid grid-cols-3 gap-4">
             <div className="col-span-2">
-              <label className="block font-bold text-slate-700 mb-1">Trích yếu / Tiêu đề thông báo *</label>
+              <label className="block font-bold text-slate-700 mb-1">
+                Trích yếu / Tiêu đề thông báo <span className="text-rose-500 font-bold">*</span>
+              </label>
               <input
                 type="text"
                 placeholder="VD: Thông báo Lịch nghỉ Lễ & Phân công trực ban..."
@@ -159,7 +161,7 @@ export function CreateInternalModal({
           {/* Phân quyền đối tượng nhận */}
           <div className="rounded-2xl border border-slate-200 p-4 bg-slate-50/70 space-y-3">
             <label className="block font-bold text-slate-800 text-xs">
-              Phân quyền đối tượng nhận văn bản (Audience Scope) *
+              Phân quyền đối tượng nhận văn bản (Audience Scope) <span className="text-rose-500 font-bold">*</span>
             </label>
 
             <div className="flex items-center space-x-6">

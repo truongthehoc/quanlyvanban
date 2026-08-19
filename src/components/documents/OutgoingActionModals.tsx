@@ -138,7 +138,9 @@ export function CreateOutgoingModal({
           )}
 
           <div>
-            <label className="block font-bold text-slate-700 mb-1">Trích yếu nội dung văn bản *</label>
+            <label className="block font-bold text-slate-700 mb-1">
+              Trích yếu nội dung văn bản <span className="text-rose-500 font-bold">*</span>
+            </label>
             <textarea
               rows={3}
               placeholder="VD: Quyết định V/v Kiện toàn nhân sự ban chuyển đổi số..."
@@ -151,7 +153,9 @@ export function CreateOutgoingModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block font-bold text-slate-700 mb-1">Loại văn bản *</label>
+              <label className="block font-bold text-slate-700 mb-1">
+                Loại văn bản <span className="text-rose-500 font-bold">*</span>
+              </label>
               <select
                 value={formData.documentTypeId}
                 onChange={(e) => setFormData({ ...formData, documentTypeId: e.target.value })}
@@ -167,7 +171,9 @@ export function CreateOutgoingModal({
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="font-bold text-slate-700">Nơi nhận văn bản *</label>
+                <label className="font-bold text-slate-700">
+                  Nơi nhận văn bản <span className="text-rose-500 font-bold">*</span>
+                </label>
                 <button
                   type="button"
                   onClick={() => setUseCustomRecipient(!useCustomRecipient)}
@@ -366,7 +372,9 @@ export function IssueAndNumberModal({
           </div>
 
           <div>
-            <label className="block font-bold text-slate-700 mb-1">Hình thức gửi văn bản *</label>
+            <label className="block font-bold text-slate-700 mb-1">
+              Hình thức gửi văn bản <span className="text-rose-500 font-bold">*</span>
+            </label>
             <select
               value={dispatchMethod}
               onChange={(e) => setDispatchMethod(e.target.value)}
@@ -380,7 +388,9 @@ export function IssueAndNumberModal({
           </div>
 
           <div>
-            <label className="block font-bold text-slate-700 mb-1">Nơi nhận xác nhận *</label>
+            <label className="block font-bold text-slate-700 mb-1">
+              Nơi nhận xác nhận <span className="text-rose-500 font-bold">*</span>
+            </label>
             <input
               type="text"
               value={recipientOrg}

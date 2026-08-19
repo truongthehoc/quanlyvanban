@@ -142,7 +142,9 @@ export function CreateIncomingModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block font-bold text-slate-700 mb-1">Số/Ký hiệu văn bản gốc *</label>
+              <label className="block font-bold text-slate-700 mb-1">
+                Số/Ký hiệu văn bản gốc <span className="text-rose-500 font-bold">*</span>
+              </label>
               <input
                 type="text"
                 placeholder="VD: 108/UBND-VX"
@@ -155,7 +157,9 @@ export function CreateIncomingModal({
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="font-bold text-slate-700">Cơ quan ban hành (Nơi gửi) *</label>
+                <label className="font-bold text-slate-700">
+                  Cơ quan ban hành (Nơi gửi) <span className="text-rose-500 font-bold">*</span>
+                </label>
                 <button
                   type="button"
                   onClick={() => setUseCustomSender(!useCustomSender)}
@@ -192,7 +196,9 @@ export function CreateIncomingModal({
           </div>
 
           <div>
-            <label className="block font-bold text-slate-700 mb-1">Trích yếu nội dung văn bản *</label>
+            <label className="block font-bold text-slate-700 mb-1">
+              Trích yếu nội dung văn bản <span className="text-rose-500 font-bold">*</span>
+            </label>
             <textarea
               rows={3}
               placeholder="Nhập tóm tắt nội dung chính của văn bản đến..."
@@ -417,7 +423,9 @@ export function DirectiveModal({
           </div>
 
           <div>
-            <label className="block font-bold text-slate-700 mb-1">Nội dung ý kiến chỉ đạo *</label>
+            <label className="block font-bold text-slate-700 mb-1">
+              Nội dung ý kiến chỉ đạo <span className="text-rose-500 font-bold">*</span>
+            </label>
             <textarea
               rows={3}
               placeholder="VD: Giao Trung tâm CNTT chủ trì, Phòng KHTC phối hợp rà soát và đề xuất phương án..."
@@ -429,7 +437,9 @@ export function DirectiveModal({
           </div>
 
           <div>
-            <label className="block font-bold text-slate-700 mb-1">Đơn vị CHỦ TRÌ xử lý *</label>
+            <label className="block font-bold text-slate-700 mb-1">
+              Đơn vị CHỦ TRÌ xử lý <span className="text-rose-500 font-bold">*</span>
+            </label>
             <select
               value={primaryDeptId}
               onChange={(e) => setPrimaryDeptId(e.target.value)}
@@ -678,7 +688,7 @@ export function ProgressModal({
         {/* Body */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
           <div>
-            <label className="block font-bold text-slate-700 mb-1">Trạng thái xử lý *</label>
+            <label className="block font-bold text-slate-700 mb-1">Trạng thái xử lý <span className="text-rose-500 font-bold">*</span></label>
             <select
               value={progressStatus}
               onChange={(e) => setProgressStatus(e.target.value)}
@@ -690,7 +700,7 @@ export function ProgressModal({
           </div>
 
           <div>
-            <label className="block font-bold text-slate-700 mb-1">Báo cáo kết quả / Ghi chú chi tiết *</label>
+            <label className="block font-bold text-slate-700 mb-1">Báo cáo kết quả / Ghi chú chi tiết <span className="text-rose-500 font-bold">*</span></label>
             <textarea
               rows={4}
               placeholder="VD: Đã hoàn tất dự thảo kế hoạch và gửi báo cáo thẩm định..."

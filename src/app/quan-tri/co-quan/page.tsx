@@ -453,7 +453,9 @@ export default function OrganizationsAdminPage() {
             <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Mã cơ quan *</label>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    Mã cơ quan <span className="text-rose-500 font-bold">*</span>
+                  </label>
                   <input
                     type="text"
                     placeholder="VD: UBND-BD"
@@ -478,7 +480,9 @@ export default function OrganizationsAdminPage() {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Tên đầy đủ Cơ quan / Đơn vị *</label>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Tên đầy đủ Cơ quan / Đơn vị <span className="text-rose-500 font-bold">*</span>
+                </label>
                 <input
                   type="text"
                   placeholder="VD: Ủy ban Nhân dân tỉnh Bình Dương"
