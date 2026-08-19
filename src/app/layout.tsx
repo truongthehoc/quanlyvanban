@@ -27,7 +27,7 @@ export default function RootLayout({
               {/* Right Area: Header starting from Sidebar onwards + Scrollable Content */}
               <div className="flex flex-1 flex-col overflow-hidden min-w-0">
                 <Header />
-                <main className="flex-1 overflow-y-auto bg-slate-50/70">
+                <main className="relative flex-1 overflow-y-auto bg-slate-50/70 z-20">
                   <div className="w-full px-4 sm:px-6 lg:px-8 py-6">
                     {children}
                   </div>
