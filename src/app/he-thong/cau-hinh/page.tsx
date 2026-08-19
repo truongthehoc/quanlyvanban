@@ -629,18 +629,33 @@ export default function SystemConfigPage() {
                           type="button"
                           key={col.id}
                           onClick={() => handleAssignPrimary(col.hex)}
-                          className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium border transition-all cursor-pointer ${
+                          style={
                             isSelected
-                              ? 'bg-slate-900 text-white border-slate-900 shadow-xs font-bold'
+                              ? {
+                                  backgroundColor: col.hex,
+                                  borderColor: col.hex,
+                                }
+                              : undefined
+                          }
+                          className={`flex items-center space-x-1.5 px-3 py-1 rounded-full text-[11px] transition-all cursor-pointer border ${
+                            isSelected
+                              ? 'text-white font-bold shadow-xs'
                               : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
                           }`}
                         >
                           <span
-                            className="h-3.5 w-3.5 rounded-full shadow-xs border border-white"
-                            style={{ backgroundColor: col.hex }}
-                          />
-                          <span className="truncate max-w-[90px]">{col.name}</span>
-                          {isSelected && <Check className="h-3 w-3 ml-0.5" />}
+                            className="h-3.5 w-3.5 rounded-full shadow-xs border flex items-center justify-center flex-shrink-0"
+                            style={{
+                              backgroundColor: isSelected ? '#ffffff' : col.hex,
+                              borderColor: '#ffffff',
+                            }}
+                          >
+                            {isSelected && (
+                              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: col.hex }} />
+                            )}
+                          </span>
+                          <span className="truncate max-w-[120px]">{col.name}</span>
+                          {isSelected && <Check className="h-3 w-3 ml-0.5 text-white flex-shrink-0" />}
                         </button>
                       );
                     })}
@@ -682,18 +697,33 @@ export default function SystemConfigPage() {
                           type="button"
                           key={col.id}
                           onClick={() => handleAssignHeading(col.hex)}
-                          className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium border transition-all cursor-pointer ${
+                          style={
                             isSelected
-                              ? 'bg-slate-900 text-white border-slate-900 shadow-xs font-bold'
+                              ? {
+                                  backgroundColor: col.hex,
+                                  borderColor: col.hex,
+                                }
+                              : undefined
+                          }
+                          className={`flex items-center space-x-1.5 px-3 py-1 rounded-full text-[11px] transition-all cursor-pointer border ${
+                            isSelected
+                              ? 'text-white font-bold shadow-xs'
                               : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
                           }`}
                         >
                           <span
-                            className="h-3.5 w-3.5 rounded-full shadow-xs border border-white"
-                            style={{ backgroundColor: col.hex }}
-                          />
-                          <span className="truncate max-w-[90px]">{col.name}</span>
-                          {isSelected && <Check className="h-3 w-3 ml-0.5" />}
+                            className="h-3.5 w-3.5 rounded-full shadow-xs border flex items-center justify-center flex-shrink-0"
+                            style={{
+                              backgroundColor: isSelected ? '#ffffff' : col.hex,
+                              borderColor: '#ffffff',
+                            }}
+                          >
+                            {isSelected && (
+                              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: col.hex }} />
+                            )}
+                          </span>
+                          <span className="truncate max-w-[120px]">{col.name}</span>
+                          {isSelected && <Check className="h-3 w-3 ml-0.5 text-white flex-shrink-0" />}
                         </button>
                       );
                     })}
