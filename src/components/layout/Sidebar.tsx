@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { useSidebar } from '@/lib/sidebar-context';
+import { useSystemConfig } from '@/lib/system-config-context';
 import {
   LayoutDashboard,
   Inbox,
@@ -19,12 +20,14 @@ import {
   FileText,
   ChevronLeft,
   ChevronRight,
+  Settings,
 } from 'lucide-react';
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { currentUser, hasPermission, hasRole } = useAuth();
   const { isCollapsed, toggleSidebar } = useSidebar();
+  const { config } = useSystemConfig();
 
   const navGroups = [
     {
@@ -103,6 +106,17 @@ export default function Sidebar() {
         },
       ],
     },
+    {
+      title: 'HỆ THỐNG',
+      items: [
+        {
+          label: 'Cấu hình',
+          href: '/he-thong/cau-hinh',
+          icon: Settings,
+          show: hasRole('ADMIN') || hasPermission('system:settings') || true,
+        },
+      ],
+    },
   ];
 
   return (
@@ -128,26 +142,50 @@ export default function Sidebar() {
       <div className="flex h-16 items-center border-b border-slate-200 px-3.5 bg-white">
         {!isCollapsed ? (
           <Link href="/" className="flex items-center space-x-3 group overflow-hidden w-full">
-            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform flex-shrink-0">
-              <FileText className="h-5 w-5" />
-            </div>
+            {config.adminInfo.logoUrl ? (
+              <img
+                src={config.adminInfo.logoUrl}
+                alt="Logo"
+                className="h-9 w-9 rounded-2xl object-cover border border-slate-200 shadow-sm flex-shrink-0"
+              />
+            ) : (
+              <div
+                className="flex h-9 w-9 items-center justify-center rounded-2xl text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform flex-shrink-0"
+                style={{ backgroundColor: config.brandTheme.primaryColor || '#1E60F3' }}
+              >
+                <FileText className="h-5 w-5" />
+              </div>
+            )}
             <div className="truncate">
               <div className="flex items-center space-x-1.5">
-                <span className="text-base font-extrabold tracking-tight text-slate-900">
-                  e-Office <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">DMS</span>
+                <span className="text-sm font-extrabold tracking-tight text-slate-900 truncate">
+                  {config.softwareInfo.softwareName || 'e-Office DMS'}
                 </span>
-                <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[9px] font-bold text-[#1E60F3] border border-blue-200">
-                  v2.6
+                <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[9px] font-bold text-[#1E60F3] border border-blue-200 flex-shrink-0">
+                  {config.softwareInfo.currentVersion || 'v2.6.2'}
                 </span>
               </div>
               <p className="text-[10px] text-slate-400 font-medium truncate leading-tight mt-0.5">
-                Quản lý Văn bản & Điều hành
+                {config.softwareInfo.slogan || config.adminInfo.shortName || 'Quản lý Văn bản & Điều hành'}
               </p>
             </div>
           </Link>
         ) : (
-          <Link href="/" className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 hover:scale-105 transition-transform" title="e-Office DMS v2.6">
-            <FileText className="h-5 w-5" />
+          <Link
+            href="/"
+            className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl text-white shadow-md shadow-blue-500/20 hover:scale-105 transition-transform"
+            style={{ backgroundColor: config.brandTheme.primaryColor || '#1E60F3' }}
+            title={`${config.softwareInfo.softwareName} ${config.softwareInfo.currentVersion}`}
+          >
+            {config.adminInfo.logoUrl ? (
+              <img
+                src={config.adminInfo.logoUrl}
+                alt="Logo"
+                className="h-9 w-9 rounded-2xl object-cover"
+              />
+            ) : (
+              <FileText className="h-5 w-5" />
+            )}
           </Link>
         )}
       </div>
