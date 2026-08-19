@@ -23,7 +23,6 @@ import {
   Trash2,
   MousePointerClick,
   Type,
-  LayoutGrid,
 } from 'lucide-react';
 
 export default function SystemConfigPage() {
@@ -66,8 +65,8 @@ export default function SystemConfigPage() {
   };
 
   const savedColors: CustomColorItem[] = brandForm.savedColors || [
-    { id: 'c1', name: 'Màu Thuận Mỹ (Nút & Menu)', hex: '#C52998' },
-    { id: 'c2', name: 'Xanh Đậm (Tiêu đề trang)', hex: '#190072' },
+    { id: 'c1', name: 'Màu Thuận Mỹ TDM', hex: '#C52998' },
+    { id: 'c2', name: 'Xanh Đậm Tiêu Đề', hex: '#190072' },
     { id: 'c3', name: 'Xanh e-Office Chuẩn', hex: '#1E60F3' },
   ];
 
@@ -81,7 +80,7 @@ export default function SystemConfigPage() {
     };
     setBrandForm(updated);
     updateBrandTheme(updated);
-    showToast(`Đã gán mã màu ${hex} cho Nút Bấm & Menu Sidebar!`);
+    showToast(`Đã áp dụng mã màu ${hex} cho Nút Bấm & Menu Sidebar!`);
   };
 
   // Assign color to Headings (Page titles & section headers)
@@ -93,7 +92,7 @@ export default function SystemConfigPage() {
     };
     setBrandForm(updated);
     updateBrandTheme(updated);
-    showToast(`Đã gán mã màu ${hex} cho Tiêu Đề Các Trang & Mục!`);
+    showToast(`Đã áp dụng mã màu ${hex} cho Tiêu Đề Các Trang & Mục!`);
   };
 
   // Add a new custom color to the list
@@ -111,7 +110,7 @@ export default function SystemConfigPage() {
     setBrandForm(updated);
     updateBrandTheme(updated);
     setNewColorName('');
-    showToast(`Đã thêm màu "${name}" (${newColorHex}) vào danh sách!`);
+    showToast(`Đã thêm màu "${name}" vào bảng màu!`);
   };
 
   // Delete a color from the list
@@ -156,7 +155,7 @@ export default function SystemConfigPage() {
   const handleSaveBrand = (e: React.FormEvent) => {
     e.preventDefault();
     updateBrandTheme(brandForm);
-    showToast('Đã áp dụng và lưu cấu hình nhận diện thương hiệu thành công!');
+    showToast('Đã lưu cấu hình nhận diện thương hiệu thành công!');
   };
 
   // Save Software Info
@@ -524,84 +523,192 @@ export default function SystemConfigPage() {
       {activeTab === 'brand' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 rounded-3xl border border-slate-200 bg-white p-6 shadow-xs space-y-6">
-            <div>
-              <h2
-                className="text-base font-bold"
-                style={{ color: currentHeadingColor }}
+            
+            {/* 1. Header & Compact Add Color Bar */}
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h2
+                    className="text-base font-bold"
+                    style={{ color: currentHeadingColor }}
+                  >
+                    Bảng Màu & Phân Vùng Nhận Diện Thương Hiệu
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Thêm các mã màu thương hiệu và chỉ định phân vùng áp dụng tương ứng.
+                  </p>
+                </div>
+              </div>
+
+              {/* Compact Add Color Bar */}
+              <form
+                onSubmit={handleAddNewColor}
+                className="flex flex-wrap items-center gap-2.5 p-2 rounded-2xl border border-slate-200 bg-slate-50/80"
               >
-                Danh Sách Màu Chủ Đạo Thương Hiệu
-              </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Tự do thêm nhiều màu chủ đạo của đơn vị, chọn phân vùng áp dụng màu cho từng thành phần giao diện.
-              </p>
-            </div>
-
-            {/* Form Thêm Màu Mới */}
-            <form
-              onSubmit={handleAddNewColor}
-              className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 space-y-3"
-            >
-              <span className="font-bold text-slate-800 text-xs flex items-center space-x-1.5">
-                <Plus className="h-4 w-4 text-slate-600" />
-                <span>Thêm Màu Chủ Đạo Mới Vào Danh Sách</span>
-              </span>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="sm:col-span-1">
-                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Tên gợi nhớ màu</label>
+                {/* Circular Color Swatch Picker */}
+                <div
+                  className="relative h-8 w-8 rounded-full overflow-hidden shadow-xs border-2 border-white ring-1 ring-slate-300 flex-shrink-0 cursor-pointer transition-transform hover:scale-105"
+                  style={{ backgroundColor: newColorHex }}
+                  title="Nhấp để mở bảng chọn màu"
+                >
                   <input
-                    type="text"
-                    placeholder="VD: Màu Thuận Mỹ, Màu Xanh Tiêu đề..."
-                    value={newColorName}
-                    onChange={(e) => setNewColorName(e.target.value)}
-                    className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:outline-none"
+                    type="color"
+                    value={newColorHex}
+                    onChange={(e) => setNewColorHex(e.target.value)}
+                    className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
                   />
                 </div>
 
-                <div className="sm:col-span-1">
-                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Chọn mã màu Hex</label>
-                  <div className="flex items-center space-x-2">
-                    {/* Perfect Circular Color Input */}
-                    <div
-                      className="relative h-9 w-9 rounded-full overflow-hidden shadow-xs border-2 border-white ring-2 ring-slate-300 flex-shrink-0 cursor-pointer transition-transform hover:scale-105"
-                      style={{ backgroundColor: newColorHex }}
-                      title="Bấm để chọn màu"
-                    >
-                      <input
-                        type="color"
-                        value={newColorHex}
-                        onChange={(e) => setNewColorHex(e.target.value)}
-                        className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
-                      />
+                <input
+                  type="text"
+                  value={newColorHex}
+                  onChange={(e) => setNewColorHex(e.target.value)}
+                  className="w-24 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 font-mono uppercase text-xs focus:outline-none"
+                  placeholder="#HEX"
+                />
+
+                <input
+                  type="text"
+                  placeholder="Tên màu (VD: Màu Thuận Mỹ...)"
+                  value={newColorName}
+                  onChange={(e) => setNewColorName(e.target.value)}
+                  className="flex-1 min-w-[140px] rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs focus:outline-none"
+                />
+
+                <button
+                  type="submit"
+                  style={{ backgroundColor: newColorHex }}
+                  className="rounded-xl px-4 py-2 font-bold text-xs text-white shadow-sm transition-all hover:scale-105 cursor-pointer flex items-center space-x-1 flex-shrink-0"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>Thêm màu</span>
+                </button>
+              </form>
+            </div>
+
+            {/* 2. Hai Khối Phân Vùng Màu Sắc Trọng Tâm */}
+            <div className="space-y-3">
+              <span className="text-xs font-bold text-slate-700 block">
+                Phân Vùng Màu Sắc Trực Quan (Bấm vào màu bạn muốn gán):
+              </span>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                
+                {/* Khối 1: Nút Bấm & Sidebar */}
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 space-y-3 shadow-xs">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className="flex h-7 w-7 items-center justify-center rounded-full text-white shadow-xs"
+                        style={{ backgroundColor: currentBrandColor }}
+                      >
+                        <MousePointerClick className="h-3.5 w-3.5" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-800 text-xs">Màu Nút Bấm & Sidebar</p>
+                        <p className="text-[10px] text-slate-400">Nút thêm, tìm kiếm, menu active</p>
+                      </div>
                     </div>
-                    <input
-                      type="text"
-                      value={newColorHex}
-                      onChange={(e) => setNewColorHex(e.target.value)}
-                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 font-mono uppercase text-xs focus:outline-none"
-                    />
+                    <span
+                      className="font-mono text-[11px] font-bold px-2 py-0.5 rounded-full"
+                      style={{
+                        backgroundColor: `${currentBrandColor}18`,
+                        color: currentBrandColor,
+                      }}
+                    >
+                      {currentBrandColor}
+                    </span>
+                  </div>
+
+                  {/* Swatches to pick for Primary */}
+                  <div className="pt-2 border-t border-slate-200/80 flex flex-wrap items-center gap-2">
+                    {savedColors.map((col) => {
+                      const isSelected = brandForm.primaryColor.toLowerCase() === col.hex.toLowerCase();
+                      return (
+                        <button
+                          type="button"
+                          key={col.id}
+                          onClick={() => handleAssignPrimary(col.hex)}
+                          className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium border transition-all cursor-pointer ${
+                            isSelected
+                              ? 'bg-slate-900 text-white border-slate-900 shadow-xs font-bold'
+                              : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
+                          }`}
+                        >
+                          <span
+                            className="h-3.5 w-3.5 rounded-full shadow-xs border border-white"
+                            style={{ backgroundColor: col.hex }}
+                          />
+                          <span className="truncate max-w-[90px]">{col.name}</span>
+                          {isSelected && <Check className="h-3 w-3 ml-0.5" />}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
-                <div className="sm:col-span-1 flex items-end">
-                  <button
-                    type="submit"
-                    style={{ backgroundColor: newColorHex }}
-                    className="w-full rounded-xl py-2.5 px-4 font-bold text-xs text-white shadow-md transition-all hover:scale-105 cursor-pointer flex items-center justify-center space-x-1.5"
-                  >
-                    <Plus className="h-4 w-4" />
-                    <span>Thêm Vào Danh Sách</span>
-                  </button>
-                </div>
-              </div>
-            </form>
+                {/* Khối 2: Tiêu Đề Các Trang & Mục */}
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 space-y-3 shadow-xs">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className="flex h-7 w-7 items-center justify-center rounded-full text-white shadow-xs"
+                        style={{ backgroundColor: currentHeadingColor }}
+                      >
+                        <Type className="h-3.5 w-3.5" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-800 text-xs">Màu Tiêu Đề Trang & Mục</p>
+                        <p className="text-[10px] text-slate-400">Tiêu đề các trang, đề mục lớn</p>
+                      </div>
+                    </div>
+                    <span
+                      className="font-mono text-[11px] font-bold px-2 py-0.5 rounded-full"
+                      style={{
+                        backgroundColor: `${currentHeadingColor}18`,
+                        color: currentHeadingColor,
+                      }}
+                    >
+                      {currentHeadingColor}
+                    </span>
+                  </div>
 
-            {/* Danh Sách Các Màu Đã Thêm */}
-            <div>
-              <label className="block font-bold text-slate-700 mb-2">
-                Các màu chủ đạo hiện có trong bảng màu:
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {/* Swatches to pick for Heading */}
+                  <div className="pt-2 border-t border-slate-200/80 flex flex-wrap items-center gap-2">
+                    {savedColors.map((col) => {
+                      const isSelected = (brandForm.headingColor || '').toLowerCase() === col.hex.toLowerCase();
+                      return (
+                        <button
+                          type="button"
+                          key={col.id}
+                          onClick={() => handleAssignHeading(col.hex)}
+                          className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium border transition-all cursor-pointer ${
+                            isSelected
+                              ? 'bg-slate-900 text-white border-slate-900 shadow-xs font-bold'
+                              : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
+                          }`}
+                        >
+                          <span
+                            className="h-3.5 w-3.5 rounded-full shadow-xs border border-white"
+                            style={{ backgroundColor: col.hex }}
+                          />
+                          <span className="truncate max-w-[90px]">{col.name}</span>
+                          {isSelected && <Check className="h-3 w-3 ml-0.5" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            {/* 3. Danh Sách Chi Tiết Các Màu Đã Lưu (Palette Chips) */}
+            <div className="pt-2 border-t border-slate-100">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">
+                Các thẻ màu trong bảng nhận diện ({savedColors.length} màu):
+              </span>
+              <div className="flex flex-wrap items-center gap-2">
                 {savedColors.map((col) => {
                   const isPrimary = brandForm.primaryColor.toLowerCase() === col.hex.toLowerCase();
                   const isHeading = (brandForm.headingColor || '').toLowerCase() === col.hex.toLowerCase();
@@ -609,133 +716,56 @@ export default function SystemConfigPage() {
                   return (
                     <div
                       key={col.id}
-                      className="relative flex flex-col justify-between p-3.5 rounded-2xl border bg-white border-slate-200 shadow-xs transition-all hover:border-slate-300 space-y-2.5"
+                      className="flex items-center space-x-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs"
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3 truncate">
-                          {/* Circular color swatch */}
-                          <div
-                            className="flex h-8 w-8 items-center justify-center rounded-full text-white shadow-xs border-2 border-white ring-1 ring-slate-200 flex-shrink-0"
-                            style={{ backgroundColor: col.hex }}
-                          >
-                            {(isPrimary || isHeading) && <Check className="h-4 w-4" />}
-                          </div>
-                          <div className="truncate">
-                            <p className="font-bold text-slate-900 text-xs truncate">{col.name}</p>
-                            <p className="text-[10px] text-slate-400 font-mono">{col.hex}</p>
-                          </div>
-                        </div>
+                      <span
+                        className="h-4 w-4 rounded-full border border-white shadow-xs flex-shrink-0"
+                        style={{ backgroundColor: col.hex }}
+                      />
+                      <span className="font-bold text-slate-800">{col.name}</span>
+                      <span className="text-[10px] text-slate-400 font-mono">{col.hex}</span>
+                      
+                      {isPrimary && (
+                        <span
+                          className="px-1.5 py-0.2 text-[9px] font-bold rounded-full"
+                          style={{
+                            backgroundColor: `${col.hex}20`,
+                            color: col.hex,
+                          }}
+                        >
+                          Nút
+                        </span>
+                      )}
+                      {isHeading && (
+                        <span
+                          className="px-1.5 py-0.2 text-[9px] font-bold rounded-full"
+                          style={{
+                            backgroundColor: `${col.hex}20`,
+                            color: col.hex,
+                          }}
+                        >
+                          Tiêu đề
+                        </span>
+                      )}
 
-                        {savedColors.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={(e) => handleDeleteColor(col.id, e)}
-                            className="p-1 rounded-full text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                            title="Xóa màu này"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        )}
-                      </div>
-
-                      {/* Quick assignment buttons for this color */}
-                      <div className="pt-2 border-t border-slate-100 flex flex-col gap-1.5 text-[10px]">
+                      {savedColors.length > 1 && (
                         <button
                           type="button"
-                          onClick={() => handleAssignPrimary(col.hex)}
-                          className={`flex items-center justify-between px-2.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                            isPrimary
-                              ? 'border-slate-900 bg-slate-900 text-white font-bold'
-                              : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
-                          }`}
+                          onClick={(e) => handleDeleteColor(col.id, e)}
+                          className="p-0.5 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer ml-1"
+                          title="Xóa màu này"
                         >
-                          <span className="flex items-center space-x-1">
-                            <MousePointerClick className="h-3 w-3" />
-                            <span>Màu Nút & Sidebar</span>
-                          </span>
-                          {isPrimary && <span className="text-[9px]">ĐANG DÙNG</span>}
+                          <Trash2 className="h-3 w-3" />
                         </button>
-
-                        <button
-                          type="button"
-                          onClick={() => handleAssignHeading(col.hex)}
-                          className={`flex items-center justify-between px-2.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                            isHeading
-                              ? 'border-slate-900 bg-slate-900 text-white font-bold'
-                              : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
-                          }`}
-                        >
-                          <span className="flex items-center space-x-1">
-                            <Type className="h-3 w-3" />
-                            <span>Màu Tiêu Đề Các Mục</span>
-                          </span>
-                          {isHeading && <span className="text-[9px]">ĐANG DÙNG</span>}
-                        </button>
-                      </div>
+                      )}
                     </div>
                   );
                 })}
               </div>
             </div>
 
-            {/* Phân Vùng Áp Dụng Màu Sắc (Color Scope Assignment) */}
-            <div className="pt-4 border-t border-slate-200 space-y-3">
-              <div>
-                <h3
-                  className="font-bold text-xs"
-                  style={{ color: currentHeadingColor }}
-                >
-                  Phân Vùng Áp Dụng Màu Sắc Hệ Thống (Color Scope Roles)
-                </h3>
-                <p className="text-[11px] text-slate-500">
-                  Tùy chỉnh phân bổ màu sắc cho từng khu vực cụ thể trên giao diện:
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {/* Role 1: Buttons & Sidebar */}
-                <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-slate-800 flex items-center space-x-1.5">
-                      <MousePointerClick className="h-4 w-4 text-slate-600" />
-                      <span>1. Nút Bấm & Menu Sidebar</span>
-                    </span>
-                    <div
-                      className="h-5 w-5 rounded-full border-2 border-white ring-1 ring-slate-300"
-                      style={{ backgroundColor: currentBrandColor }}
-                    />
-                  </div>
-                  <p className="text-[11px] text-slate-500">
-                    Áp dụng cho: Nút bấm thêm mới, tìm kiếm, lưu dữ liệu, tên phần mềm và mục active trên sidebar.
-                  </p>
-                  <div className="flex items-center space-x-2 pt-1 font-mono text-xs font-bold" style={{ color: currentBrandColor }}>
-                    <span>Mã màu: {currentBrandColor}</span>
-                  </div>
-                </div>
-
-                {/* Role 2: Page & Section Headings */}
-                <div className="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-slate-800 flex items-center space-x-1.5">
-                      <Type className="h-4 w-4 text-slate-600" />
-                      <span>2. Tiêu Đề Các Trang & Mục</span>
-                    </span>
-                    <div
-                      className="h-5 w-5 rounded-full border-2 border-white ring-1 ring-slate-300"
-                      style={{ backgroundColor: currentHeadingColor }}
-                    />
-                  </div>
-                  <p className="text-[11px] text-slate-500">
-                    Áp dụng cho: Tiêu đề trang (Văn bản đến, Văn bản đi, Cấu hình,...), tiêu đề các khối nội dung.
-                  </p>
-                  <div className="flex items-center space-x-2 pt-1 font-mono text-xs font-bold" style={{ color: currentHeadingColor }}>
-                    <span>Mã màu: {currentHeadingColor}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end pt-4 border-t border-slate-200">
+            {/* Bottom Save Action */}
+            <div className="flex justify-end pt-3 border-t border-slate-200">
               <button
                 type="button"
                 onClick={handleSaveBrand}
@@ -767,7 +797,7 @@ export default function SystemConfigPage() {
               {/* Heading Sample */}
               <div>
                 <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">
-                  Tiêu Đề Trang (Màu #{currentHeadingColor}):
+                  Tiêu Đề Trang ({currentHeadingColor}):
                 </span>
                 <h4
                   className="text-base font-extrabold tracking-tight"
@@ -780,7 +810,7 @@ export default function SystemConfigPage() {
               {/* Primary Button Sample */}
               <div>
                 <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">
-                  Nút Hành Động (Màu #{currentBrandColor}):
+                  Nút Hành Động ({currentBrandColor}):
                 </span>
                 <button
                   type="button"
