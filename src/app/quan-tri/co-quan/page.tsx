@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Landmark,
   Plus,
@@ -20,10 +21,15 @@ import {
 } from 'lucide-react';
 
 export default function OrganizationsAdminPage() {
+  const [mounted, setMounted] = useState(false);
   const [organizations, setOrganizations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('ALL');
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Modal
   const [showModal, setShowModal] = useState(false);
@@ -152,7 +158,7 @@ export default function OrganizationsAdminPage() {
   const countEnter = organizations.filter((o) => o.type === 'ENTERPRISE' || o.type === 'PARTNER').length;
 
   return (
-    <div className="w-full space-y-6 animate-in fade-in duration-200">
+    <div className="w-full space-y-6">
       
       {/* 1. Header Area */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -420,9 +426,9 @@ export default function OrganizationsAdminPage() {
         </div>
       </div>
 
-      {/* CREATE / EDIT MODAL */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+      {/* CREATE / EDIT MODAL (Rendered via Portal to document.body) */}
+      {showModal && mounted && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="w-full max-w-lg max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
             
             {/* Header */}
@@ -550,7 +556,8 @@ export default function OrganizationsAdminPage() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

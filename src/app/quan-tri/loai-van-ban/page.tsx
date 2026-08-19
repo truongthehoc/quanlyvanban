@@ -1,14 +1,20 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { FileCode2, Plus, Sparkles, CheckCircle2, Info, Edit2, X, Code2 } from 'lucide-react';
 
 export default function DocumentTypesAdminPage() {
+  const [mounted, setMounted] = useState(false);
   const [docTypes, setDocTypes] = useState<any[]>([]);
   const [books, setBooks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingType, setEditingType] = useState<any>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const [formData, setFormData] = useState({
     code: '',
@@ -83,7 +89,7 @@ export default function DocumentTypesAdminPage() {
   };
 
   return (
-    <div className="w-full space-y-6 animate-in fade-in duration-200">
+    <div className="w-full space-y-6">
       
       {/* 1. Header Area with Rounded Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -209,9 +215,9 @@ export default function DocumentTypesAdminPage() {
         </div>
       </div>
 
-      {/* EDIT / CREATE MODAL */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+      {/* EDIT / CREATE MODAL (Rendered via Portal to document.body) */}
+      {showModal && mounted && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="w-full max-w-lg max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
             
             {/* Header */}
@@ -310,7 +316,8 @@ export default function DocumentTypesAdminPage() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '@/lib/auth-context';
 import { X, Send, FileCheck, CheckCircle2, Building2, Calendar, AlertCircle, Inbox, FileText } from 'lucide-react';
 
@@ -14,6 +15,7 @@ export function CreateIncomingModal({
   onClose: () => void;
   onSuccess: () => void;
 }) {
+  const [mounted, setMounted] = useState(false);
   const { currentUser } = useAuth();
   const [docTypes, setDocTypes] = useState<any[]>([]);
   const [organizations, setOrganizations] = useState<any[]>([]);
@@ -36,6 +38,7 @@ export function CreateIncomingModal({
   const [error, setError] = useState('');
 
   useEffect(() => {
+    setMounted(true);
     Promise.all([
       fetch('/api/admin/doc-types').then((r) => r.json()),
       fetch('/api/admin/organizations').then((r) => r.json()),
@@ -106,8 +109,10 @@ export function CreateIncomingModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="w-full max-w-2xl max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
         
         {/* Header */}
@@ -306,7 +311,8 @@ export function CreateIncomingModal({
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -322,6 +328,7 @@ export function DirectiveModal({
   onClose: () => void;
   onSuccess: () => void;
 }) {
+  const [mounted, setMounted] = useState(false);
   const { currentUser } = useAuth();
   const [departments, setDepartments] = useState<any[]>([]);
   const [directiveText, setDirectiveText] = useState('');
@@ -331,6 +338,7 @@ export function DirectiveModal({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     fetch('/api/admin/departments')
       .then((res) => res.json())
       .then((data) => {
@@ -379,8 +387,10 @@ export function DirectiveModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="w-full max-w-xl max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
         
         {/* Header */}
@@ -482,7 +492,8 @@ export function DirectiveModal({
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -498,8 +509,13 @@ export function ForwardModal({
   onClose: () => void;
   onSuccess: () => void;
 }) {
+  const [mounted, setMounted] = useState(false);
   const { currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleForward = async () => {
     setLoading(true);
@@ -525,8 +541,10 @@ export function ForwardModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="w-full max-w-md max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
         
         {/* Header */}
@@ -578,7 +596,8 @@ export function ForwardModal({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -594,10 +613,15 @@ export function ProgressModal({
   onClose: () => void;
   onSuccess: () => void;
 }) {
+  const [mounted, setMounted] = useState(false);
   const { currentUser } = useAuth();
   const [progressStatus, setProgressStatus] = useState('COMPLETED');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -629,8 +653,10 @@ export function ProgressModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="w-full max-w-lg max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
         
         {/* Header */}
@@ -694,6 +720,7 @@ export function ProgressModal({
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '@/lib/auth-context';
 import {
   X,
@@ -41,11 +42,16 @@ export default function DocumentDetailModal({
   onOpenProgressModal,
   onOpenIssueModal,
 }: DocumentDetailModalProps) {
+  const [mounted, setMounted] = useState(false);
   const { currentUser, hasRole, hasPermission } = useAuth();
   const [activeTab, setActiveTab] = useState<'preview' | 'directive' | 'history'>('preview');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!doc) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!doc || !mounted) return null;
 
   // Helpers
   const getUrgencyBadge = (urgency: string) => {
@@ -131,8 +137,8 @@ export default function DocumentDetailModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
       {/* Modal Box */}
       <div className="flex flex-col h-[90vh] w-full max-w-5xl rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-200">
         
@@ -610,6 +616,7 @@ export default function DocumentDetailModal({
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

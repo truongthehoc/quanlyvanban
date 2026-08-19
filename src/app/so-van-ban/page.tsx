@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '@/lib/auth-context';
 import {
   BookOpen,
@@ -16,10 +17,15 @@ import {
 } from 'lucide-react';
 
 export default function DocumentBooksPage() {
+  const [mounted, setMounted] = useState(false);
   const { hasRole } = useAuth();
   const [books, setBooks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [newBook, setNewBook] = useState({
     name: '',
     code: '',
@@ -77,7 +83,7 @@ export default function DocumentBooksPage() {
   };
 
   return (
-    <div className="w-full space-y-6 animate-in fade-in duration-200">
+    <div className="w-full space-y-6">
       
       {/* 1. Header Area with Rounded Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -154,9 +160,9 @@ export default function DocumentBooksPage() {
         )}
       </div>
 
-      {/* CREATE MODAL */}
-      {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+      {/* CREATE MODAL (Rendered via Portal to document.body) */}
+      {showCreateModal && mounted && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="w-full max-w-md max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
             
             {/* Header */}
@@ -243,7 +249,8 @@ export default function DocumentBooksPage() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

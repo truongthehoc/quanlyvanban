@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '@/lib/auth-context';
 import { X, Radio, Building2, Globe, Users, AlertCircle } from 'lucide-react';
 
@@ -11,6 +12,7 @@ export function CreateInternalModal({
   onClose: () => void;
   onSuccess: () => void;
 }) {
+  const [mounted, setMounted] = useState(false);
   const { currentUser } = useAuth();
   const [departments, setDepartments] = useState<any[]>([]);
   const [docTypes, setDocTypes] = useState<any[]>([]);
@@ -26,6 +28,7 @@ export function CreateInternalModal({
   const [error, setError] = useState('');
 
   useEffect(() => {
+    setMounted(true);
     Promise.all([
       fetch('/api/admin/departments').then((r) => r.json()),
       fetch('/api/admin/doc-types').then((r) => r.json()),
@@ -86,8 +89,10 @@ export function CreateInternalModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="w-full max-w-2xl max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
         
         {/* Header */}
@@ -224,6 +229,7 @@ export function CreateInternalModal({
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
