@@ -77,12 +77,12 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-4 sm:px-6 backdrop-blur-md transition-all shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-      {/* Left: Toggle & Branding */}
-      <div className="flex items-center space-x-3 sm:space-x-4">
+    <header className="sticky top-0 z-20 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-4 sm:px-6 backdrop-blur-md transition-all shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+      {/* Left: Sidebar Toggle Button */}
+      <div className="flex items-center space-x-3">
         <button
           onClick={toggleSidebar}
-          className="flex h-9 w-9 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-all focus:outline-none border border-slate-200"
+          className="flex h-9 w-9 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all focus:outline-none border border-slate-200 shadow-sm"
           title={isCollapsed ? 'Mở rộng thanh điều hướng' : 'Thu gọn thanh điều hướng'}
         >
           {isCollapsed ? (
@@ -92,24 +92,13 @@ export default function Header() {
           )}
         </button>
 
-        <Link href="/" className="flex items-center space-x-3 group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 text-white shadow-sm group-hover:scale-105 transition-transform">
-            <FileText className="h-4.5 w-4.5" />
+        <div className="hidden sm:block">
+          <div className="flex items-center space-x-2 text-xs text-slate-500 font-medium">
+            <span>Hệ thống Quản lý Văn bản</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-800 font-semibold">{currentUser?.departmentName || 'Cơ quan'}</span>
           </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="text-base sm:text-lg font-extrabold tracking-tight text-slate-900">
-                e-Office <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">DMS</span>
-              </span>
-              <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-bold text-[#1E60F3] border border-blue-200">
-                v2.6
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-400 font-medium hidden md:block leading-none mt-0.5">
-              Hệ thống Quản lý Văn bản & Điều hành Điện tử
-            </p>
-          </div>
-        </Link>
+        </div>
       </div>
 
       {/* Right: Role Switcher & User Action Center */}

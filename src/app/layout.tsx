@@ -20,10 +20,13 @@ export default function RootLayout({
       <body className="bg-slate-100/70 text-slate-800 antialiased selection:bg-blue-600 selection:text-white">
         <AuthProvider>
           <SidebarProvider>
-            <div className="flex min-h-screen flex-col">
-              <Header />
-              <div className="flex flex-1 overflow-hidden">
-                <Sidebar />
+            <div className="flex h-screen w-full overflow-hidden bg-slate-50">
+              {/* Left Full-Height Sidebar (Containing Brand & Logo) */}
+              <Sidebar />
+
+              {/* Right Area: Header starting from Sidebar onwards + Scrollable Content */}
+              <div className="flex flex-1 flex-col overflow-hidden min-w-0">
+                <Header />
                 <main className="flex-1 overflow-y-auto bg-slate-50/70">
                   <div className="w-full px-4 sm:px-6 lg:px-8 py-6">
                     {children}

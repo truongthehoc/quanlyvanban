@@ -16,12 +16,15 @@ import {
   Users,
   Landmark,
   FileCode2,
+  FileText,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react';
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { currentUser, hasPermission, hasRole } = useAuth();
-  const { isCollapsed } = useSidebar();
+  const { isCollapsed, toggleSidebar } = useSidebar();
 
   const navGroups = [
     {
@@ -104,10 +107,39 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`relative flex flex-col justify-between border-r border-slate-200 bg-white select-none transition-all duration-300 ease-in-out z-20 ${
+      className={`relative flex flex-col justify-between border-r border-slate-200 bg-white select-none transition-all duration-300 ease-in-out z-30 h-screen flex-shrink-0 ${
         isCollapsed ? 'w-[68px]' : 'w-64'
       }`}
     >
+      {/* 1. Top Sidebar Branding / Logo */}
+      <div className="flex h-16 items-center border-b border-slate-200 px-3.5 bg-white">
+        {!isCollapsed ? (
+          <Link href="/" className="flex items-center space-x-3 group overflow-hidden w-full">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform flex-shrink-0">
+              <FileText className="h-5 w-5" />
+            </div>
+            <div className="truncate">
+              <div className="flex items-center space-x-1.5">
+                <span className="text-base font-extrabold tracking-tight text-slate-900">
+                  e-Office <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">DMS</span>
+                </span>
+                <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[9px] font-bold text-[#1E60F3] border border-blue-200">
+                  v2.6
+                </span>
+              </div>
+              <p className="text-[10px] text-slate-400 font-medium truncate leading-tight mt-0.5">
+                Quản lý Văn bản & Điều hành
+              </p>
+            </div>
+          </Link>
+        ) : (
+          <Link href="/" className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 hover:scale-105 transition-transform" title="e-Office DMS v2.6">
+            <FileText className="h-5 w-5" />
+          </Link>
+        )}
+      </div>
+
+      {/* 2. Navigation Menu */}
       <div className="py-4 overflow-y-auto overflow-x-hidden flex-1 space-y-6">
         {navGroups.map((group, gIdx) => {
           const visibleItems = group.items.filter((i) => i.show);
@@ -133,13 +165,13 @@ export default function Sidebar() {
                       key={item.href}
                       href={item.href}
                       title={isCollapsed ? item.label : undefined}
-                      className={`group relative flex items-center rounded-xl transition-all duration-150 ${
+                      className={`group relative flex items-center rounded-2xl transition-all duration-150 ${
                         isCollapsed
                           ? 'justify-center h-10 w-10 mx-auto'
                           : 'justify-between px-3.5 py-2.5 text-xs font-semibold'
                       } ${
                         isActive
-                          ? 'bg-[#1E60F3] text-white shadow-sm'
+                          ? 'bg-[#1E60F3] text-white shadow-md shadow-blue-500/20'
                           : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                       }`}
                     >
@@ -181,7 +213,7 @@ export default function Sidebar() {
         })}
       </div>
 
-      {/* Footer Info */}
+      {/* 3. Footer Info */}
       {!isCollapsed ? (
         <div className="p-3.5 border border-slate-200/80 bg-slate-50/70 m-3 rounded-2xl text-xs">
           <p className="font-bold text-slate-800">Cơ chế RBAC 2.6</p>
