@@ -46,6 +46,18 @@ model Organization {
   updatedAt   DateTime  @updatedAt
 }
 
+// Phân loại Cơ quan / Đơn vị bên ngoài
+model OrganizationCategory {
+  id          String   @id @default(uuid())
+  code        String   @unique // e.g. "GOVERNMENT", "DEPARTMENT", "ENTERPRISE", "PARTNER", "HOSPITAL", "EDUCATION", ...
+  name        String   // e.g. "Cơ quan Nhà nước", "Sở ban ngành", "Doanh nghiệp / Đối tác", "Bệnh viện / Y tế"
+  color       String?  @default("blue") // e.g. "blue", "purple", "amber", "emerald", "rose", "indigo", "teal"
+  description String?
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model Role {
   id          String   @id @default(uuid())
   code        String   @unique // ADMIN, LEADER, CLERK, HEAD_DEPT, OFFICER

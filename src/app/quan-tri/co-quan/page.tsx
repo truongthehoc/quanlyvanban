@@ -23,6 +23,7 @@ import {
 export default function OrganizationsAdminPage() {
   const [mounted, setMounted] = useState(false);
   const [organizations, setOrganizations] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('ALL');
@@ -31,11 +32,15 @@ export default function OrganizationsAdminPage() {
     setMounted(true);
   }, []);
 
-  // Modal
+  // Modals
   const [showModal, setShowModal] = useState(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [editingOrg, setEditingOrg] = useState<any>(null);
   const [deletingOrg, setDeletingOrg] = useState<any>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [categoryLoading, setCategoryLoading] = useState(false);
+  const [categoryToast, setCategoryToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
   const [formData, setFormData] = useState({
     code: '',
     name: '',
@@ -46,6 +51,30 @@ export default function OrganizationsAdminPage() {
     address: '',
     contactPerson: '',
   });
+
+  const [categoryFormData, setCategoryFormData] = useState({
+    code: '',
+    name: '',
+    color: 'blue',
+    description: '',
+  });
+
+  const showCatToast = (text: string, type: 'success' | 'error' = 'success') => {
+    setCategoryToast({ text, type });
+    setTimeout(() => setCategoryToast(null), 3000);
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch('/api/admin/organization-categories');
+      if (res.ok) {
+        const data = await res.json();
+        setCategories(data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const fetchOrgs = async () => {
     setLoading(true);
@@ -65,6 +94,10 @@ export default function OrganizationsAdminPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     fetchOrgs();
@@ -94,7 +127,7 @@ export default function OrganizationsAdminPage() {
           code: '',
           name: '',
           shortName: '',
-          type: 'GOVERNMENT',
+          type: categories[0]?.code || 'GOVERNMENT',
           email: '',
           phone: '',
           address: '',
@@ -125,39 +158,72 @@ export default function OrganizationsAdminPage() {
     }
   };
 
-  const getTypeBadge = (type: string) => {
-    switch (type) {
-      case 'GOVERNMENT':
-        return (
-          <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 border border-blue-100">
-            Cơ quan Nhà nước
-          </span>
-        );
-      case 'DEPARTMENT':
-        return (
-          <span className="inline-flex items-center rounded-full bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-700 border border-purple-100">
-            Sở ban ngành
-          </span>
-        );
-      case 'ENTERPRISE':
-        return (
-          <span className="inline-flex items-center rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 border border-amber-100">
-            Doanh nghiệp / Bưu chính
-          </span>
-        );
-      case 'PARTNER':
-        return (
-          <span className="inline-flex items-center rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700 border border-teal-100">
-            Đối tác / Hiệp hội
-          </span>
-        );
-      default:
-        return (
-          <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-            {type}
-          </span>
-        );
+  const handleCreateCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!categoryFormData.code || !categoryFormData.name) {
+      showCatToast('Vui lòng nhập đầy đủ mã và tên phân loại', 'error');
+      return;
     }
+    setCategoryLoading(true);
+    try {
+      const res = await fetch('/api/admin/organization-categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(categoryFormData),
+      });
+      if (res.ok) {
+        showCatToast('Đã thêm phân loại mới thành công');
+        setCategoryFormData({ code: '', name: '', color: 'blue', description: '' });
+        fetchCategories();
+      } else {
+        const data = await res.json();
+        showCatToast(data.error || 'Lỗi khi tạo phân loại', 'error');
+      }
+    } catch (err) {
+      showCatToast('Lỗi hệ thống', 'error');
+    } finally {
+      setCategoryLoading(false);
+    }
+  };
+
+  const handleDeleteCategory = async (id: string, code: string) => {
+    try {
+      const res = await fetch(`/api/admin/organization-categories?id=${id}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        showCatToast('Đã xóa phân loại');
+        fetchCategories();
+      } else {
+        const data = await res.json();
+        showCatToast(data.error || 'Không thể xóa phân loại này', 'error');
+      }
+    } catch (err) {
+      showCatToast('Lỗi hệ thống', 'error');
+    }
+  };
+
+  const BADGE_COLOR_MAP: Record<string, { bg: string; text: string; border: string }> = {
+    blue: { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' },
+    purple: { bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200' },
+    amber: { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200' },
+    emerald: { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
+    rose: { bg: 'bg-rose-50', text: 'text-rose-700', border: 'border-rose-200' },
+    indigo: { bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200' },
+    teal: { bg: 'bg-teal-50', text: 'text-teal-700', border: 'border-teal-200' },
+  };
+
+  const getTypeBadge = (type: string) => {
+    const found = categories.find((c) => c.code === type);
+    const colorKey = found?.color || (type === 'GOVERNMENT' ? 'blue' : type === 'DEPARTMENT' ? 'purple' : type === 'ENTERPRISE' ? 'amber' : 'teal');
+    const colorStyle = BADGE_COLOR_MAP[colorKey] || BADGE_COLOR_MAP.blue;
+    const displayName = found?.name?.split('(')[0]?.trim() || (type === 'GOVERNMENT' ? 'Cơ quan Nhà nước' : type === 'DEPARTMENT' ? 'Sở ban ngành' : type === 'ENTERPRISE' ? 'Doanh nghiệp / Bưu chính' : type === 'PARTNER' ? 'Đối tác' : type);
+
+    return (
+      <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border ${colorStyle.bg} ${colorStyle.text} ${colorStyle.border}`}>
+        {displayName}
+      </span>
+    );
   };
 
   // Stats
@@ -168,7 +234,7 @@ export default function OrganizationsAdminPage() {
   return (
     <div className="w-full space-y-6">
       
-      {/* 1. Header Area */}
+      {/* 1. Header Area with Action Buttons */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2">
@@ -182,26 +248,36 @@ export default function OrganizationsAdminPage() {
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            setEditingOrg(null);
-            setFormData({
-              code: '',
-              name: '',
-              shortName: '',
-              type: 'GOVERNMENT',
-              email: '',
-              phone: '',
-              address: '',
-              contactPerson: '',
-            });
-            setShowModal(true);
-          }}
-          className="flex items-center space-x-2 rounded-full bg-[#1E60F3] px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-blue-500/20 hover:bg-blue-700 transition-all cursor-pointer flex-shrink-0"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Thêm Cơ Quan / Đơn Vị</span>
-        </button>
+        <div className="flex items-center space-x-2 flex-shrink-0">
+          <button
+            onClick={() => setShowCategoryModal(true)}
+            className="flex items-center space-x-1.5 rounded-full border border-slate-300 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-xs hover:bg-slate-50 transition-all cursor-pointer"
+          >
+            <Building className="h-4 w-4 text-purple-600" />
+            <span>Phân Loại Đơn Vị ({categories.length})</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setEditingOrg(null);
+              setFormData({
+                code: '',
+                name: '',
+                shortName: '',
+                type: categories[0]?.code || 'GOVERNMENT',
+                email: '',
+                phone: '',
+                address: '',
+                contactPerson: '',
+              });
+              setShowModal(true);
+            }}
+            className="flex items-center space-x-2 rounded-full bg-[#1E60F3] px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-blue-500/20 hover:bg-blue-700 transition-all cursor-pointer"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Thêm Cơ Quan / Đơn Vị</span>
+          </button>
+        </div>
       </div>
 
       {/* 2. Stat Widgets (4 Cards Row) */}
@@ -299,10 +375,11 @@ export default function OrganizationsAdminPage() {
             className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 focus:border-[#1E60F3] focus:outline-none cursor-pointer shadow-sm"
           >
             <option value="ALL">Tất cả loại cơ quan</option>
-            <option value="GOVERNMENT">Cơ quan Nhà nước</option>
-            <option value="DEPARTMENT">Sở ban ngành</option>
-            <option value="ENTERPRISE">Doanh nghiệp / Bưu chính</option>
-            <option value="PARTNER">Đối tác / Khác</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.code}>
+                {c.name.split('(')[0].trim()}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -510,16 +587,29 @@ export default function OrganizationsAdminPage() {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Phân loại cơ quan / đơn vị</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block font-bold text-slate-700">
+                    Phân loại cơ quan / đơn vị <span className="text-rose-500 font-bold">*</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowCategoryModal(true)}
+                    className="text-[11px] font-bold text-[#1E60F3] hover:underline cursor-pointer flex items-center space-x-1"
+                  >
+                    <Plus className="h-3 w-3" />
+                    <span>+ Thêm phân loại mới</span>
+                  </button>
+                </div>
                 <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                   className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none cursor-pointer"
                 >
-                  <option value="GOVERNMENT">Cơ quan Nhà nước (UBND, Bộ, Ngành, BHXH...)</option>
-                  <option value="DEPARTMENT">Sở ban ngành địa phương (Sở Y tế, Tài chính, GD&ĐT...)</option>
-                  <option value="ENTERPRISE">Doanh nghiệp / Đơn vị Bưu chính</option>
-                  <option value="PARTNER">Đối tác / Tổ chức khác</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.code}>
+                      {c.name}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -588,6 +678,186 @@ export default function OrganizationsAdminPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* ======================================================== */}
+      {/* MODAL QUẢN LÝ PHÂN LOẠI CƠ QUAN / ĐƠN VỊ (CATEGORIES)    */}
+      {/* ======================================================== */}
+      {showCategoryModal && mounted && createPortal(
+        <div className="fixed inset-0 z-[105] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-lg max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
+            
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-200 bg-purple-50/70 px-6 py-4 flex-shrink-0">
+              <div className="flex items-center space-x-2.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-purple-600 text-white font-bold shadow-xs">
+                  <Building className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold text-slate-900">
+                    Quản Lý Phân Loại Cơ Quan / Đơn Vị
+                  </h2>
+                  <p className="text-[11px] text-slate-500">
+                    Tùy chỉnh các nhóm phân loại cơ quan bên ngoài trong toàn hệ thống
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowCategoryModal(false)}
+                className="rounded-full p-2 text-slate-400 hover:bg-slate-200 transition-colors cursor-pointer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-5 text-xs">
+              
+              {/* Toast inside modal */}
+              {categoryToast && (
+                <div
+                  className={`flex items-center space-x-2 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-white shadow-sm animate-in fade-in ${
+                    categoryToast.type === 'error' ? 'bg-rose-600' : 'bg-emerald-600'
+                  }`}
+                >
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span>{categoryToast.text}</span>
+                </div>
+              )}
+
+              {/* 1. Existing Categories List */}
+              <div className="space-y-2">
+                <label className="block font-bold text-slate-700 text-xs">
+                  Danh sách phân loại hiện có ({categories.length})
+                </label>
+                <div className="rounded-2xl border border-slate-200 divide-y divide-slate-100 max-h-48 overflow-y-auto bg-slate-50/50">
+                  {categories.map((cat) => {
+                    const mappedCount = organizations.filter((o) => o.type === cat.code).length;
+                    return (
+                      <div
+                        key={cat.id}
+                        className="flex items-center justify-between p-3 bg-white hover:bg-slate-50/80 transition-colors"
+                      >
+                        <div className="flex items-center space-x-2.5">
+                          {getTypeBadge(cat.code)}
+                          <div>
+                            <span className="font-mono text-[10px] text-slate-400 font-bold ml-1">
+                              ({cat.code})
+                            </span>
+                            <span className="text-[11px] text-slate-500 ml-2">
+                              • {mappedCount} đơn vị
+                            </span>
+                          </div>
+                        </div>
+
+                        {!cat.isDefault && mappedCount === 0 && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteCategory(cat.id, cat.code)}
+                            className="p-1.5 rounded-full text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                            title="Xóa phân loại này"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 2. Form Create New Category */}
+              <form onSubmit={handleCreateCategory} className="rounded-2xl border border-purple-200 bg-purple-50/40 p-4 space-y-3">
+                <h3 className="font-bold text-purple-900 text-xs flex items-center space-x-1.5">
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>Thêm Phân Loại Cơ Quan Mới</span>
+                </h3>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1 text-[11px]">
+                      Mã phân loại <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="VD: BENH_VIEN, TRUONG_HOC..."
+                      value={categoryFormData.code}
+                      onChange={(e) => setCategoryFormData({ ...categoryFormData, code: e.target.value.toUpperCase() })}
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-mono uppercase focus:border-purple-600 focus:outline-none"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1 text-[11px]">
+                      Tên phân loại <span className="text-rose-500 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="VD: Bệnh viện / Y tế..."
+                      value={categoryFormData.name}
+                      onChange={(e) => setCategoryFormData({ ...categoryFormData, name: e.target.value })}
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs focus:border-purple-600 focus:outline-none font-semibold"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Color Choice */}
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1.5 text-[11px]">
+                    Màu sắc nhận diện huy hiệu
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    {[
+                      { key: 'blue', name: 'Xanh dương', class: 'bg-blue-600' },
+                      { key: 'purple', name: 'Tím', class: 'bg-purple-600' },
+                      { key: 'amber', name: 'Vàng cam', class: 'bg-amber-500' },
+                      { key: 'emerald', name: 'Xanh lá', class: 'bg-emerald-600' },
+                      { key: 'rose', name: 'Hồng đỏ', class: 'bg-rose-600' },
+                      { key: 'indigo', name: 'Chàm', class: 'bg-indigo-600' },
+                      { key: 'teal', name: 'Xanh ngọc', class: 'bg-teal-600' },
+                    ].map((c) => (
+                      <button
+                        key={c.key}
+                        type="button"
+                        onClick={() => setCategoryFormData({ ...categoryFormData, color: c.key })}
+                        className={`h-6 w-6 rounded-full transition-all cursor-pointer ${c.class} ${
+                          categoryFormData.color === c.key ? 'ring-2 ring-offset-2 ring-slate-800 scale-110' : 'opacity-70 hover:opacity-100'
+                        }`}
+                        title={c.name}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-1">
+                  <button
+                    type="submit"
+                    disabled={categoryLoading}
+                    className="inline-flex items-center space-x-1.5 rounded-full bg-purple-600 px-4 py-1.5 text-xs font-bold text-white hover:bg-purple-700 transition-colors shadow-xs cursor-pointer disabled:opacity-50"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>{categoryLoading ? 'Đang tạo...' : 'Tạo Phân Loại'}</span>
+                  </button>
+                </div>
+              </form>
+
+            </div>
+
+            {/* Footer */}
+            <div className="flex justify-end p-4 border-t border-slate-200 bg-slate-50">
+              <button
+                type="button"
+                onClick={() => setShowCategoryModal(false)}
+                className="rounded-full bg-slate-900 px-5 py-2 text-xs font-bold text-white hover:bg-slate-800 cursor-pointer"
+              >
+                Đóng
+              </button>
+            </div>
           </div>
         </div>,
         document.body
