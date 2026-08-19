@@ -1,0 +1,291 @@
+// Prisma Schema for QuanLyVanBan (e-Office DMS)
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Department {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  description String?  @db.Text
+  parentId    String?
+  parent      Department?  @relation("DepartmentHierarchy", fields: [parentId], references: [id])
+  children    Department[] @relation("DepartmentHierarchy")
+  
+  users             User[]
+  documents         Document[]
+  assignees         DocumentAssignee[]
+  internalAudiences DocumentInternalAudience[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Danh mục Cơ quan / Đơn vị bên ngoài (Được map lên Nơi gửi / Nơi nhận của VB Đến / Đi)
+model Organization {
+  id          String    @id @default(uuid())
+  code        String    @unique // e.g. "UBND-BD", "SYT", "BHXH", "BGDDT", "UBND-TP"
+  name        String    // e.g. "Ủy ban Nhân dân tỉnh Bình Dương", "Sở Y tế", "Bảo hiểm xã hội tỉnh"
+  shortName   String?   // Tên viết tắt: UBND Tỉnh, Sở Y tế
+  type        String    @default("GOVERNMENT") // GOVERNMENT (Cơ quan nhà nước), DEPARTMENT (Sở ban ngành), PARTNER (Đối tác), ENTERPRISE (Doanh nghiệp)
+  email       String?
+  phone       String?
+  address     String?
+  isActive    Boolean   @default(true)
+  
+  incomingDocuments Document[] @relation("SenderOrganization")
+  outgoingDocuments Document[] @relation("RecipientOrganization")
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  code        String   @unique // ADMIN, LEADER, CLERK, HEAD_DEPT, OFFICER
+  name        String
+  description String?  @db.Text
+  isSystem    Boolean  @default(false)
+  
+  users       UserRole[]
+  permissions RolePermission[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  module      String   // DASHBOARD, DOC_IN, DOC_OUT, DOC_INTERNAL, BOOKS, USERS, DEPARTMENTS, ORGANIZATIONS, ROLES, AUDIT
+  action      String   // VIEW, CREATE, EDIT, DIRECT, FORWARD, APPROVE, NUMBERING, DISPATCH, DELETE
+  code        String   @unique // e.g. "doc_in:create", "doc_in:directive", "doc_out:numbering"
+  name        String
+  description String?  @db.Text
+  
+  roles       RolePermission[]
+  
+  createdAt   DateTime @default(now())
+}
+
+model RolePermission {
+  id           String     @id @default(uuid())
+  roleId       String
+  permissionId String
+  
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+}
+
+model User {
+  id           String    @id @default(uuid())
+  username     String    @unique
+  passwordHash String    @default("123456")
+  fullName     String
+  email        String?
+  phone        String?
+  position     String    // Chức vụ: Giám đốc, Phó Giám đốc, Chánh VP, Văn thư, Trưởng phòng, Chuyên viên
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  avatar       String?
+  isActive     Boolean   @default(true)
+  
+  roles             UserRole[]
+  createdDocuments  Document[]            @relation("CreatedDocuments")
+  directedDocuments Document[]            @relation("DirectedDocuments")
+  clerkDocuments    Document[]            @relation("ClerkDocuments")
+  assignments       DocumentAssignee[]
+  internalAudiences DocumentInternalAudience[]
+  attachments       DocumentAttachment[]
+  processingLogs    DocumentProcessingLog[]
+  notifications     Notification[]
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String
+  roleId    String
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+}
+
+model DocumentBook {
+  id            String         @id @default(uuid())
+  code          String         @unique // e.g. "SO-DEN-2026", "SO-DI-2026", "SO-NB-2026"
+  name          String
+  type          String         // INCOMING, OUTGOING, INTERNAL
+  year          Int
+  currentNumber Int            @default(0)
+  isActive      Boolean        @default(true)
+  
+  documents     Document[]
+  documentTypes DocumentType[]
+  
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model DocumentType {
+  id               String        @id @default(uuid())
+  code             String        @unique // CV, QD, TB, TTr, BC, KH, BB
+  name             String
+  numberingPattern String        @default("{STT}/{MA_LOAI}-{MA_DV}") // e.g. "{STT}/CV-BGD"
+  defaultBookId    String?
+  defaultBook      DocumentBook? @relation(fields: [defaultBookId], references: [id])
+  description      String?
+  isActive         Boolean       @default(true)
+  
+  documents        Document[]
+  
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+model Document {
+  id                   String        @id @default(uuid())
+  documentNumber       String?       // Số/Ký hiệu (VD: 105/CV-BGD, hoặc số đến: 48)
+  autoSequence         Int?          // Số thứ tự tăng dần
+  subNumber            String?       // Số phụ
+  documentTypeDoc      String        // "INCOMING", "OUTGOING", "INTERNAL"
+  title                String        @db.Text // Trích yếu nội dung
+  summary              String?       @db.Text
+  
+  // Cơ quan gửi (Mapped với Organization)
+  senderOrg            String?       // Chuỗi text nơi gửi
+  senderOrgId          String?
+  senderOrganization   Organization? @relation("SenderOrganization", fields: [senderOrgId], references: [id])
+  
+  // Cơ quan nhận (Mapped với Organization)
+  recipientOrg         String?       // Chuỗi text nơi nhận
+  recipientOrgId       String?
+  recipientOrganization Organization? @relation("RecipientOrganization", fields: [recipientOrgId], references: [id])
+
+  issueDate            DateTime?     // Ngày ban hành
+  arrivalDate          DateTime?     // Ngày đến
+  dueDate              DateTime?     // Hạn xử lý
+  urgencyLevel         String        @default("NORMAL") // NORMAL, URGENT, TOP_URGENT
+  confidentialityLevel String        @default("NORMAL") // NORMAL, CONFIDENTIAL, TOP_SECRET
+  status               String        @default("DRAFT")  // DRAFT, PENDING_DIRECTIVE, DIRECTED, PROCESSING, OVERDUE, COMPLETED, ISSUED, ARCHIVED
+  
+  leaderDirective      String?       @db.Text // Ý kiến chỉ đạo của lãnh đạo
+  leaderId             String?
+  leader               User?         @relation("DirectedDocuments", fields: [leaderId], references: [id])
+  
+  clerkId              String?
+  clerk                User?         @relation("ClerkDocuments", fields: [clerkId], references: [id])
+  
+  creatorId            String
+  creator              User          @relation("CreatedDocuments", fields: [creatorId], references: [id])
+  
+  departmentId         String?
+  department           Department?   @relation(fields: [departmentId], references: [id])
+  
+  documentTypeId       String?
+  documentType         DocumentType? @relation(fields: [documentTypeId], references: [id])
+  
+  bookId               String?
+  book                 DocumentBook? @relation(fields: [bookId], references: [id])
+  
+  // Thông tin phát hành/gửi đi (Cho văn bản đi)
+  dispatchMethod       String?       // Bưu điện, Trực tiếp, Email, Hệ thống liên thông
+  dispatchStatus       String?       // Chờ gửi, Đã gửi, Đã giao
+  dispatchDate         DateTime?
+  
+  assignees            DocumentAssignee[]
+  internalAudiences    DocumentInternalAudience[]
+  attachments          DocumentAttachment[]
+  processingLogs       DocumentProcessingLog[]
+  
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+}
+
+model DocumentAssignee {
+  id           String     @id @default(uuid())
+  documentId   String
+  departmentId String?
+  userId       String?
+  roleType     String     @default("PRIMARY") // PRIMARY (Chủ trì), COORDINATE (Phối hợp), OBSERVE (Theo dõi)
+  status       String     @default("PENDING") // PENDING, ACCEPTED, IN_PROGRESS, COMPLETED
+  notes        String?    @db.Text
+  completedAt  DateTime?
+  
+  document     Document   @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  department   Department? @relation(fields: [departmentId], references: [id])
+  user         User?      @relation(fields: [userId], references: [id])
+  
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model DocumentInternalAudience {
+  id           String     @id @default(uuid())
+  documentId   String
+  departmentId String?
+  userId       String?
+  scopeType    String     @default("ALL") // ALL (Toàn cơ quan), DEPARTMENT (Theo phòng), USER (Theo cá nhân)
+  isRead       Boolean    @default(false)
+  readAt       DateTime?
+  
+  document     Document   @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  department   Department? @relation(fields: [departmentId], references: [id])
+  user         User?      @relation(fields: [userId], references: [id])
+  
+  createdAt    DateTime   @default(now())
+}
+
+model DocumentAttachment {
+  id           String     @id @default(uuid())
+  documentId   String
+  fileName     String
+  fileUrl      String     @db.Text
+  fileType     String     // pdf, docx, xlsx, png, jpg
+  fileSize     Int        // bytes
+  uploadedById String?
+  
+  document     Document   @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  uploadedBy   User?      @relation(fields: [uploadedById], references: [id])
+  
+  createdAt    DateTime   @default(now())
+}
+
+model DocumentProcessingLog {
+  id           String     @id @default(uuid())
+  documentId   String
+  actorId      String
+  action       String     // Tiếp nhận, Trình duyệt, Chỉ đạo, Chuyển tiếp, Đang xử lý, Hoàn thành, Cấp số & Phát hành
+  notes        String?    @db.Text
+  fromStatus   String?
+  toStatus     String?
+  
+  document     Document   @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  actor        User       @relation(fields: [actorId], references: [id])
+  
+  createdAt    DateTime   @default(now())
+}
+
+model Notification {
+  id           String     @id @default(uuid())
+  userId       String
+  title        String
+  content      String     @db.Text
+  link         String?
+  isRead       Boolean    @default(false)
+  type         String     @default("INFO") // DIRECTIVE, ASSIGNMENT, OUTGOING_ISSUED, INTERNAL_NEW, OVERDUE
+  
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime   @default(now())
+}
