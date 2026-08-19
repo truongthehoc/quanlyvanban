@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql-db:
+    image: mysql:8.0
+    container_name: eoffice_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password_123
+      MYSQL_DATABASE: quanlyvanban
+      MYSQL_USER: eoffice_user
+      MYSQL_PASSWORD: eoffice_password_123
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - eoffice_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Next.js Application
+  eoffice-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: eoffice_web
+    restart: always
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "mysql://eoffice_user:eoffice_password_123@mysql-db:3306/quanlyvanban"
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - '3000:3000'
+    networks:
+      - eoffice_net
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  eoffice_net:
+    driver: bridge
