@@ -14,12 +14,19 @@ export interface AdminInfo {
   logoUrl?: string;
 }
 
+export interface CustomColorItem {
+  id: string;
+  name: string;
+  hex: string;
+}
+
 export interface BrandTheme {
-  primaryColor: string; // e.g. '#1E60F3'
+  primaryColor: string; // e.g. '#C52998'
   primaryHover: string;
   accentColor: string;
   themeMode: 'LIGHT' | 'DARK' | 'SLATE';
   borderRadius: 'rounded-full' | 'rounded-2xl' | 'rounded-xl';
+  savedColors?: CustomColorItem[];
 }
 
 export interface SoftwareInfo {
@@ -47,22 +54,27 @@ export interface SystemConfig {
 
 const DEFAULT_CONFIG: SystemConfig = {
   adminInfo: {
-    orgName: 'Ủy ban Nhân dân Thành phố',
-    shortName: 'UBND Thành phố',
-    orgCode: 'UBND-TP',
+    orgName: 'Bệnh viện Thuận Mỹ TDM',
+    shortName: 'TMTDM',
+    orgCode: 'TMTDM',
     address: 'Số 01 Đường Quang Trung, Phường 1, TP. Thủ Dầu Một',
     phone: '0274.3822.999',
     email: 'vanthu@binhduong.gov.vn',
     website: 'https://binhduong.gov.vn',
-    leaderName: 'Võ Văn Minh - Chủ tịch UBND',
+    leaderName: 'Phí Thùy Châu',
     logoUrl: '',
   },
   brandTheme: {
-    primaryColor: '#1E60F3',
-    primaryHover: '#174ec7',
-    accentColor: '#3B82F6',
+    primaryColor: '#C52998',
+    primaryHover: '#a71f80',
+    accentColor: '#C52998',
     themeMode: 'LIGHT',
     borderRadius: 'rounded-full',
+    savedColors: [
+      { id: 'c1', name: 'Màu Thuận Mỹ TDM', hex: '#C52998' },
+      { id: 'c2', name: 'Xanh e-Office', hex: '#1E60F3' },
+      { id: 'c3', name: 'Xanh Ngọc Lục Bảo', hex: '#059669' },
+    ],
   },
   softwareInfo: {
     softwareName: 'e-Office DMS',

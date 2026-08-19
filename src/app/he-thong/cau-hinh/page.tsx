@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '@/lib/auth-context';
-import { useSystemConfig, VersionLog } from '@/lib/system-config-context';
+import { useSystemConfig, VersionLog, CustomColorItem } from '@/lib/system-config-context';
 import {
   Settings,
   Building2,
@@ -20,16 +20,8 @@ import {
   User,
   X,
   CheckCircle2,
+  Trash2,
 } from 'lucide-react';
-
-const PRESET_COLORS = [
-  { name: 'Xanh e-Office', hex: '#1E60F3', hover: '#174ec7' },
-  { name: 'Xanh Ngọc Lục Bảo', hex: '#059669', hover: '#047857' },
-  { name: 'Tím Indigo Hiện Đại', hex: '#4F46E5', hover: '#4338ca' },
-  { name: 'Đỏ Đô Hành Chính', hex: '#DC2626', hover: '#b91c1c' },
-  { name: 'Xanh Đen Sang Trọng', hex: '#0F172A', hover: '#1e293b' },
-  { name: 'Tím Violet Hoàng Gia', hex: '#7C3AED', hover: '#6d28d9' },
-];
 
 export default function SystemConfigPage() {
   const [mounted, setMounted] = useState(false);
@@ -44,6 +36,10 @@ export default function SystemConfigPage() {
   const [adminForm, setAdminForm] = useState(config.adminInfo);
   const [brandForm, setBrandForm] = useState(config.brandTheme);
   const [softwareForm, setSoftwareForm] = useState(config.softwareInfo);
+
+  // Add new color state
+  const [newColorName, setNewColorName] = useState('');
+  const [newColorHex, setNewColorHex] = useState('#C52998');
 
   // Modal Release Version
   const [showReleaseModal, setShowReleaseModal] = useState(false);
@@ -61,21 +57,72 @@ export default function SystemConfigPage() {
     setSoftwareForm(config.softwareInfo);
   }, [config]);
 
-  // Live real-time color reflection as admin selects colors
-  const handleColorChange = (hex: string, hover?: string) => {
-    const updated = {
-      ...brandForm,
-      primaryColor: hex,
-      primaryHover: hover || hex,
-    };
-    setBrandForm(updated);
-    // Instant live preview across the system
-    updateBrandTheme(updated);
-  };
-
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const savedColors: CustomColorItem[] = brandForm.savedColors || [
+    { id: 'c1', name: 'Màu Thuận Mỹ TDM', hex: '#C52998' },
+    { id: 'c2', name: 'Xanh e-Office', hex: '#1E60F3' },
+    { id: 'c3', name: 'Xanh Ngọc Lục Bảo', hex: '#059669' },
+  ];
+
+  // Select an existing color
+  const handleSelectColor = (hex: string) => {
+    const updated = {
+      ...brandForm,
+      primaryColor: hex,
+      primaryHover: hex,
+      savedColors,
+    };
+    setBrandForm(updated);
+    updateBrandTheme(updated);
+  };
+
+  // Add a new custom color to the list
+  const handleAddNewColor = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newColorHex) return;
+    const name = newColorName.trim() || `Màu ${newColorHex.toUpperCase()}`;
+    const newId = `c-${Date.now()}`;
+    const updatedColors = [...savedColors, { id: newId, name, hex: newColorHex }];
+
+    const updated = {
+      ...brandForm,
+      primaryColor: newColorHex,
+      primaryHover: newColorHex,
+      savedColors: updatedColors,
+    };
+    setBrandForm(updated);
+    updateBrandTheme(updated);
+    setNewColorName('');
+    showToast(`Đã thêm màu "${name}" (${newColorHex}) và áp dụng ngay!`);
+  };
+
+  // Delete a color from the list
+  const handleDeleteColor = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (savedColors.length <= 1) {
+      alert('Hệ thống cần giữ ít nhất một màu chủ đạo.');
+      return;
+    }
+    const updatedColors = savedColors.filter((c) => c.id !== id);
+    let newPrimary = brandForm.primaryColor;
+    const deletingColor = savedColors.find((c) => c.id === id);
+    if (deletingColor && deletingColor.hex.toLowerCase() === brandForm.primaryColor.toLowerCase()) {
+      newPrimary = updatedColors[0].hex;
+    }
+
+    const updated = {
+      ...brandForm,
+      primaryColor: newPrimary,
+      primaryHover: newPrimary,
+      savedColors: updatedColors,
+    };
+    setBrandForm(updated);
+    updateBrandTheme(updated);
+    showToast('Đã xóa màu khỏi danh sách.');
   };
 
   // Save Administrative Info
@@ -139,7 +186,7 @@ export default function SystemConfigPage() {
     }
   };
 
-  const currentBrandColor = brandForm.primaryColor || config.brandTheme.primaryColor || '#1E60F3';
+  const currentBrandColor = brandForm.primaryColor || config.brandTheme.primaryColor || '#C52998';
 
   return (
     <div className="w-full space-y-6">
@@ -415,7 +462,7 @@ export default function SystemConfigPage() {
                 </span>
                 <div className="flex items-center space-x-3 rounded-2xl bg-white p-3 border border-slate-200 shadow-xs">
                   {adminForm.logoUrl ? (
-                    <img src={adminForm.logoUrl} alt="Logo" className="h-9 w-9 rounded-2xl object-contain border p-1" />
+                    <img src={adminForm.logoUrl} alt="Logo" className="h-9 w-9 rounded-2xl object-contain" />
                   ) : (
                     <div
                       className="flex h-9 w-9 items-center justify-center rounded-2xl text-white font-bold"
@@ -425,7 +472,9 @@ export default function SystemConfigPage() {
                     </div>
                   )}
                   <div className="truncate">
-                    <p className="text-xs font-extrabold text-slate-900">{config.softwareInfo.softwareName}</p>
+                    <p className="text-xs font-extrabold" style={{ color: currentBrandColor }}>
+                      {config.softwareInfo.softwareName}
+                    </p>
                     <p className="text-[10px] text-slate-400 font-medium truncate">{adminForm.shortName || 'TMTDM'}</p>
                   </div>
                 </div>
@@ -442,133 +491,190 @@ export default function SystemConfigPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 rounded-3xl border border-slate-200 bg-white p-6 shadow-xs space-y-6">
             <div>
-              <h2 className="text-base font-bold text-slate-900">Bảng Màu Nhận Diện & Tùy Chỉnh Nút Bấm</h2>
+              <h2 className="text-base font-bold text-slate-900">Danh Sách Màu Chủ Đạo Thương Hiệu</h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Chọn tông màu thương hiệu cơ quan để áp dụng trực tiếp lên các nút bấm, menu kích hoạt và biểu tượng.
+                Tự do thêm nhiều màu chủ đạo của đơn vị, chọn màu đang áp dụng và quản lý bảng màu dễ dàng.
               </p>
             </div>
 
-            <form onSubmit={handleSaveBrand} className="space-y-6 text-xs">
-              {/* Preset Palette */}
-              <div>
-                <label className="block font-bold text-slate-700 mb-3">Tông màu chủ đạo có sẵn (Preset Themes):</label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {PRESET_COLORS.map((col) => {
-                    const isSelected = brandForm.primaryColor === col.hex;
-                    return (
-                      <button
-                        type="button"
-                        key={col.hex}
-                        onClick={() => handleColorChange(col.hex, col.hover)}
-                        className={`flex items-center space-x-3 rounded-2xl p-3 border transition-all text-left cursor-pointer ${
-                          isSelected
-                            ? 'border-slate-900 ring-2 ring-slate-900/10 shadow-md bg-slate-50'
-                            : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50/50'
-                        }`}
-                      >
+            {/* Form Thêm Màu Mới */}
+            <form
+              onSubmit={handleAddNewColor}
+              className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 space-y-3"
+            >
+              <span className="font-bold text-slate-800 text-xs flex items-center space-x-1.5">
+                <Plus className="h-4 w-4 text-slate-600" />
+                <span>Thêm Màu Chủ Đạo Mới Vào Danh Sách</span>
+              </span>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="sm:col-span-1">
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Tên gợi nhớ màu</label>
+                  <input
+                    type="text"
+                    placeholder="VD: Màu Thuận Mỹ, Màu Lễ..."
+                    value={newColorName}
+                    onChange={(e) => setNewColorName(e.target.value)}
+                    className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs focus:outline-none"
+                  />
+                </div>
+
+                <div className="sm:col-span-1">
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Chọn mã màu Hex</label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="color"
+                      value={newColorHex}
+                      onChange={(e) => setNewColorHex(e.target.value)}
+                      className="h-8.5 w-8.5 rounded-xl border border-slate-300 cursor-pointer p-0.5"
+                    />
+                    <input
+                      type="text"
+                      value={newColorHex}
+                      onChange={(e) => setNewColorHex(e.target.value)}
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 font-mono uppercase text-xs focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-1 flex items-end">
+                  <button
+                    type="submit"
+                    style={{ backgroundColor: newColorHex }}
+                    className="w-full rounded-xl py-2.5 px-4 font-bold text-xs text-white shadow-md transition-all hover:scale-105 cursor-pointer flex items-center justify-center space-x-1.5"
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span>Thêm Màu Này</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            {/* Danh Sách Các Màu Đã Thêm */}
+            <div>
+              <label className="block font-bold text-slate-700 mb-2">
+                Các màu chủ đạo hiện có (Bấm vào thẻ để chọn và áp dụng ngay):
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {savedColors.map((col) => {
+                  const isSelected = brandForm.primaryColor.toLowerCase() === col.hex.toLowerCase();
+                  return (
+                    <div
+                      key={col.id}
+                      onClick={() => handleSelectColor(col.hex)}
+                      className={`relative flex items-center justify-between p-3.5 rounded-2xl border transition-all cursor-pointer group ${
+                        isSelected
+                          ? 'border-slate-900 ring-2 ring-slate-900/10 shadow-md bg-white'
+                          : 'border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300 hover:shadow-xs'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3 truncate">
                         <div
-                          className="flex h-7 w-7 items-center justify-center rounded-full text-white shadow-xs flex-shrink-0"
+                          className="flex h-8 w-8 items-center justify-center rounded-full text-white shadow-xs flex-shrink-0"
                           style={{ backgroundColor: col.hex }}
                         >
                           {isSelected && <Check className="h-4 w-4" />}
                         </div>
                         <div className="truncate">
-                          <p className="font-bold text-slate-800 text-[11px] truncate">{col.name}</p>
+                          <p className="font-bold text-slate-900 text-xs truncate">{col.name}</p>
                           <p className="text-[10px] text-slate-400 font-mono">{col.hex}</p>
                         </div>
-                      </button>
-                    );
-                  })}
-                </div>
+                      </div>
+
+                      <div className="flex items-center space-x-1.5 flex-shrink-0">
+                        {isSelected && (
+                          <span
+                            className="rounded-full px-2 py-0.5 text-[9px] font-bold"
+                            style={{
+                              backgroundColor: `${col.hex}18`,
+                              color: col.hex,
+                            }}
+                          >
+                            ĐANG DÙNG
+                          </span>
+                        )}
+                        {savedColors.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={(e) => handleDeleteColor(col.id, e)}
+                            className="p-1 rounded-full text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                            title="Xóa màu này khỏi danh sách"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
+            </div>
 
-              {/* Custom Color Input */}
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                  <span className="font-bold text-slate-800 block text-xs">Mã màu tùy chỉnh (Custom Hex Code):</span>
-                  <span className="text-[11px] text-slate-500">Tùy ý chọn mã màu theo cẩm nang nhận diện thương hiệu riêng</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="color"
-                    value={brandForm.primaryColor}
-                    onChange={(e) => handleColorChange(e.target.value)}
-                    className="h-9 w-9 rounded-xl border border-slate-300 cursor-pointer p-0.5"
-                  />
-                  <input
-                    type="text"
-                    value={brandForm.primaryColor}
-                    onChange={(e) => handleColorChange(e.target.value)}
-                    className="w-28 rounded-xl border border-slate-300 px-3 py-1.5 font-mono uppercase text-xs focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* Bo góc nút */}
-              <div>
-                <label className="block font-bold text-slate-700 mb-2">Phong cách bo góc nút bấm (Border Radius):</label>
-                <div className="grid grid-cols-3 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const updated = { ...brandForm, borderRadius: 'rounded-full' as const };
-                      setBrandForm(updated);
-                      updateBrandTheme(updated);
-                    }}
-                    className={`rounded-full border py-2.5 text-center font-bold text-xs transition-all cursor-pointer ${
-                      brandForm.borderRadius === 'rounded-full'
-                        ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-                    }`}
-                  >
-                    Tròn mềm mại (Pill)
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const updated = { ...brandForm, borderRadius: 'rounded-2xl' as const };
-                      setBrandForm(updated);
-                      updateBrandTheme(updated);
-                    }}
-                    className={`rounded-2xl border py-2.5 text-center font-bold text-xs transition-all cursor-pointer ${
-                      brandForm.borderRadius === 'rounded-2xl'
-                        ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-                    }`}
-                  >
-                    Bo góc Hiện đại
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const updated = { ...brandForm, borderRadius: 'rounded-xl' as const };
-                      setBrandForm(updated);
-                      updateBrandTheme(updated);
-                    }}
-                    className={`rounded-xl border py-2.5 text-center font-bold text-xs transition-all cursor-pointer ${
-                      brandForm.borderRadius === 'rounded-xl'
-                        ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-                    }`}
-                  >
-                    Chuẩn vuông vức
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex justify-end pt-4 border-t border-slate-200">
+            {/* Bo góc nút */}
+            <div className="pt-2 border-t border-slate-100">
+              <label className="block font-bold text-slate-700 mb-2">Phong cách bo góc nút bấm (Border Radius):</label>
+              <div className="grid grid-cols-3 gap-3">
                 <button
-                  type="submit"
-                  style={{ backgroundColor: currentBrandColor }}
-                  className="inline-flex items-center space-x-2 rounded-full px-6 py-2.5 font-bold text-white shadow-md transition-all hover:scale-105 hover:opacity-90 cursor-pointer"
+                  type="button"
+                  onClick={() => {
+                    const updated = { ...brandForm, borderRadius: 'rounded-full' as const, savedColors };
+                    setBrandForm(updated);
+                    updateBrandTheme(updated);
+                  }}
+                  className={`rounded-full border py-2.5 text-center font-bold text-xs transition-all cursor-pointer ${
+                    brandForm.borderRadius === 'rounded-full'
+                      ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
+                      : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                  }`}
                 >
-                  <Save className="h-4 w-4" />
-                  <span>Áp Dụng & Lưu Bảng Màu</span>
+                  Tròn mềm mại (Pill)
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const updated = { ...brandForm, borderRadius: 'rounded-2xl' as const, savedColors };
+                    setBrandForm(updated);
+                    updateBrandTheme(updated);
+                  }}
+                  className={`rounded-2xl border py-2.5 text-center font-bold text-xs transition-all cursor-pointer ${
+                    brandForm.borderRadius === 'rounded-2xl'
+                      ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
+                      : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  Bo góc Hiện đại
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const updated = { ...brandForm, borderRadius: 'rounded-xl' as const, savedColors };
+                    setBrandForm(updated);
+                    updateBrandTheme(updated);
+                  }}
+                  className={`rounded-xl border py-2.5 text-center font-bold text-xs transition-all cursor-pointer ${
+                    brandForm.borderRadius === 'rounded-xl'
+                      ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
+                      : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  Chuẩn vuông vức
                 </button>
               </div>
-            </form>
+            </div>
+
+            <div className="flex justify-end pt-4 border-t border-slate-200">
+              <button
+                type="button"
+                onClick={handleSaveBrand}
+                style={{ backgroundColor: currentBrandColor }}
+                className="inline-flex items-center space-x-2 rounded-full px-6 py-2.5 font-bold text-white shadow-md transition-all hover:scale-105 hover:opacity-90 cursor-pointer"
+              >
+                <Save className="h-4 w-4" />
+                <span>Lưu Cấu Hình Bảng Màu</span>
+              </button>
+            </div>
           </div>
 
           {/* Live Preview Card */}
@@ -610,18 +716,11 @@ export default function SystemConfigPage() {
               </div>
 
               <div>
-                <span className="text-[11px] font-bold text-slate-500 uppercase">Huy hiệu phiên bản:</span>
-                <div className="mt-1.5 flex items-center space-x-2">
-                  <span
-                    className="font-bold px-2.5 py-0.5 rounded-full text-xs"
-                    style={{
-                      backgroundColor: `${currentBrandColor}18`,
-                      color: currentBrandColor,
-                    }}
-                  >
-                    {config.softwareInfo.currentVersion}
+                <span className="text-[11px] font-bold text-slate-500 uppercase">Tên phần mềm trên Sidebar:</span>
+                <div className="mt-1.5">
+                  <span className="text-sm font-black" style={{ color: currentBrandColor }}>
+                    {config.softwareInfo.softwareName}
                   </span>
-                  <span className="text-slate-500 text-xs">Tự động đồng bộ</span>
                 </div>
               </div>
             </div>
