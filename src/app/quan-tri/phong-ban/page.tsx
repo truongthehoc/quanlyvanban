@@ -131,7 +131,7 @@ export default function DepartmentsAdminPage() {
 
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs flex items-center justify-between">
           <div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Nhiệm vụ phân công</p>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Văn bản được phân công</p>
             <p className="text-2xl font-black text-slate-900 mt-1">
               {departments.reduce((acc, curr) => acc + (curr._count?.primaryDocs || 0), 0)}
             </p>
@@ -168,7 +168,7 @@ export default function DepartmentsAdminPage() {
                 <th className="py-3.5 px-6">Tên Phòng Ban / Đơn vị</th>
                 <th className="py-3.5 px-6">Mô tả chức năng</th>
                 <th className="py-3.5 px-6 text-center">Nhân sự</th>
-                <th className="py-3.5 px-6 text-center">Nhiệm vụ</th>
+                <th className="py-3.5 px-6 text-center">Văn bản được phân công</th>
                 <th className="py-3.5 px-6 text-right">Thao tác</th>
               </tr>
             </thead>
@@ -204,7 +204,7 @@ export default function DepartmentsAdminPage() {
                     </td>
                     <td className="py-4 px-6 text-center">
                       <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-bold text-blue-700">
-                        {dept._count?.primaryDocs || 0} nhiệm vụ
+                        {dept._count?.primaryDocs || 0} văn bản
                       </span>
                     </td>
                     <td className="py-4 px-6 text-right">
