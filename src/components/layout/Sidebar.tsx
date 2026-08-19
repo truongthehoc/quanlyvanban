@@ -23,13 +23,26 @@ import {
   Settings,
 } from 'lucide-react';
 
+interface NavItem {
+  label: string;
+  href: string;
+  icon: any;
+  show: boolean;
+  badge?: string;
+}
+
+interface NavGroup {
+  title: string;
+  items: NavItem[];
+}
+
 export default function Sidebar() {
   const pathname = usePathname();
   const { currentUser, hasPermission, hasRole } = useAuth();
   const { isCollapsed, toggleSidebar } = useSidebar();
   const { config } = useSystemConfig();
 
-  const navGroups = [
+  const navGroups: NavGroup[] = [
     {
       title: 'TỔNG QUAN',
       items: [
@@ -62,29 +75,11 @@ export default function Sidebar() {
           icon: Radio,
           show: hasPermission('doc_internal:view') || hasPermission('doc_internal:create'),
         },
-        {
-          label: 'Sổ Văn bản',
-          href: '/so-van-ban',
-          icon: BookOpen,
-          show: hasPermission('books:manage') || hasPermission('books:export'),
-        },
       ],
     },
     {
       title: 'QUẢN LÝ DANH MỤC',
       items: [
-        {
-          label: 'Danh mục Phòng ban',
-          href: '/quan-tri/phong-ban',
-          icon: Building2,
-          show: hasRole('ADMIN') || hasPermission('system:departments'),
-        },
-        {
-          label: 'Danh mục Người dùng',
-          href: '/quan-tri/nguoi-dung',
-          icon: Users,
-          show: hasRole('ADMIN') || hasPermission('system:users'),
-        },
         {
           label: 'Cơ quan / Đơn vị ngoài',
           href: '/quan-tri/co-quan',
@@ -98,11 +93,22 @@ export default function Sidebar() {
           show: hasRole('ADMIN') || hasPermission('system:doc_types'),
         },
         {
-          label: 'Ma trận Phân quyền',
-          href: '/quan-tri/phan-quyen',
-          icon: ShieldCheck,
-          badge: 'RBAC',
-          show: hasRole('ADMIN') || hasPermission('system:matrix'),
+          label: 'Sổ Văn bản',
+          href: '/so-van-ban',
+          icon: BookOpen,
+          show: hasPermission('books:manage') || hasPermission('books:export'),
+        },
+        {
+          label: 'Danh mục Phòng ban',
+          href: '/quan-tri/phong-ban',
+          icon: Building2,
+          show: hasRole('ADMIN') || hasPermission('system:departments'),
+        },
+        {
+          label: 'Danh mục Người dùng',
+          href: '/quan-tri/nguoi-dung',
+          icon: Users,
+          show: hasRole('ADMIN') || hasPermission('system:users'),
         },
       ],
     },
@@ -114,6 +120,13 @@ export default function Sidebar() {
           href: '/he-thong/cau-hinh',
           icon: Settings,
           show: hasRole('ADMIN') || hasPermission('system:settings') || true,
+        },
+        {
+          label: 'Ma trận Phân quyền',
+          href: '/quan-tri/phan-quyen',
+          icon: ShieldCheck,
+          badge: 'RBAC',
+          show: hasRole('ADMIN') || hasPermission('system:matrix'),
         },
       ],
     },
