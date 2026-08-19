@@ -63,9 +63,14 @@ const FIXED_BOOK_CATEGORIES = [
     description: 'Quản lý toàn bộ công văn, văn bản đến từ cơ quan ngoài và cấp số tiếp nhận',
     color: 'blue',
     icon: Inbox,
-    badgeBg: 'bg-blue-50',
-    badgeText: 'text-blue-700',
-    badgeBorder: 'border-blue-200',
+    containerClass: 'border-blue-200/90 bg-gradient-to-b from-blue-50/70 via-blue-50/20 to-white shadow-xs',
+    headerClass: 'border-b border-blue-200/70 bg-blue-100/50',
+    tableHeaderClass: 'border-b border-blue-200/50 bg-blue-50/80 text-blue-900/80',
+    rowHoverClass: 'hover:bg-blue-50/60',
+    iconClass: 'bg-blue-600 text-white shadow-xs shadow-blue-500/20',
+    folderBadgeClass: 'bg-blue-100/90 text-blue-800 border-blue-200',
+    countBadgeClass: 'bg-white text-blue-800 border-blue-200',
+    pathBgClass: 'bg-blue-50/80 text-blue-900 border-blue-200/80 hover:bg-blue-100 hover:text-blue-700',
   },
   {
     type: 'OUTGOING',
@@ -75,9 +80,14 @@ const FIXED_BOOK_CATEGORIES = [
     description: 'Quản lý công văn, quyết định ban hành đi và tự động lấy số theo quy chuẩn',
     color: 'indigo',
     icon: Send,
-    badgeBg: 'bg-indigo-50',
-    badgeText: 'text-indigo-700',
-    badgeBorder: 'border-indigo-200',
+    containerClass: 'border-indigo-200/90 bg-gradient-to-b from-indigo-50/70 via-indigo-50/20 to-white shadow-xs',
+    headerClass: 'border-b border-indigo-200/70 bg-indigo-100/50',
+    tableHeaderClass: 'border-b border-indigo-200/50 bg-indigo-50/80 text-indigo-900/80',
+    rowHoverClass: 'hover:bg-indigo-50/60',
+    iconClass: 'bg-indigo-600 text-white shadow-xs shadow-indigo-500/20',
+    folderBadgeClass: 'bg-indigo-100/90 text-indigo-800 border-indigo-200',
+    countBadgeClass: 'bg-white text-indigo-800 border-indigo-200',
+    pathBgClass: 'bg-indigo-50/80 text-indigo-900 border-indigo-200/80 hover:bg-indigo-100 hover:text-indigo-700',
   },
   {
     type: 'INTERNAL',
@@ -87,9 +97,14 @@ const FIXED_BOOK_CATEGORIES = [
     description: 'Quản lý thông báo, phân công, chỉ đạo nội bộ trong đơn vị và các phòng ban',
     color: 'teal',
     icon: Radio,
-    badgeBg: 'bg-teal-50',
-    badgeText: 'text-teal-700',
-    badgeBorder: 'border-teal-200',
+    containerClass: 'border-teal-200/90 bg-gradient-to-b from-teal-50/70 via-teal-50/20 to-white shadow-xs',
+    headerClass: 'border-b border-teal-200/70 bg-teal-100/50',
+    tableHeaderClass: 'border-b border-teal-200/50 bg-teal-50/80 text-teal-900/80',
+    rowHoverClass: 'hover:bg-teal-50/60',
+    iconClass: 'bg-teal-600 text-white shadow-xs shadow-teal-500/20',
+    folderBadgeClass: 'bg-teal-100/90 text-teal-800 border-teal-200',
+    countBadgeClass: 'bg-white text-teal-800 border-teal-200',
+    pathBgClass: 'bg-teal-50/80 text-teal-900 border-teal-200/80 hover:bg-teal-100 hover:text-teal-700',
   },
 ];
 
@@ -465,13 +480,13 @@ export default function DocumentBooksPage() {
           return (
             <div
               key={category.type}
-              className="rounded-3xl border border-slate-200 bg-white shadow-xs overflow-hidden"
+              className={`rounded-3xl border overflow-hidden ${category.containerClass}`}
             >
-              {/* Category Header Bar */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 bg-slate-50/70 p-4 sm:px-6">
+              {/* Category Header Bar with Distinct Tint */}
+              <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:px-6 ${category.headerClass}`}>
                 <div className="flex items-center space-x-3">
                   <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-2xl border ${category.badgeBg} ${category.badgeText} ${category.badgeBorder}`}
+                    className={`flex h-10 w-10 items-center justify-center rounded-2xl ${category.iconClass}`}
                   >
                     <CatIcon className="h-5 w-5" />
                   </div>
@@ -483,33 +498,33 @@ export default function DocumentBooksPage() {
                       >
                         {category.title}
                       </h2>
-                      <span className="rounded-full bg-slate-200/80 px-2.5 py-0.5 text-[10px] font-mono font-bold text-slate-700">
+                      <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-mono font-bold ${category.folderBadgeClass}`}>
                         📁 DOCS/{category.folderName}/
                       </span>
                     </div>
-                    <p className="text-xs text-slate-500 mt-0.5">{category.description}</p>
+                    <p className="text-xs text-slate-600 mt-0.5">{category.description}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <span className="text-xs font-semibold text-slate-500 bg-white px-3 py-1 rounded-full border border-slate-200">
-                    Tổng cộng: <strong className="text-slate-900">{categoryBooks.length}</strong> kỳ sổ
+                  <span className={`text-xs font-bold px-3 py-1 rounded-full shadow-xs ${category.countBadgeClass}`}>
+                    Tổng cộng: <strong className="font-extrabold">{categoryBooks.length}</strong> kỳ sổ
                   </span>
                 </div>
               </div>
 
               {/* Books List for this Category */}
               {categoryBooks.length === 0 ? (
-                <div className="p-8 text-center text-xs text-slate-400">
+                <div className="p-8 text-center text-xs text-slate-400 bg-white/60">
                   <Folder className="mx-auto h-8 w-8 text-slate-300 mb-2" />
                   <p className="font-semibold text-slate-600">Chưa có sổ văn bản nào được mở cho mục này trong năm đã chọn.</p>
                   <p className="mt-1">Nhấn "Mở Sổ Mới Cho Năm / Quý" ở góc trên để khởi tạo sổ và thư mục lưu trữ mới.</p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto bg-white/70">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className="border-b border-slate-100 bg-slate-50/40 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                      <tr className={`text-[11px] font-bold uppercase tracking-wider ${category.tableHeaderClass}`}>
                         <th className="py-3 px-5">Kỳ Mở Sổ / Tên Sổ</th>
                         <th className="py-3 px-4">Mã Định Danh</th>
                         <th className="py-3 px-4">Đường Dẫn Thư Mục Server</th>
@@ -521,21 +536,21 @@ export default function DocumentBooksPage() {
                         <th className="py-3 px-5 text-right">Thao Tác</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-slate-200/50 bg-white/50">
                       {categoryBooks.map((book) => {
                         const storagePath = getBookStoragePath(book);
 
                         return (
                           <tr
                             key={book.id}
-                            className={`hover:bg-slate-50/80 transition-colors ${
+                            className={`transition-colors ${category.rowHoverClass} ${
                               !book.isActive ? 'bg-slate-50/40 opacity-75' : ''
                             }`}
                           >
                             {/* Name & Period */}
                             <td className="py-3.5 px-5">
                               <div className="font-bold text-slate-900 text-xs flex items-center space-x-2">
-                                <span className="rounded-md bg-slate-100 px-2 py-0.5 font-bold text-[10px] text-slate-600 border border-slate-200">
+                                <span className="rounded-md bg-white px-2 py-0.5 font-bold text-[10px] text-slate-700 border border-slate-200 shadow-xs">
                                   Năm {book.year}
                                 </span>
                                 <span className="font-extrabold">{book.name}</span>
@@ -551,10 +566,10 @@ export default function DocumentBooksPage() {
                             <td className="py-3.5 px-4">
                               <button
                                 onClick={() => setInspectingFolderBook(book)}
-                                className="group flex items-center space-x-1.5 rounded-lg bg-slate-100 px-2.5 py-1 text-[11px] font-mono text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition-colors cursor-pointer border border-slate-200/80"
+                                className={`group flex items-center space-x-1.5 rounded-lg px-2.5 py-1 text-[11px] font-mono transition-colors cursor-pointer border shadow-xs ${category.pathBgClass}`}
                                 title="Xem cấu trúc thư mục lưu trữ tháng trên server"
                               >
-                                <Folder className="h-3.5 w-3.5 text-amber-500 group-hover:text-blue-600" />
+                                <Folder className="h-3.5 w-3.5 text-amber-500" />
                                 <span className="font-bold">{storagePath}/</span>
                                 <ArrowUpRight className="h-3 w-3 opacity-50 group-hover:opacity-100" />
                               </button>
@@ -563,20 +578,20 @@ export default function DocumentBooksPage() {
                             {/* Numbering Mechanism Tag */}
                             <td className="py-3.5 px-4">
                               <span
-                                className={`inline-flex items-center space-x-1 rounded-full px-2.5 py-0.5 text-[10px] font-extrabold border ${
+                                className={`inline-flex items-center space-x-1 rounded-full px-2.5 py-0.5 text-[10px] font-extrabold border bg-white ${
                                   book.isAutoIncrement !== false
-                                    ? 'bg-purple-50 text-purple-700 border-purple-200'
-                                    : 'bg-amber-50 text-amber-700 border-amber-200'
+                                    ? 'text-purple-700 border-purple-200 shadow-xs'
+                                    : 'text-amber-700 border-amber-200 shadow-xs'
                                 }`}
                               >
                                 {book.isAutoIncrement !== false ? (
                                   <>
-                                    <Sparkles className="h-3 w-3" />
+                                    <Sparkles className="h-3 w-3 text-purple-600" />
                                     <span>Tự động (+1)</span>
                                   </>
                                 ) : (
                                   <>
-                                    <Hash className="h-3 w-3" />
+                                    <Hash className="h-3 w-3 text-amber-600" />
                                     <span>Thủ công</span>
                                   </>
                                 )}
