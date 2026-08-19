@@ -154,20 +154,29 @@ export default function DocumentBooksPage() {
         )}
       </div>
 
-      {/* CREATE MODAL */}
+      {/* CREATE SLIDE-OVER DRAWER */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-6 py-4">
-              <h2 className="text-base font-bold text-slate-800">Mở Sổ Đăng Ký Văn Bản Mới</h2>
-              <button onClick={() => setShowCreateModal(false)} className="rounded-full p-1.5 text-slate-400 hover:bg-slate-200">
+        <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-opacity duration-300 animate-in fade-in">
+          <div className="w-full max-w-md h-full bg-white shadow-2xl border-l border-slate-200 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300 ease-out">
+            
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/90 px-6 py-4 flex-shrink-0">
+              <div>
+                <h2 className="text-base font-bold text-slate-900">Mở Sổ Đăng Ký Văn Bản Mới</h2>
+                <p className="text-[11px] text-slate-500 mt-0.5">Khởi tạo sổ đăng ký quản lý số và luân chuyển văn bản</p>
+              </div>
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="rounded-full p-2 text-slate-400 hover:bg-slate-200 transition-colors"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateBook} className="p-6 space-y-4 text-xs">
+            {/* Body */}
+            <form onSubmit={handleCreateBook} className="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Mã định danh sổ *</label>
+                <label className="block font-bold text-slate-700 mb-1">Mã định danh sổ *</label>
                 <input
                   type="text"
                   placeholder="VD: SO-DEN-2027"
@@ -179,7 +188,7 @@ export default function DocumentBooksPage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Tên sổ đăng ký *</label>
+                <label className="block font-bold text-slate-700 mb-1">Tên sổ đăng ký *</label>
                 <input
                   type="text"
                   placeholder="VD: Sổ Đăng ký Văn bản Đến năm 2027"
@@ -192,11 +201,11 @@ export default function DocumentBooksPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Loại sổ</label>
+                  <label className="block font-bold text-slate-700 mb-1">Loại sổ</label>
                   <select
                     value={newBook.type}
                     onChange={(e) => setNewBook({ ...newBook, type: e.target.value })}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
+                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none cursor-pointer"
                   >
                     <option value="INCOMING">Văn bản Đến</option>
                     <option value="OUTGOING">Văn bản Đi</option>
@@ -205,7 +214,7 @@ export default function DocumentBooksPage() {
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Năm áp dụng</label>
+                  <label className="block font-bold text-slate-700 mb-1">Năm áp dụng</label>
                   <input
                     type="number"
                     value={newBook.year}
@@ -216,6 +225,7 @@ export default function DocumentBooksPage() {
                 </div>
               </div>
 
+              {/* Footer */}
               <div className="flex justify-end space-x-2 pt-4 border-t border-slate-200">
                 <button
                   type="button"
@@ -226,7 +236,7 @@ export default function DocumentBooksPage() {
                 </button>
                 <button
                   type="submit"
-                  className="rounded-full bg-[#1E60F3] px-6 py-2 font-bold text-white hover:bg-blue-700 shadow-sm"
+                  className="rounded-full bg-[#1E60F3] px-6 py-2 font-bold text-white hover:bg-blue-700 shadow-md shadow-blue-500/20"
                 >
                   Tạo Sổ Văn Bản
                 </button>

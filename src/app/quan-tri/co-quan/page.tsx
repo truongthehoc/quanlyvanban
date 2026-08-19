@@ -420,13 +420,15 @@ export default function OrganizationsAdminPage() {
         </div>
       </div>
 
-      {/* CREATE / EDIT MODAL */}
+      {/* CREATE / EDIT SLIDE-OVER DRAWER */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-opacity duration-300 animate-in fade-in">
+          <div className="w-full max-w-lg h-full bg-white shadow-2xl border-l border-slate-200 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300 ease-out">
+            
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/90 px-6 py-4 flex-shrink-0">
               <div>
-                <h2 className="text-base font-bold text-slate-800">
+                <h2 className="text-base font-bold text-slate-900">
                   {editingOrg ? 'Chỉnh Sửa Cơ Quan / Đơn Vị' : 'Thêm Cơ Quan / Đơn Vị Mới'}
                 </h2>
                 <p className="text-[11px] text-slate-500 mt-0.5">
@@ -435,16 +437,17 @@ export default function OrganizationsAdminPage() {
               </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="rounded-full p-1.5 text-slate-400 hover:bg-slate-200"
+                className="rounded-full p-2 text-slate-400 hover:bg-slate-200 transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSave} className="p-6 space-y-4 text-xs">
+            {/* Body */}
+            <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Mã cơ quan *</label>
+                  <label className="block font-bold text-slate-700 mb-1">Mã cơ quan *</label>
                   <input
                     type="text"
                     placeholder="VD: UBND-BD"
@@ -457,7 +460,7 @@ export default function OrganizationsAdminPage() {
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block font-semibold text-slate-700 mb-1">Tên viết tắt</label>
+                  <label className="block font-bold text-slate-700 mb-1">Tên viết tắt</label>
                   <input
                     type="text"
                     placeholder="VD: UBND tỉnh Bình Dương"
@@ -469,7 +472,7 @@ export default function OrganizationsAdminPage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Tên đầy đủ Cơ quan / Đơn vị *</label>
+                <label className="block font-bold text-slate-700 mb-1">Tên đầy đủ Cơ quan / Đơn vị *</label>
                 <input
                   type="text"
                   placeholder="VD: Ủy ban Nhân dân tỉnh Bình Dương"
@@ -481,7 +484,7 @@ export default function OrganizationsAdminPage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Phân loại cơ quan / đơn vị</label>
+                <label className="block font-bold text-slate-700 mb-1">Phân loại cơ quan / đơn vị</label>
                 <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
@@ -496,7 +499,7 @@ export default function OrganizationsAdminPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Email liên hệ / Điện tử</label>
+                  <label className="block font-bold text-slate-700 mb-1">Email liên hệ / Điện tử</label>
                   <input
                     type="email"
                     placeholder="vanthu@binhduong.gov.vn"
@@ -507,7 +510,7 @@ export default function OrganizationsAdminPage() {
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Số điện thoại</label>
+                  <label className="block font-bold text-slate-700 mb-1">Số điện thoại</label>
                   <input
                     type="tel"
                     placeholder="0274.3822..."
@@ -519,7 +522,7 @@ export default function OrganizationsAdminPage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Địa chỉ trụ sở</label>
+                <label className="block font-bold text-slate-700 mb-1">Địa chỉ trụ sở</label>
                 <input
                   type="text"
                   placeholder="Trung tâm Hành chính tỉnh, TP. Thủ Dầu Một..."
@@ -529,6 +532,7 @@ export default function OrganizationsAdminPage() {
                 />
               </div>
 
+              {/* Footer */}
               <div className="flex justify-end space-x-2 pt-4 border-t border-slate-200">
                 <button
                   type="button"
@@ -539,7 +543,7 @@ export default function OrganizationsAdminPage() {
                 </button>
                 <button
                   type="submit"
-                  className="rounded-full bg-[#1E60F3] px-6 py-2 font-bold text-white hover:bg-blue-700 shadow-sm"
+                  className="rounded-full bg-[#1E60F3] px-6 py-2 font-bold text-white hover:bg-blue-700 shadow-md shadow-blue-500/20"
                 >
                   {editingOrg ? 'Lưu Thay Đổi' : 'Thêm Cơ Quan'}
                 </button>

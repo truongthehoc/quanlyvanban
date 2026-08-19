@@ -209,23 +209,32 @@ export default function DocumentTypesAdminPage() {
         </div>
       </div>
 
-      {/* EDIT MODAL */}
+      {/* EDIT / CREATE SLIDE-OVER DRAWER */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-6 py-4">
-              <h2 className="text-base font-bold text-slate-800">
-                {editingType ? 'Chỉnh Sửa Loại Văn Bản & Mẫu Số' : 'Thêm Loại Văn Bản Mới'}
-              </h2>
-              <button onClick={() => setShowModal(false)} className="rounded-full p-1.5 text-slate-400 hover:bg-slate-200">
+        <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-opacity duration-300 animate-in fade-in">
+          <div className="w-full max-w-lg h-full bg-white shadow-2xl border-l border-slate-200 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300 ease-out">
+            
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/90 px-6 py-4 flex-shrink-0">
+              <div>
+                <h2 className="text-base font-bold text-slate-900">
+                  {editingType ? 'Chỉnh Sửa Loại Văn Bản & Mẫu Số' : 'Thêm Loại Văn Bản Mới'}
+                </h2>
+                <p className="text-[11px] text-slate-500 mt-0.5">Cấu hình công thức sinh số tự động cho loại văn bản</p>
+              </div>
+              <button
+                onClick={() => setShowModal(false)}
+                className="rounded-full p-2 text-slate-400 hover:bg-slate-200 transition-colors"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSave} className="p-6 space-y-4 text-xs">
+            {/* Body */}
+            <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Mã loại văn bản *</label>
+                  <label className="block font-bold text-slate-700 mb-1">Mã loại văn bản *</label>
                   <input
                     type="text"
                     placeholder="VD: CV, QD, TB..."
@@ -238,7 +247,7 @@ export default function DocumentTypesAdminPage() {
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Tên loại văn bản *</label>
+                  <label className="block font-bold text-slate-700 mb-1">Tên loại văn bản *</label>
                   <input
                     type="text"
                     placeholder="VD: Công văn, Quyết định..."
@@ -251,7 +260,7 @@ export default function DocumentTypesAdminPage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Mẫu quy tắc sinh số (Pattern) *</label>
+                <label className="block font-bold text-slate-700 mb-1">Mẫu quy tắc sinh số (Pattern) *</label>
                 <input
                   type="text"
                   placeholder="VD: {STT}/{MA_LOAI}-{MA_DV}"
@@ -260,20 +269,20 @@ export default function DocumentTypesAdminPage() {
                   className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-mono text-[#1E60F3] font-bold focus:border-[#1E60F3] focus:outline-none"
                   required
                 />
-                <div className="mt-2 rounded-xl bg-slate-50 p-3 border border-slate-200">
-                  <span className="text-slate-500 font-semibold">Xem trước kết quả:</span>
-                  <span className="ml-2 font-mono font-bold text-emerald-700 bg-white px-2.5 py-0.5 rounded-full border border-emerald-200">
+                <div className="mt-2 rounded-2xl bg-slate-50 p-3.5 border border-slate-200">
+                  <span className="text-slate-500 font-semibold">Xem trước kết quả sinh số:</span>
+                  <span className="ml-2 font-mono font-bold text-emerald-700 bg-white px-3 py-1 rounded-full border border-emerald-200 inline-block mt-1">
                     {getSimulatedNumber(formData.numberingPattern, formData.code || 'CV')}
                   </span>
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Sổ văn bản mặc định</label>
+                <label className="block font-bold text-slate-700 mb-1">Sổ văn bản mặc định</label>
                 <select
                   value={formData.defaultBookId}
                   onChange={(e) => setFormData({ ...formData, defaultBookId: e.target.value })}
-                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
+                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none cursor-pointer"
                 >
                   {books.map((b) => (
                     <option key={b.id} value={b.id}>
@@ -283,6 +292,7 @@ export default function DocumentTypesAdminPage() {
                 </select>
               </div>
 
+              {/* Footer */}
               <div className="flex justify-end space-x-2 pt-4 border-t border-slate-200">
                 <button
                   type="button"
@@ -293,7 +303,7 @@ export default function DocumentTypesAdminPage() {
                 </button>
                 <button
                   type="submit"
-                  className="rounded-full bg-[#1E60F3] px-6 py-2 font-bold text-white hover:bg-blue-700 shadow-sm"
+                  className="rounded-full bg-[#1E60F3] px-6 py-2 font-bold text-white hover:bg-blue-700 shadow-md shadow-blue-500/20"
                 >
                   Lưu Cấu Hình Mẫu Số
                 </button>

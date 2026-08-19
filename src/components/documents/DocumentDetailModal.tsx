@@ -132,24 +132,24 @@ export default function DocumentDetailModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="flex flex-col h-[90vh] w-full max-w-5xl rounded-2xl bg-white shadow-2xl border border-slate-200 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-opacity duration-300 animate-in fade-in">
+      <div className="flex flex-col h-full w-full max-w-4xl sm:max-w-5xl bg-white shadow-2xl border-l border-slate-200 overflow-hidden animate-in slide-in-from-right duration-300 ease-out">
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/80 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/90 px-6 py-4 flex-shrink-0">
           <div className="flex items-center space-x-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white font-bold">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-600 text-white font-bold shadow-md shadow-blue-500/20">
               <FileText className="h-5 w-5" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-bold text-slate-800 text-base">
+                <span className="font-extrabold text-slate-900 text-base">
                   {doc.documentNumber || `Số đến: ${doc.subNumber || 'Chưa vào sổ'}`}
                 </span>
                 {getUrgencyBadge(doc.urgencyLevel)}
                 {getStatusBadge(doc.status)}
               </div>
-              <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">
+              <p className="text-xs text-slate-500 line-clamp-1 mt-0.5 max-w-xl">
                 {doc.title}
               </p>
             </div>
@@ -157,7 +157,7 @@ export default function DocumentDetailModal({
 
           <button
             onClick={onClose}
-            className="rounded-lg p-2 text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition-colors"
+            className="rounded-full p-2 text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -494,7 +494,7 @@ export default function DocumentDetailModal({
                         </p>
 
                         {log.notes && (
-                          <div className="mt-2 text-xs text-slate-700 bg-white p-2.5 rounded border border-slate-100">
+                          <div className="mt-2 text-xs text-slate-700 bg-white p-2.5 rounded-full border border-slate-100">
                             {log.notes}
                           </div>
                         )}
@@ -520,7 +520,7 @@ export default function DocumentDetailModal({
             {/* Close */}
             <button
               onClick={onClose}
-              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
+              className="rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
             >
               Đóng
             </button>
@@ -532,7 +532,7 @@ export default function DocumentDetailModal({
                   onClose();
                   onOpenDirectiveModal?.(doc);
                 }}
-                className="rounded-lg bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/20 flex items-center space-x-1.5"
+                className="rounded-full bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/20 flex items-center space-x-1.5"
               >
                 <FileCheck className="h-4 w-4" />
                 <span>Cho ý kiến chỉ đạo</span>
@@ -546,7 +546,7 @@ export default function DocumentDetailModal({
                   onClose();
                   onOpenForwardModal?.(doc);
                 }}
-                className="rounded-lg bg-indigo-600 px-4 py-2 text-xs font-bold text-white hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-500/20 flex items-center space-x-1.5"
+                className="rounded-full bg-indigo-600 px-4 py-2 text-xs font-bold text-white hover:bg-indigo-700 transition-colors shadow-sm shadow-indigo-500/20 flex items-center space-x-1.5"
               >
                 <Send className="h-4 w-4" />
                 <span>Vào sổ & Chuyển tiếp phòng ban</span>
@@ -560,7 +560,7 @@ export default function DocumentDetailModal({
                   onClose();
                   onOpenProgressModal?.(doc);
                 }}
-                className="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition-colors shadow-sm shadow-emerald-500/20 flex items-center space-x-1.5"
+                className="rounded-full bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition-colors shadow-sm shadow-emerald-500/20 flex items-center space-x-1.5"
               >
                 <CheckCircle2 className="h-4 w-4" />
                 <span>Báo cáo tiến độ / Hoàn thành</span>
@@ -572,7 +572,7 @@ export default function DocumentDetailModal({
               <button
                 onClick={handleApproveDraft}
                 disabled={isSubmitting}
-                className="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition-colors shadow-sm flex items-center space-x-1.5"
+                className="rounded-full bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition-colors shadow-sm flex items-center space-x-1.5"
               >
                 <Stamp className="h-4 w-4" />
                 <span>Ký duyệt ban hành</span>
@@ -586,7 +586,7 @@ export default function DocumentDetailModal({
                   onClose();
                   onOpenIssueModal?.(doc);
                 }}
-                className="rounded-lg bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-700 transition-colors shadow-sm flex items-center space-x-1.5"
+                className="rounded-full bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-700 transition-colors shadow-sm flex items-center space-x-1.5"
               >
                 <Stamp className="h-4 w-4" />
                 <span>Cấp số tự động & Phát hành</span>
@@ -598,7 +598,7 @@ export default function DocumentDetailModal({
               <button
                 onClick={handleConfirmReadInternal}
                 disabled={isSubmitting}
-                className="rounded-lg bg-teal-600 px-4 py-2 text-xs font-bold text-white hover:bg-teal-700 transition-colors shadow-sm flex items-center space-x-1.5"
+                className="rounded-full bg-teal-600 px-4 py-2 text-xs font-bold text-white hover:bg-teal-700 transition-colors shadow-sm flex items-center space-x-1.5"
               >
                 <CheckCircle2 className="h-4 w-4" />
                 <span>Xác nhận đã tiếp nhận</span>

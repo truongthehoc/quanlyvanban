@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
-import { X, Send, FileCheck, CheckCircle2, Building2, Calendar, AlertCircle } from 'lucide-react';
+import { X, Send, FileCheck, CheckCircle2, Building2, Calendar, AlertCircle, Inbox, FileText } from 'lucide-react';
 
 // ==========================================
-// 1. MODAL TIẾP NHẬN & NHẬP VĂN BẢN ĐẾN
+// 1. DRAWER TIẾP NHẬN & NHẬP VĂN BẢN ĐẾN
 // ==========================================
 export function CreateIncomingModal({
   onClose,
@@ -107,18 +107,29 @@ export function CreateIncomingModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl border border-slate-200 overflow-hidden">
-        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-6 py-4">
-          <h2 className="text-base font-bold text-slate-800">Tiếp nhận & Vào sổ Văn bản Đến</h2>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-200">
+    <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-opacity duration-300 animate-in fade-in">
+      <div className="w-full max-w-2xl h-full bg-white shadow-2xl border-l border-slate-200 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300 ease-out">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/90 px-6 py-4 flex-shrink-0">
+          <div className="flex items-center space-x-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-[#1E60F3] font-bold">
+              <Inbox className="h-5 w-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-slate-900">Tiếp nhận & Vào sổ Văn bản Đến</h2>
+              <p className="text-[11px] text-slate-500">Đăng ký thông tin văn bản đến từ cơ quan bên ngoài</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-slate-200 transition-colors">
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 text-xs">
+        {/* Body Form */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
           {error && (
-            <div className="flex items-center space-x-2 rounded-lg bg-rose-50 p-3 text-rose-700 border border-rose-200">
+            <div className="flex items-center space-x-2 rounded-xl bg-rose-50 p-3.5 text-rose-700 border border-rose-200">
               <AlertCircle className="h-4 w-4 flex-shrink-0" />
               <span>{error}</span>
             </div>
@@ -126,24 +137,24 @@ export function CreateIncomingModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block font-semibold text-slate-700 mb-1">Số/Ký hiệu văn bản gốc *</label>
+              <label className="block font-bold text-slate-700 mb-1">Số/Ký hiệu văn bản gốc *</label>
               <input
                 type="text"
                 placeholder="VD: 108/UBND-VX"
                 value={formData.documentNumber}
                 onChange={(e) => setFormData({ ...formData, documentNumber: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
                 required
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="font-semibold text-slate-700">Cơ quan ban hành (Nơi gửi) *</label>
+                <label className="font-bold text-slate-700">Cơ quan ban hành (Nơi gửi) *</label>
                 <button
                   type="button"
                   onClick={() => setUseCustomSender(!useCustomSender)}
-                  className="text-[11px] text-blue-600 hover:underline"
+                  className="text-[11px] font-bold text-blue-600 hover:underline"
                 >
                   {useCustomSender ? 'Chọn từ danh mục' : 'Nhập tự do'}
                 </button>
@@ -153,7 +164,7 @@ export function CreateIncomingModal({
                 <select
                   value={formData.senderOrgId}
                   onChange={(e) => handleOrgSelect(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-blue-500 focus:outline-none cursor-pointer"
+                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none cursor-pointer"
                 >
                   {organizations.map((org) => (
                     <option key={org.id} value={org.id}>
@@ -168,7 +179,7 @@ export function CreateIncomingModal({
                   placeholder="Nhập tên cơ quan gửi..."
                   value={formData.senderOrg}
                   onChange={(e) => setFormData({ ...formData, senderOrg: e.target.value, senderOrgId: '' })}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
                   required
                 />
               )}
@@ -176,24 +187,24 @@ export function CreateIncomingModal({
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">Trích yếu nội dung văn bản *</label>
+            <label className="block font-bold text-slate-700 mb-1">Trích yếu nội dung văn bản *</label>
             <textarea
-              rows={2}
+              rows={3}
               placeholder="Nhập tóm tắt nội dung chính của văn bản đến..."
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
               required
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block font-semibold text-slate-700 mb-1">Loại văn bản</label>
+              <label className="block font-bold text-slate-700 mb-1">Loại văn bản</label>
               <select
                 value={formData.documentTypeId}
                 onChange={(e) => setFormData({ ...formData, documentTypeId: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
               >
                 {docTypes.map((dt) => (
                   <option key={dt.id} value={dt.id}>
@@ -204,24 +215,24 @@ export function CreateIncomingModal({
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-700 mb-1">Độ khẩn</label>
+              <label className="block font-bold text-slate-700 mb-1">Độ khẩn</label>
               <select
                 value={formData.urgencyLevel}
                 onChange={(e) => setFormData({ ...formData, urgencyLevel: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
               >
-                <option value="NORMAL">Thường</option>
+                <option value="NORMAL">Bình thường</option>
                 <option value="URGENT">Khẩn</option>
                 <option value="TOP_URGENT">Hỏa tốc / Thượng khẩn</option>
               </select>
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-700 mb-1">Độ mật</label>
+              <label className="block font-bold text-slate-700 mb-1">Độ mật</label>
               <select
                 value={formData.confidentialityLevel}
                 onChange={(e) => setFormData({ ...formData, confidentialityLevel: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
               >
                 <option value="NORMAL">Thường</option>
                 <option value="CONFIDENTIAL">Mật</option>
@@ -230,64 +241,65 @@ export function CreateIncomingModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block font-semibold text-slate-700 mb-1">Ngày ban hành</label>
+              <label className="block font-bold text-slate-700 mb-1">Ngày ban hành</label>
               <input
                 type="date"
                 value={formData.issueDate}
                 onChange={(e) => setFormData({ ...formData, issueDate: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-700 mb-1">Ngày đến (Tiếp nhận)</label>
+              <label className="block font-bold text-slate-700 mb-1">Ngày tiếp nhận</label>
               <input
                 type="date"
                 value={formData.arrivalDate}
                 onChange={(e) => setFormData({ ...formData, arrivalDate: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-700 mb-1">Hạn xử lý (nếu có)</label>
+              <label className="block font-bold text-slate-700 mb-1">Hạn xử lý (nếu có)</label>
               <input
                 type="date"
                 value={formData.dueDate}
                 onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
               />
             </div>
           </div>
 
           {/* Direct to leader toggle */}
-          <div className="rounded-lg bg-blue-50/70 p-3 border border-blue-200 flex items-center space-x-3">
+          <div className="rounded-2xl bg-blue-50/70 p-4 border border-blue-200 flex items-center space-x-3">
             <input
               type="checkbox"
               id="submitDirectlyToLeader"
               checked={formData.submitDirectlyToLeader}
               onChange={(e) => setFormData({ ...formData, submitDirectlyToLeader: e.target.checked })}
-              className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+              className="h-4 w-4 rounded-full border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
             />
-            <label htmlFor="submitDirectlyToLeader" className="font-semibold text-blue-900 cursor-pointer">
-              Trình ngay lên Lãnh đạo xin ý kiến chỉ đạo sau khi vào sổ
+            <label htmlFor="submitDirectlyToLeader" className="font-semibold text-blue-900 cursor-pointer text-xs">
+              Trình ngay lên Lãnh đạo cho ý kiến chỉ đạo sau khi tiếp nhận
             </label>
           </div>
 
+          {/* Footer */}
           <div className="flex justify-end space-x-2 pt-4 border-t border-slate-200">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-slate-300 px-4 py-2 font-semibold text-slate-700 hover:bg-slate-50"
+              className="rounded-full border border-slate-300 px-5 py-2 font-semibold text-slate-700 hover:bg-slate-50"
             >
               Hủy
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="rounded-lg bg-blue-600 px-5 py-2 font-bold text-white hover:bg-blue-700 shadow-sm"
+              className="rounded-full bg-[#1E60F3] px-6 py-2 font-bold text-white hover:bg-blue-700 shadow-sm"
             >
               {loading ? 'Đang lưu...' : 'Vào sổ & Tiếp nhận'}
             </button>
@@ -299,7 +311,7 @@ export function CreateIncomingModal({
 }
 
 // ==========================================
-// 2. MODAL LÃNH ĐẠO CHO Ý KIẾN CHỈ ĐẠO
+// 2. DRAWER LÃNH ĐẠO CHO Ý KIẾN CHỈ ĐẠO
 // ==========================================
 export function DirectiveModal({
   document: doc,
@@ -368,42 +380,50 @@ export function DirectiveModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-xl rounded-2xl bg-white shadow-2xl border border-slate-200 overflow-hidden">
-        <div className="flex items-center justify-between border-b border-slate-200 bg-blue-50/80 px-6 py-4">
-          <div className="flex items-center space-x-2">
-            <FileCheck className="h-5 w-5 text-blue-700" />
-            <h2 className="text-base font-bold text-slate-800">Lãnh đạo cho ý kiến chỉ đạo</h2>
+    <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-opacity duration-300 animate-in fade-in">
+      <div className="w-full max-w-xl h-full bg-white shadow-2xl border-l border-slate-200 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300 ease-out">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-slate-200 bg-blue-50/90 px-6 py-4 flex-shrink-0">
+          <div className="flex items-center space-x-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-600 text-white font-bold shadow-sm">
+              <FileCheck className="h-5 w-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-slate-900">Lãnh đạo cho ý kiến chỉ đạo</h2>
+              <p className="text-[11px] text-slate-500">Phân công đơn vị chủ trì và phối hợp thực hiện</p>
+            </div>
           </div>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-200">
+          <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-slate-200 transition-colors">
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 text-xs">
-          <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-            <p className="font-semibold text-slate-800 text-xs">Văn bản: {doc.title}</p>
-            <p className="text-slate-500 text-[11px] mt-0.5">Số đến: {doc.subNumber} • Gửi từ: {doc.senderOrg}</p>
+        {/* Body */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
+          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <p className="font-bold text-slate-800 text-xs">{doc.title}</p>
+            <p className="text-slate-500 text-[11px] mt-1 font-medium">Số đến: {doc.subNumber} • Gửi từ: {doc.senderOrg}</p>
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">Nội dung ý kiến chỉ đạo *</label>
+            <label className="block font-bold text-slate-700 mb-1">Nội dung ý kiến chỉ đạo *</label>
             <textarea
               rows={3}
               placeholder="VD: Giao Trung tâm CNTT chủ trì, Phòng KHTC phối hợp rà soát và đề xuất phương án..."
               value={directiveText}
               onChange={(e) => setDirectiveText(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
               required
             />
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">Đơn vị CHỦ TRÌ xử lý *</label>
+            <label className="block font-bold text-slate-700 mb-1">Đơn vị CHỦ TRÌ xử lý *</label>
             <select
               value={primaryDeptId}
               onChange={(e) => setPrimaryDeptId(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
               required
             >
               {departments.map((d) => (
@@ -415,8 +435,8 @@ export function DirectiveModal({
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">Đơn vị PHỐI HỢP (Chọn nhiều)</label>
-            <div className="grid grid-cols-2 gap-2 border border-slate-200 rounded-lg p-2.5 max-h-36 overflow-y-auto bg-slate-50/50">
+            <label className="block font-bold text-slate-700 mb-1">Đơn vị PHỐI HỢP (Chọn nhiều)</label>
+            <div className="grid grid-cols-2 gap-2 border border-slate-200 rounded-2xl p-3 max-h-40 overflow-y-auto bg-slate-50/50">
               {departments
                 .filter((d) => d.id !== primaryDeptId)
                 .map((d) => (
@@ -425,36 +445,37 @@ export function DirectiveModal({
                       type="checkbox"
                       checked={coordinateDeptIds.includes(d.id)}
                       onChange={() => toggleCoordDept(d.id)}
-                      className="rounded border-slate-300 text-blue-600"
+                      className="rounded-full border-slate-300 text-blue-600 cursor-pointer"
                     />
-                    <span>{d.name}</span>
+                    <span className="text-[11px] font-medium">{d.name}</span>
                   </label>
                 ))}
             </div>
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">Hạn xử lý yêu cầu</label>
+            <label className="block font-bold text-slate-700 mb-1">Hạn xử lý yêu cầu</label>
             <input
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
             />
           </div>
 
+          {/* Footer */}
           <div className="flex justify-end space-x-2 pt-4 border-t border-slate-200">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-slate-300 px-4 py-2 font-semibold text-slate-700 hover:bg-slate-50"
+              className="rounded-full border border-slate-300 px-5 py-2 font-semibold text-slate-700 hover:bg-slate-50"
             >
               Hủy
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="rounded-lg bg-blue-600 px-5 py-2 font-bold text-white hover:bg-blue-700 shadow-sm"
+              className="rounded-full bg-[#1E60F3] px-6 py-2 font-bold text-white hover:bg-blue-700 shadow-sm"
             >
               {loading ? 'Đang gửi...' : 'Lưu & Chuyển Văn thư phát hành'}
             </button>
@@ -466,7 +487,7 @@ export function DirectiveModal({
 }
 
 // ==========================================
-// 3. MODAL VĂN THƯ CHUYỂN TIẾP PHÒNG BAN
+// 3. DRAWER VĂN THƯ CHUYỂN TIẾP PHÒNG BAN
 // ==========================================
 export function ForwardModal({
   document: doc,
@@ -505,43 +526,52 @@ export function ForwardModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl border border-slate-200 overflow-hidden">
-        <div className="flex items-center justify-between border-b border-slate-200 bg-indigo-50 px-6 py-4">
-          <div className="flex items-center space-x-2">
-            <Send className="h-5 w-5 text-indigo-700" />
-            <h2 className="text-base font-bold text-slate-800">Vào sổ & Chuyển tiếp Phòng ban</h2>
+    <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-opacity duration-300 animate-in fade-in">
+      <div className="w-full max-w-md h-full bg-white shadow-2xl border-l border-slate-200 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300 ease-out">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-slate-200 bg-indigo-50/90 px-6 py-4 flex-shrink-0">
+          <div className="flex items-center space-x-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-indigo-600 text-white font-bold shadow-sm">
+              <Send className="h-5 w-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-slate-900">Vào sổ & Chuyển tiếp Phòng ban</h2>
+              <p className="text-[11px] text-slate-500">Phát hành lệnh xử lý đến các phòng ban phụ trách</p>
+            </div>
           </div>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-200">
+          <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-slate-200 transition-colors">
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="p-6 space-y-4 text-xs">
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
           <p className="text-slate-600 leading-relaxed">
             Bạn chuẩn bị chuyển giao văn bản <span className="font-bold text-slate-900">"{doc.title}"</span> đến các đơn vị đã được Lãnh đạo chỉ đạo:
           </p>
 
-          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-1.5">
             <p className="font-bold text-blue-900">Ý kiến Lãnh đạo:</p>
-            <p className="italic text-slate-700">"{doc.leaderDirective}"</p>
+            <p className="italic text-slate-700 leading-relaxed">"{doc.leaderDirective}"</p>
           </div>
 
-          <div className="rounded-lg bg-emerald-50 p-3 text-emerald-800 text-[11px] border border-emerald-200">
+          <div className="rounded-2xl bg-emerald-50 p-3.5 text-emerald-800 text-[11px] border border-emerald-200 font-medium">
             ✓ Hệ thống sẽ gửi thông báo tức thì đến Trưởng các đơn vị được chỉ đạo.
           </div>
 
+          {/* Footer */}
           <div className="flex justify-end space-x-2 pt-4 border-t border-slate-200">
             <button
               onClick={onClose}
-              className="rounded-lg border border-slate-300 px-4 py-2 font-semibold text-slate-700 hover:bg-slate-50"
+              className="rounded-full border border-slate-300 px-5 py-2 font-semibold text-slate-700 hover:bg-slate-50"
             >
               Hủy
             </button>
             <button
               onClick={handleForward}
               disabled={loading}
-              className="rounded-lg bg-indigo-600 px-5 py-2 font-bold text-white hover:bg-indigo-700 shadow-sm"
+              className="rounded-full bg-indigo-600 px-6 py-2 font-bold text-white hover:bg-indigo-700 shadow-md shadow-indigo-500/20"
             >
               {loading ? 'Đang chuyển...' : 'Xác nhận Chuyển tiếp'}
             </button>
@@ -553,7 +583,7 @@ export function ForwardModal({
 }
 
 // ==========================================
-// 4. MODAL BÁO CÁO TIẾN ĐỘ / HOÀN THÀNH
+// 4. DRAWER BÁO CÁO TIẾN ĐỘ / HOÀN THÀNH
 // ==========================================
 export function ProgressModal({
   document: doc,
@@ -600,25 +630,33 @@ export function ProgressModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl border border-slate-200 overflow-hidden">
-        <div className="flex items-center justify-between border-b border-slate-200 bg-emerald-50 px-6 py-4">
-          <div className="flex items-center space-x-2">
-            <CheckCircle2 className="h-5 w-5 text-emerald-700" />
-            <h2 className="text-base font-bold text-slate-800">Cập nhật Tiến độ & Kết quả Xử lý</h2>
+    <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-opacity duration-300 animate-in fade-in">
+      <div className="w-full max-w-lg h-full bg-white shadow-2xl border-l border-slate-200 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300 ease-out">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-slate-200 bg-emerald-50/90 px-6 py-4 flex-shrink-0">
+          <div className="flex items-center space-x-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-600 text-white font-bold shadow-sm">
+              <CheckCircle2 className="h-5 w-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-slate-900">Cập nhật Tiến độ & Kết quả Xử lý</h2>
+              <p className="text-[11px] text-slate-500">Báo cáo kết quả công việc lên Lãnh đạo</p>
+            </div>
           </div>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-200">
+          <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-slate-200 transition-colors">
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 text-xs">
+        {/* Body */}
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4 text-xs">
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">Trạng thái xử lý *</label>
+            <label className="block font-bold text-slate-700 mb-1">Trạng thái xử lý *</label>
             <select
               value={progressStatus}
               onChange={(e) => setProgressStatus(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-emerald-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-emerald-500 focus:outline-none"
             >
               <option value="IN_PROGRESS">Đang thực hiện (Cập nhật tiến độ)</option>
               <option value="COMPLETED">Đã hoàn thành toàn bộ nhiệm vụ</option>
@@ -626,29 +664,30 @@ export function ProgressModal({
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">Báo cáo kết quả / Ghi chú chi tiết *</label>
+            <label className="block font-bold text-slate-700 mb-1">Báo cáo kết quả / Ghi chú chi tiết *</label>
             <textarea
-              rows={3}
+              rows={4}
               placeholder="VD: Đã hoàn tất dự thảo kế hoạch và gửi báo cáo thẩm định..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-emerald-500 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-emerald-500 focus:outline-none"
               required
             />
           </div>
 
+          {/* Footer */}
           <div className="flex justify-end space-x-2 pt-4 border-t border-slate-200">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-slate-300 px-4 py-2 font-semibold text-slate-700 hover:bg-slate-50"
+              className="rounded-full border border-slate-300 px-5 py-2 font-semibold text-slate-700 hover:bg-slate-50"
             >
               Hủy
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="rounded-lg bg-emerald-600 px-5 py-2 font-bold text-white hover:bg-emerald-700 shadow-sm"
+              className="rounded-full bg-emerald-600 px-6 py-2 font-bold text-white hover:bg-emerald-700 shadow-md shadow-emerald-500/20"
             >
               {loading ? 'Đang lưu...' : 'Lưu kết quả'}
             </button>
