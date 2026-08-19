@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { code, name, shortName, type, email, phone, address } = body;
+    const { code, name, shortName, type, email, phone, address, contactPerson } = body;
 
     if (!code || !name) {
       return NextResponse.json({ error: 'Mã và Tên cơ quan/đơn vị là bắt buộc' }, { status: 400 });
@@ -57,6 +57,7 @@ export async function POST(req: NextRequest) {
         email: email?.trim(),
         phone: phone?.trim(),
         address: address?.trim(),
+        contactPerson: contactPerson?.trim() || null,
       },
     });
 
@@ -70,7 +71,7 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   try {
     const body = await req.json();
-    const { id, name, shortName, type, email, phone, address, isActive } = body;
+    const { id, name, shortName, type, email, phone, address, contactPerson, isActive } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'id is required' }, { status: 400 });
@@ -85,6 +86,7 @@ export async function PATCH(req: NextRequest) {
         email,
         phone,
         address,
+        contactPerson: contactPerson !== undefined ? (contactPerson?.trim() || null) : undefined,
         isActive,
       },
     });

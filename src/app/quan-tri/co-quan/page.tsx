@@ -34,6 +34,8 @@ export default function OrganizationsAdminPage() {
   // Modal
   const [showModal, setShowModal] = useState(false);
   const [editingOrg, setEditingOrg] = useState<any>(null);
+  const [deletingOrg, setDeletingOrg] = useState<any>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [formData, setFormData] = useState({
     code: '',
     name: '',
@@ -42,6 +44,7 @@ export default function OrganizationsAdminPage() {
     email: '',
     phone: '',
     address: '',
+    contactPerson: '',
   });
 
   const fetchOrgs = async () => {
@@ -95,6 +98,7 @@ export default function OrganizationsAdminPage() {
           email: '',
           phone: '',
           address: '',
+          contactPerson: '',
         });
         fetchOrgs();
       }
@@ -103,17 +107,21 @@ export default function OrganizationsAdminPage() {
     }
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Bạn có chắc chắn muốn xóa cơ quan "${name}"?`)) return;
+  const handleConfirmDelete = async () => {
+    if (!deletingOrg) return;
+    setDeleteLoading(true);
     try {
-      const res = await fetch(`/api/admin/organizations?id=${id}`, {
+      const res = await fetch(`/api/admin/organizations?id=${deletingOrg.id}`, {
         method: 'DELETE',
       });
       if (res.ok) {
+        setDeletingOrg(null);
         fetchOrgs();
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -185,6 +193,7 @@ export default function OrganizationsAdminPage() {
               email: '',
               phone: '',
               address: '',
+              contactPerson: '',
             });
             setShowModal(true);
           }}
@@ -356,6 +365,12 @@ export default function OrganizationsAdminPage() {
 
                       {/* Liên hệ */}
                       <td className="py-4 px-4 sm:px-5 text-slate-600 space-y-1">
+                        {org.contactPerson && (
+                          <div className="font-bold text-slate-900 text-xs flex items-center space-x-1 mb-0.5">
+                            <span className="text-[10px] text-slate-400 font-normal">LH:</span>
+                            <span>{org.contactPerson}</span>
+                          </div>
+                        )}
                         {org.email && (
                           <div className="flex items-center space-x-1.5 text-[11px]">
                             <Mail className="h-3 w-3 text-slate-400 flex-shrink-0" />
@@ -368,7 +383,7 @@ export default function OrganizationsAdminPage() {
                             <span>{org.phone}</span>
                           </div>
                         )}
-                        {!org.email && !org.phone && <span className="text-slate-400">---</span>}
+                        {!org.email && !org.phone && !org.contactPerson && <span className="text-slate-400">---</span>}
                       </td>
 
                       {/* Địa chỉ */}
@@ -398,18 +413,19 @@ export default function OrganizationsAdminPage() {
                                 email: org.email || '',
                                 phone: org.phone || '',
                                 address: org.address || '',
+                                contactPerson: org.contactPerson || '',
                               });
                               setShowModal(true);
                             }}
-                            className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-[#1E60F3] hover:bg-blue-50 hover:border-blue-300 transition-colors"
+                            className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-[#1E60F3] hover:bg-blue-50 hover:border-blue-300 transition-colors cursor-pointer"
                             title="Chỉnh sửa"
                           >
                             <Edit2 className="h-3.5 w-3.5" />
                           </button>
 
                           <button
-                            onClick={() => handleDelete(org.id, org.name)}
-                            className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-rose-500 hover:bg-rose-50 hover:border-rose-300 transition-colors"
+                            onClick={() => setDeletingOrg(org)}
+                            className="flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-rose-500 hover:bg-rose-50 hover:border-rose-300 transition-colors cursor-pointer"
                             title="Xóa"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -507,6 +523,19 @@ export default function OrganizationsAdminPage() {
                 </select>
               </div>
 
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Người liên hệ
+                </label>
+                <input
+                  type="text"
+                  placeholder="Nhập họ tên người liên hệ..."
+                  value={formData.contactPerson}
+                  onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
+                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs focus:border-[#1E60F3] focus:outline-none"
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Email liên hệ / Điện tử</label>
@@ -547,18 +576,70 @@ export default function OrganizationsAdminPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="rounded-full border border-slate-300 px-5 py-2 font-semibold text-slate-700 hover:bg-slate-50"
+                  className="rounded-full border border-slate-300 px-5 py-2 font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
-                  className="rounded-full bg-[#1E60F3] px-6 py-2 font-bold text-white hover:bg-blue-700 shadow-md shadow-blue-500/20"
+                  className="rounded-full bg-[#1E60F3] px-6 py-2 font-bold text-white hover:bg-blue-700 shadow-md shadow-blue-500/20 cursor-pointer"
                 >
                   {editingOrg ? 'Lưu Thay Đổi' : 'Thêm Cơ Quan'}
                 </button>
               </div>
             </form>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* ======================================================== */}
+      {/* MODAL XÁC NHẬN XÓA CƠ QUAN / ĐƠN VỊ (BEAUTIFUL DELETE DIALOG) */}
+      {/* ======================================================== */}
+      {deletingOrg && mounted && createPortal(
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-sm rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 p-6 text-center space-y-4">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 shadow-sm border border-rose-100">
+              <Trash2 className="h-7 w-7" />
+            </div>
+
+            <div className="space-y-1.5">
+              <h3 className="text-base font-black text-slate-900">
+                Xác Nhận Xóa Cơ Quan?
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Hành động này sẽ xóa cơ quan / đơn vị khỏi danh mục và không thể hoàn tác.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-3.5 text-xs text-left space-y-1.5 font-mono">
+              <div className="flex items-center justify-between font-bold text-slate-800">
+                <span className="font-sans">Tên cơ quan:</span>
+                <span className="text-rose-700 font-sans truncate max-w-[180px]">{deletingOrg.name}</span>
+              </div>
+              <div className="flex items-center justify-between text-slate-600">
+                <span className="font-sans">Mã cơ quan:</span>
+                <span className="text-blue-700 font-bold">{deletingOrg.code}</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setDeletingOrg(null)}
+                className="rounded-full border border-slate-200 bg-white py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shadow-xs"
+              >
+                Hủy bỏ
+              </button>
+              <button
+                type="button"
+                disabled={deleteLoading}
+                onClick={handleConfirmDelete}
+                className="rounded-full bg-rose-600 py-2.5 text-xs font-bold text-white hover:bg-rose-700 transition-colors cursor-pointer shadow-md shadow-rose-500/20 disabled:opacity-50"
+              >
+                {deleteLoading ? 'Đang xóa...' : 'Xác Nhận Xóa'}
+              </button>
+            </div>
           </div>
         </div>,
         document.body

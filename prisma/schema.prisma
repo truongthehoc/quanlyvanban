@@ -36,6 +36,7 @@ model Organization {
   email       String?
   phone       String?
   address     String?
+  contactPerson String? // Người liên hệ (Không bắt buộc)
   isActive    Boolean   @default(true)
   
   incomingDocuments Document[] @relation("SenderOrganization")
