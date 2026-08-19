@@ -17,6 +17,9 @@ import {
   Info,
   Building,
   CheckCircle2,
+  AlertTriangle,
+  AlertCircle,
+  ShieldAlert,
   X,
 } from 'lucide-react';
 
@@ -38,6 +41,7 @@ export default function OrganizationsAdminPage() {
   const [editingOrg, setEditingOrg] = useState<any>(null);
   const [deletingOrg, setDeletingOrg] = useState<any>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [editingCat, setEditingCat] = useState<any>(null);
   const [categoryLoading, setCategoryLoading] = useState(false);
   const [categoryToast, setCategoryToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -149,16 +153,20 @@ export default function OrganizationsAdminPage() {
   const handleConfirmDelete = async () => {
     if (!deletingOrg) return;
     setDeleteLoading(true);
+    setDeleteError(null);
     try {
       const res = await fetch(`/api/admin/organizations?id=${deletingOrg.id}`, {
         method: 'DELETE',
       });
-      if (res.ok) {
+      const data = await res.json();
+      if (res.ok && data.success) {
         setDeletingOrg(null);
         fetchOrgs();
+      } else {
+        setDeleteError(data.error || 'Không thể xóa cơ quan / đơn vị này.');
       }
     } catch (err) {
-      console.error(err);
+      setDeleteError('Lỗi kết nối máy chủ. Vui lòng thử lại!');
     } finally {
       setDeleteLoading(false);
     }
@@ -974,53 +982,126 @@ export default function OrganizationsAdminPage() {
       )}
 
       {/* ======================================================== */}
-      {/* MODAL XÁC NHẬN XÓA CƠ QUAN / ĐƠN VỊ (BEAUTIFUL DELETE DIALOG) */}
+      {/* MODAL XÁC NHẬN / CẢNH BÁO CHẶN XÓA CƠ QUAN / ĐƠN VỊ */}
       {/* ======================================================== */}
       {deletingOrg && mounted && createPortal(
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-sm rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 p-6 text-center space-y-4">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 shadow-sm border border-rose-100">
-              <Trash2 className="h-7 w-7" />
-            </div>
+          {(() => {
+            const linkedIncoming = deletingOrg._count?.incomingDocuments || 0;
+            const linkedOutgoing = deletingOrg._count?.outgoingDocuments || 0;
+            const totalLinkedDocs = linkedIncoming + linkedOutgoing;
 
-            <div className="space-y-1.5">
-              <h3 className="text-base font-black text-slate-900">
-                Xác Nhận Xóa Cơ Quan?
-              </h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                Hành động này sẽ xóa cơ quan / đơn vị khỏi danh mục và không thể hoàn tác.
-              </p>
-            </div>
+            if (totalLinkedDocs > 0) {
+              return (
+                <div className="w-full max-w-md rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 p-6 text-center space-y-4">
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 shadow-sm border border-amber-200">
+                    <AlertTriangle className="h-7 w-7" />
+                  </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-3.5 text-xs text-left space-y-1.5 font-mono">
-              <div className="flex items-center justify-between font-bold text-slate-800">
-                <span className="font-sans">Tên cơ quan:</span>
-                <span className="text-rose-700 font-sans truncate max-w-[180px]">{deletingOrg.name}</span>
+                  <div className="space-y-1.5">
+                    <h3 className="text-base font-black text-slate-900">
+                      Không Thể Xóa Cơ Quan / Đơn Vị Này
+                    </h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      Cơ quan <strong className="text-slate-800 font-bold">{deletingOrg.name}</strong> ({deletingOrg.code}) đang được liên kết với dữ liệu văn bản trong hệ thống.
+                    </p>
+                  </div>
+
+                  {/* Document stats */}
+                  <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4 text-xs text-left space-y-2.5">
+                    <div className="flex items-center justify-between font-semibold text-slate-800">
+                      <span>Tổng số văn bản liên kết:</span>
+                      <span className="rounded-full bg-amber-200/90 text-amber-900 font-bold px-2.5 py-0.5 text-xs">
+                        {totalLinkedDocs} văn bản
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-amber-200/60">
+                      <div className="bg-white/80 rounded-xl p-2 border border-amber-100 flex items-center justify-between">
+                        <span className="text-slate-500">Văn bản Đến:</span>
+                        <strong className="text-blue-700 font-mono font-bold">{linkedIncoming} VB</strong>
+                      </div>
+                      <div className="bg-white/80 rounded-xl p-2 border border-amber-100 flex items-center justify-between">
+                        <span className="text-slate-500">Văn bản Đi:</span>
+                        <strong className="text-purple-700 font-mono font-bold">{linkedOutgoing} VB</strong>
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-amber-900 leading-normal pt-1">
+                      💡 <strong>Lưu ý:</strong> Hệ thống chặn xóa cơ quan này nhằm bảo toàn lịch sử sổ lưu và toàn vẹn dữ liệu văn bản. Bạn có thể chỉnh sửa thông tin hoặc chuyển đổi các văn bản liên quan sang cơ quan khác.
+                    </p>
+                  </div>
+
+                  <div className="pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDeletingOrg(null);
+                        setDeleteError(null);
+                      }}
+                      className="w-full rounded-full bg-slate-900 py-2.5 text-xs font-bold text-white hover:bg-slate-800 transition-colors cursor-pointer shadow-md shadow-slate-900/10"
+                    >
+                      Đã Hiểu & Đóng
+                    </button>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div className="w-full max-w-sm rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 p-6 text-center space-y-4">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 shadow-sm border border-rose-100">
+                  <Trash2 className="h-7 w-7" />
+                </div>
+
+                <div className="space-y-1.5">
+                  <h3 className="text-base font-black text-slate-900">
+                    Xác Nhận Xóa Cơ Quan?
+                  </h3>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Hành động này sẽ xóa cơ quan / đơn vị khỏi danh mục và không thể hoàn tác.
+                  </p>
+                </div>
+
+                {deleteError && (
+                  <div className="flex items-start space-x-2 rounded-2xl bg-rose-50 border border-rose-200 p-3 text-xs text-rose-700 text-left">
+                    <AlertCircle className="h-4 w-4 text-rose-600 flex-shrink-0 mt-0.5" />
+                    <span>{deleteError}</span>
+                  </div>
+                )}
+
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-3.5 text-xs text-left space-y-1.5 font-mono">
+                  <div className="flex items-center justify-between font-bold text-slate-800">
+                    <span className="font-sans">Tên cơ quan:</span>
+                    <span className="text-rose-700 font-sans truncate max-w-[180px]">{deletingOrg.name}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-slate-600">
+                    <span className="font-sans">Mã cơ quan:</span>
+                    <span className="text-blue-700 font-bold">{deletingOrg.code}</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDeletingOrg(null);
+                      setDeleteError(null);
+                    }}
+                    className="rounded-full border border-slate-200 bg-white py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shadow-xs"
+                  >
+                    Hủy bỏ
+                  </button>
+                  <button
+                    type="button"
+                    disabled={deleteLoading}
+                    onClick={handleConfirmDelete}
+                    className="rounded-full bg-rose-600 py-2.5 text-xs font-bold text-white hover:bg-rose-700 transition-colors cursor-pointer shadow-md shadow-rose-500/20 disabled:opacity-50"
+                  >
+                    {deleteLoading ? 'Đang xóa...' : 'Xác Nhận Xóa'}
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center justify-between text-slate-600">
-                <span className="font-sans">Mã cơ quan:</span>
-                <span className="text-blue-700 font-bold">{deletingOrg.code}</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => setDeletingOrg(null)}
-                className="rounded-full border border-slate-200 bg-white py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shadow-xs"
-              >
-                Hủy bỏ
-              </button>
-              <button
-                type="button"
-                disabled={deleteLoading}
-                onClick={handleConfirmDelete}
-                className="rounded-full bg-rose-600 py-2.5 text-xs font-bold text-white hover:bg-rose-700 transition-colors cursor-pointer shadow-md shadow-rose-500/20 disabled:opacity-50"
-              >
-                {deleteLoading ? 'Đang xóa...' : 'Xác Nhận Xóa'}
-              </button>
-            </div>
-          </div>
+            );
+          })()}
         </div>,
         document.body
       )}

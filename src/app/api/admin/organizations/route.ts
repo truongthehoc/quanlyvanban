@@ -107,6 +107,35 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'id is required' }, { status: 400 });
     }
 
+    const org = await prisma.organization.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: {
+            incomingDocuments: true,
+            outgoingDocuments: true,
+          },
+        },
+      },
+    });
+
+    if (!org) {
+      return NextResponse.json({ error: 'Cơ quan / đơn vị không tồn tại' }, { status: 404 });
+    }
+
+    const incomingDocs = org._count?.incomingDocuments || 0;
+    const outgoingDocs = org._count?.outgoingDocuments || 0;
+    const totalDocs = incomingDocs + outgoingDocs;
+
+    if (totalDocs > 0) {
+      return NextResponse.json(
+        {
+          error: `Không thể xóa đơn vị "${org.name}" vì đang có ${totalDocs} văn bản liên kết (${incomingDocs} VB Đến, ${outgoingDocs} VB Đi) trong hệ thống! Vui lòng chuyển hoặc xử lý các văn bản liên quan trước.`,
+        },
+        { status: 400 }
+      );
+    }
+
     await prisma.organization.delete({
       where: { id },
     });
