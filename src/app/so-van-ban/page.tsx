@@ -154,19 +154,13 @@ export default function DocumentBooksPage() {
         )}
       </div>
 
-      {/* CREATE SLIDE-OVER DRAWER */}
+      {/* CREATE MODAL */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex justify-end overflow-hidden">
-          {/* Full Backdrop */}
-          <div
-            className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
-            onClick={() => setShowCreateModal(false)}
-          />
-
-          <div className="relative w-full max-w-md h-full bg-white shadow-2xl border-l border-slate-200 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300 ease-out z-10">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-md max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
             
             {/* Header */}
-            <div className="flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-6 flex-shrink-0">
+            <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/90 px-6 py-4 flex-shrink-0">
               <div>
                 <h2 className="text-base font-bold text-slate-900">Mở Sổ Đăng Ký Văn Bản Mới</h2>
                 <p className="text-[11px] text-slate-500 mt-0.5">Khởi tạo sổ đăng ký quản lý số và luân chuyển văn bản</p>

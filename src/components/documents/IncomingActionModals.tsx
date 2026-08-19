@@ -5,7 +5,7 @@ import { useAuth } from '@/lib/auth-context';
 import { X, Send, FileCheck, CheckCircle2, Building2, Calendar, AlertCircle, Inbox, FileText } from 'lucide-react';
 
 // ==========================================
-// 1. DRAWER TIẾP NHẬN & NHẬP VĂN BẢN ĐẾN
+// 1. MODAL TIẾP NHẬN & NHẬP VĂN BẢN ĐẾN
 // ==========================================
 export function CreateIncomingModal({
   onClose,
@@ -107,17 +107,11 @@ export function CreateIncomingModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end overflow-hidden">
-      {/* Full Backdrop */}
-      <div
-        className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
-        onClick={onClose}
-      />
-
-      <div className="relative w-full max-w-2xl h-full bg-white shadow-2xl border-l border-slate-200 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300 ease-out z-10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-2xl max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-6 flex-shrink-0">
+        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/90 px-6 py-4 flex-shrink-0">
           <div className="flex items-center space-x-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-[#1E60F3] font-bold">
               <Inbox className="h-5 w-5" />
@@ -305,7 +299,7 @@ export function CreateIncomingModal({
             <button
               type="submit"
               disabled={loading}
-              className="rounded-full bg-[#1E60F3] px-6 py-2 font-bold text-white hover:bg-blue-700 shadow-sm"
+              className="rounded-full bg-[#1E60F3] px-6 py-2 font-bold text-white hover:bg-blue-700 shadow-md shadow-blue-500/20"
             >
               {loading ? 'Đang lưu...' : 'Vào sổ & Tiếp nhận'}
             </button>
@@ -317,7 +311,7 @@ export function CreateIncomingModal({
 }
 
 // ==========================================
-// 2. DRAWER LÃNH ĐẠO CHO Ý KIẾN CHỈ ĐẠO
+// 2. MODAL LÃNH ĐẠO CHO Ý KIẾN CHỈ ĐẠO
 // ==========================================
 export function DirectiveModal({
   document: doc,
@@ -386,17 +380,11 @@ export function DirectiveModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end overflow-hidden">
-      {/* Full Backdrop */}
-      <div
-        className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
-        onClick={onClose}
-      />
-
-      <div className="relative w-full max-w-xl h-full bg-white shadow-2xl border-l border-slate-200 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300 ease-out z-10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-xl max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-6 flex-shrink-0">
+        <div className="flex items-center justify-between border-b border-slate-200 bg-blue-50/90 px-6 py-4 flex-shrink-0">
           <div className="flex items-center space-x-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-600 text-white font-bold shadow-sm">
               <FileCheck className="h-5 w-5" />
@@ -487,7 +475,7 @@ export function DirectiveModal({
             <button
               type="submit"
               disabled={loading}
-              className="rounded-full bg-[#1E60F3] px-6 py-2 font-bold text-white hover:bg-blue-700 shadow-sm"
+              className="rounded-full bg-[#1E60F3] px-6 py-2 font-bold text-white hover:bg-blue-700 shadow-md shadow-blue-500/20"
             >
               {loading ? 'Đang gửi...' : 'Lưu & Chuyển Văn thư phát hành'}
             </button>
@@ -499,7 +487,7 @@ export function DirectiveModal({
 }
 
 // ==========================================
-// 3. DRAWER VĂN THƯ CHUYỂN TIẾP PHÒNG BAN
+// 3. MODAL VĂN THƯ CHUYỂN TIẾP PHÒNG BAN
 // ==========================================
 export function ForwardModal({
   document: doc,
@@ -538,17 +526,11 @@ export function ForwardModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end overflow-hidden">
-      {/* Full Backdrop */}
-      <div
-        className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
-        onClick={onClose}
-      />
-
-      <div className="relative w-full max-w-md h-full bg-white shadow-2xl border-l border-slate-200 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300 ease-out z-10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-md max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-6 flex-shrink-0">
+        <div className="flex items-center justify-between border-b border-slate-200 bg-indigo-50/90 px-6 py-4 flex-shrink-0">
           <div className="flex items-center space-x-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-indigo-600 text-white font-bold shadow-sm">
               <Send className="h-5 w-5" />
@@ -601,7 +583,7 @@ export function ForwardModal({
 }
 
 // ==========================================
-// 4. DRAWER BÁO CÁO TIẾN ĐỘ / HOÀN THÀNH
+// 4. MODAL BÁO CÁO TIẾN ĐỘ / HOÀN THÀNH
 // ==========================================
 export function ProgressModal({
   document: doc,
@@ -648,17 +630,11 @@ export function ProgressModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end overflow-hidden">
-      {/* Full Backdrop */}
-      <div
-        className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
-        onClick={onClose}
-      />
-
-      <div className="relative w-full max-w-lg h-full bg-white shadow-2xl border-l border-slate-200 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300 ease-out z-10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-lg max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-6 flex-shrink-0">
+        <div className="flex items-center justify-between border-b border-slate-200 bg-emerald-50/90 px-6 py-4 flex-shrink-0">
           <div className="flex items-center space-x-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-600 text-white font-bold shadow-sm">
               <CheckCircle2 className="h-5 w-5" />

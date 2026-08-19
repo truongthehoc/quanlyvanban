@@ -132,18 +132,12 @@ export default function DocumentDetailModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end overflow-hidden">
-      {/* Full Backdrop covering entire screen */}
-      <div
-        className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
-        onClick={onClose}
-      />
-
-      {/* Slide-over Drawer Panel from Top 0 to Bottom */}
-      <div className="relative flex flex-col h-full w-full max-w-4xl sm:max-w-5xl bg-white shadow-2xl border-l border-slate-200 overflow-hidden animate-in slide-in-from-right duration-300 ease-out z-10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+      {/* Modal Box */}
+      <div className="flex flex-col h-[90vh] w-full max-w-5xl rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-6 flex-shrink-0">
+        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/90 px-6 py-4 flex-shrink-0">
           <div className="flex items-center space-x-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-600 text-white font-bold shadow-md shadow-blue-500/20">
               <FileText className="h-5 w-5" />

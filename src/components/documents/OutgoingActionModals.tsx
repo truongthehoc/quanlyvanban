@@ -5,7 +5,7 @@ import { useAuth } from '@/lib/auth-context';
 import { X, Stamp, Send, Sparkles, FileText, AlertCircle } from 'lucide-react';
 
 // ==========================================
-// 1. DRAWER SOẠN THẢO DỰ THẢO VĂN BẢN ĐI
+// 1. MODAL SOẠN THẢO DỰ THẢO VĂN BẢN ĐI
 // ==========================================
 export function CreateOutgoingModal({
   onClose,
@@ -104,17 +104,11 @@ export function CreateOutgoingModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end overflow-hidden">
-      {/* Full Backdrop */}
-      <div
-        className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
-        onClick={onClose}
-      />
-
-      <div className="relative w-full max-w-2xl h-full bg-white shadow-2xl border-l border-slate-200 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300 ease-out z-10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-2xl max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-6 flex-shrink-0">
+        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/90 px-6 py-4 flex-shrink-0">
           <div className="flex items-center space-x-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-[#1E60F3] font-bold">
               <FileText className="h-5 w-5" />
@@ -280,7 +274,7 @@ export function CreateOutgoingModal({
 }
 
 // ==========================================
-// 2. DRAWER CẤP SỐ TỰ ĐỘNG & PHÁT HÀNH
+// 2. MODAL CẤP SỐ TỰ ĐỘNG & PHÁT HÀNH
 // ==========================================
 export function IssueAndNumberModal({
   document: doc,
@@ -324,17 +318,11 @@ export function IssueAndNumberModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end overflow-hidden">
-      {/* Full Backdrop */}
-      <div
-        className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
-        onClick={onClose}
-      />
-
-      <div className="relative w-full max-w-lg h-full bg-white shadow-2xl border-l border-slate-200 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300 ease-out z-10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-lg max-h-[90vh] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-6 flex-shrink-0">
+        <div className="flex items-center justify-between border-b border-slate-200 bg-blue-50/90 px-6 py-4 flex-shrink-0">
           <div className="flex items-center space-x-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-600 text-white font-bold shadow-sm">
               <Stamp className="h-5 w-5" />
