@@ -422,8 +422,14 @@ export default function OrganizationsAdminPage() {
 
       {/* CREATE / EDIT SLIDE-OVER DRAWER */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-opacity duration-300 animate-in fade-in">
-          <div className="w-full max-w-lg h-full bg-white shadow-2xl border-l border-slate-200 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300 ease-out">
+        <div className="fixed top-16 right-0 bottom-0 left-0 z-40 flex justify-end">
+          {/* Backdrop below header */}
+          <div
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+            onClick={() => setShowModal(false)}
+          />
+
+          <div className="relative w-full max-w-lg h-full bg-white shadow-2xl border-l border-slate-200 overflow-hidden flex flex-col animate-in slide-in-from-right duration-300 ease-out z-10">
             
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/90 px-6 py-4 flex-shrink-0">
