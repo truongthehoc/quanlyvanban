@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { FileCode2, Plus, Sparkles, CheckCircle2, Info, Edit2, X, Code2 } from 'lucide-react';
+import { FileCode2, Plus, Sparkles, CheckCircle2, Info, Edit2, X, Code2, FileText, BookOpen } from 'lucide-react';
 
 export default function DocumentTypesAdminPage() {
   const [mounted, setMounted] = useState(false);
@@ -142,20 +142,21 @@ export default function DocumentTypesAdminPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/80 font-bold text-slate-700">
-                <th className="py-3.5 px-4 sm:px-5 w-28 font-bold text-slate-800">Mã loại</th>
-                <th className="py-3.5 px-4 sm:px-5 font-bold text-slate-800">Tên loại văn bản</th>
-                <th className="py-3.5 px-4 sm:px-5 font-bold text-slate-800">Công thức sinh số (Pattern)</th>
-                <th className="py-3.5 px-4 sm:px-5 font-bold text-slate-800">Mẫu số thực tế minh họa</th>
-                <th className="py-3.5 px-4 sm:px-5 w-40 font-bold text-slate-800">Sổ văn bản mặc định</th>
-                <th className="py-3.5 px-4 sm:px-5 w-20 text-right font-bold text-slate-800">Thao tác</th>
+              <tr className="border-b border-slate-200 bg-slate-50/80 font-bold text-slate-700 text-[11px] uppercase tracking-wider">
+                <th className="py-3.5 px-4 sm:px-5 w-24 font-bold text-slate-800 whitespace-nowrap">Mã loại</th>
+                <th className="py-3.5 px-4 sm:px-5 font-bold text-slate-800 min-w-[140px]">Tên loại văn bản</th>
+                <th className="py-3.5 px-4 sm:px-5 font-bold text-slate-800 min-w-[180px]">Công thức sinh số (Pattern)</th>
+                <th className="py-3.5 px-4 sm:px-5 font-bold text-slate-800 whitespace-nowrap">Mẫu số thực tế minh họa</th>
+                <th className="py-3.5 px-4 sm:px-5 w-28 text-center font-bold text-slate-800 whitespace-nowrap">Số văn bản</th>
+                <th className="py-3.5 px-4 sm:px-5 whitespace-nowrap min-w-[220px] font-bold text-slate-800">Sổ văn bản mặc định</th>
+                <th className="py-3.5 px-4 sm:px-5 w-20 text-right font-bold text-slate-800 whitespace-nowrap">Thao tác</th>
               </tr>
             </thead>
 
             <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400">
+                  <td colSpan={7} className="py-12 text-center text-slate-400">
                     Đang tải danh mục loại văn bản...
                   </td>
                 </tr>
@@ -163,7 +164,7 @@ export default function DocumentTypesAdminPage() {
                 docTypes.map((dt) => (
                   <tr key={dt.id} className="hover:bg-slate-50/80 transition-colors">
                     
-                    <td className="py-4 px-4 sm:px-5 font-mono font-bold text-[#1E60F3]">
+                    <td className="py-4 px-4 sm:px-5 font-mono font-bold text-[#1E60F3] whitespace-nowrap">
                       {dt.code}
                     </td>
 
@@ -175,17 +176,29 @@ export default function DocumentTypesAdminPage() {
                       {dt.numberingPattern}
                     </td>
 
-                    <td className="py-4 px-4 sm:px-5">
+                    <td className="py-4 px-4 sm:px-5 whitespace-nowrap">
                       <span className="inline-flex rounded-full bg-emerald-50 px-3 py-1 font-mono text-xs font-bold text-emerald-800 border border-emerald-200">
                         {getSimulatedNumber(dt.numberingPattern, dt.code)}
                       </span>
                     </td>
 
-                    <td className="py-4 px-4 sm:px-5 text-slate-600 font-medium">
-                      {dt.defaultBook?.name || 'Sổ mặc định'}
+                    {/* Số văn bản */}
+                    <td className="py-4 px-4 sm:px-5 text-center whitespace-nowrap">
+                      <span className="inline-flex items-center space-x-1 rounded-full bg-blue-50 border border-blue-200/80 px-2.5 py-0.5 text-[11px] font-bold text-blue-700">
+                        <FileText className="h-3 w-3 text-blue-500" />
+                        <span>{dt._count?.documents || 0} VB</span>
+                      </span>
                     </td>
 
-                    <td className="py-4 px-4 sm:px-5 text-right">
+                    {/* Sổ văn bản mặc định */}
+                    <td className="py-4 px-4 sm:px-5 text-slate-700 font-medium whitespace-nowrap">
+                      <div className="flex items-center space-x-1.5">
+                        <BookOpen className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
+                        <span className="font-semibold text-slate-800">{dt.defaultBook?.name || 'Sổ mặc định'}</span>
+                      </div>
+                    </td>
+
+                    <td className="py-4 px-4 sm:px-5 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end space-x-1">
                         <button
                           onClick={() => {
