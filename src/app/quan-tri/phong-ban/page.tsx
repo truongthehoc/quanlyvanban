@@ -103,49 +103,9 @@ export default function DepartmentsAdminPage() {
         </button>
       </div>
 
-      {/* 2. Top Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs flex items-center justify-between">
-          <div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tổng số đơn vị</p>
-            <p className="text-2xl font-black text-slate-900 mt-1">{departments.length}</p>
-            <p className="text-[11px] text-slate-500 mt-0.5">Khoa / Phòng / Trung tâm</p>
-          </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-[#1E60F3]">
-            <Building2 className="h-6 w-6" />
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs flex items-center justify-between">
-          <div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tổng nhân sự</p>
-            <p className="text-2xl font-black text-slate-900 mt-1">
-              {departments.reduce((acc, curr) => acc + (curr._count?.users || 0), 0)}
-            </p>
-            <p className="text-[11px] text-slate-500 mt-0.5">Cán bộ công chức viên chức</p>
-          </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
-            <Users className="h-6 w-6" />
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xs flex items-center justify-between">
-          <div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Văn bản được phân công</p>
-            <p className="text-2xl font-black text-slate-900 mt-1">
-              {departments.reduce((acc, curr) => acc + (curr._count?.primaryDocs || 0), 0)}
-            </p>
-            <p className="text-[11px] text-slate-500 mt-0.5">Văn bản đang xử lý</p>
-          </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
-            <FileText className="h-6 w-6" />
-          </div>
-        </div>
-      </div>
-
-      {/* 3. Search Toolbar */}
-      <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-xs">
-        <div className="relative max-w-md">
+      {/* 2. Search Toolbar with Department Counter */}
+      <div className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-4.5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="relative w-full sm:max-w-md">
           <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-slate-400" />
           <input
             type="text"
@@ -153,8 +113,14 @@ export default function DepartmentsAdminPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && fetchDepartments()}
-            className="w-full rounded-full border border-slate-200 bg-slate-50/50 pl-9 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:border-[#1E60F3] focus:bg-white focus:outline-none transition-all"
+            className="w-full rounded-full border border-slate-200 bg-slate-50/50 pl-9 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:border-[#1E60F3] focus:bg-white focus:outline-none transition-all shadow-xs"
           />
+        </div>
+
+        <div className="inline-flex items-center space-x-1.5 rounded-full bg-slate-100 border border-slate-200/80 px-3.5 py-1.5 text-xs text-slate-600 font-medium self-end sm:self-auto">
+          <span className="text-slate-500">Số lượng:</span>
+          <span className="font-bold text-slate-900">{departments.length}</span>
+          <span className="text-slate-500">phòng ban</span>
         </div>
       </div>
 
